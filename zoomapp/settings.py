@@ -28,6 +28,8 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = []
+if env('DOMAIN'):
+    ALLOWED_HOSTS = [env('DOMAIN')]
 
 
 # Application definition
