@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django import http
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
 import requests
 import logging
@@ -26,9 +27,8 @@ def callback(request):
     return http.HttpResponse(api_resp)
 
 
+@csrf_exempt
 def hook(request, path):
     logger.error(f'** hook: {path}')
     logger.error(request.body)
     return http.HttpResponse(status=200)
-
-
