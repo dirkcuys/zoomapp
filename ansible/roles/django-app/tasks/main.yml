@@ -1,0 +1,55 @@
+---
+- name: create postgres user
+  postgresql_user:
+    name: "{{DB_USER}}"
+    password: "{{DB_PASSWORD}}"
+    login_host: "127.0.0.1"
+    login_user: "{{PG_ADMIN_USER}}"
+    login_password: "{{PG_ADMIN_PASSWORD}}"
+
+- name: create postgres db
+  postgresql_db:
+    name: "{{DB_NAME}}"
+    encoding: UTF-8
+    login_host: "127.0.0.1"
+    login_user: "{{PG_ADMIN_USER}}"
+    login_password: "{{PG_ADMIN_PASSWORD}}"
+    owner: "{{DB_USER}}"
+
+- name: setup static and media file hosting through nginx-proxy
+  template: src=static.j2 dest=/var/docker_volumes/nginx/vhosts.d/{{DOMAIN}}
+
+# Doing this before restarting the containers, keeps the currently running image + container
+- name: Remove old docker images & containers
+  docker_prune:
+    images: yes
+    containers: yes
+    builder_cache: yes
+
+# Setup env variables for sharing between django containers and celery containers. They need basically the same ENV variables except for the Nginx specific ones.
+- set_fact:
+    lc_nginx_env:
+      VIRTUAL_HOST: "{{DOMAIN}}"
+      LETSENCRYPT_HOST: "{{DOMAIN}}"
+      LETSENCRYPT_EMAIL: "admin@p2pu.org"
+
+- set_fact: 
+    lc_app_env: "{{ lc_docker_env | combine(lc_nginx_env) }}"
+
+- name: start docker container for django
+  docker_container:
+    name: "{{DOMAIN}}"
+    image: "local/django-app"
+    state: started
+    pull: yes
+    recreate: true
+    restart: yes
+    restart_policy: always
+    volumes:
+    - "/var/docker_volumes/nginx/static/{{DOMAIN}}/static:/opt/app/static_serve"
+    - "/var/docker_volumes/nginx/static/{{DOMAIN}}/media:/opt/app/upload"
+    - "/var/docker_volumes/{{DOMAIN}}/celery:/var/lib/celery"
+    - "/var/docker_volumes/{{DOMAIN}}/log:/var/log"
+    links:
+    - "postgres"
+    env: "{{lc_app_env}}"

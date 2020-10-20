@@ -1,0 +1,12 @@
+---
+- name: zoom
+  hosts: zoom
+  become: yes
+  become_method: sudo
+  vars_files: 
+  - vars/zoom.code27.co.za.yml
+  roles:
+  #- common
+  - docker_ubuntu
+  - nginx-proxy
+  - dummy

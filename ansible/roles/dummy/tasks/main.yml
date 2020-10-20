@@ -1,0 +1,15 @@
+---
+- name: start dummy docker container to trick nginx into serving files and generate ssl
+  docker_container:
+    name: "dummy"
+    image: "busybox"
+    state: started
+    pull: yes
+    recreate: true
+    restart: yes
+    restart_policy: always
+    command: sh -c "while true; do sleep 1; done;"
+    env:
+      VIRTUAL_HOST: zoom.code27.co.za
+      LETSENCRYPT_HOST: zoom.code27.co.za
+      LETSENCRYPT_EMAIL: "dirkcuys@gmail.com"
