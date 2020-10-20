@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 3rd party
     'webpack_loader',
+    'channels',
 
+    'registration',
     'zoom',
     'meetings',
 ]
@@ -112,6 +114,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'registration.User'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -144,6 +148,18 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
+####### Django channels setup #######
+ASGI_APPLICATION = "zoomapp.routing.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [
+                (env("REDIS_HOST", '127.0.0.1'), env('REDIS_PORT', 6379))
+            ],
+        },
+    },
+}
 
 ####### Django Webpack Loader config #######
 WEBPACK_LOADER = {
