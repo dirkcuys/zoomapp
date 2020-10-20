@@ -10,3 +10,14 @@ services:
     volumes:
     - .:/opt/app
     command: /opt/app/venv/bin/python manage.py runserver 0.0.0.0:8000
+  node:
+    image: node:lts
+    user: 1000:1000
+    working_dir: /opt/app
+    env_file: docker.env
+    ports:
+    - 3000:3000
+    volumes:
+    - .:/opt/app
+    command: yarn start
+
