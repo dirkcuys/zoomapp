@@ -1,23 +1,52 @@
 version: '3'
 services:
-  python:
-    image: python:3
-    user: 1000:1000
-    working_dir: /opt/app
-    env_file: docker.env
+  email:
+    image: djfarrelly/maildev
     ports:
-    - 8000:8000
-    volumes:
-    - .:/opt/app
-    command: /opt/app/venv/bin/python manage.py runserver 0.0.0.0:8000
+    - "1080:80"
+    - "1025:25"
+    networks:
+    - unbreakout
+  redis:
+    image: redis
+    ports:
+    - 6379:6379
+    networks:
+    - unbreakout
+  postgres:
+    image: postgres:11
+    environment:
+    - POSTGRES_PASSWORD=password
+    - POSTGRES_HOST_AUTH_METHOD=password
+    ports:
+    - "5432:5432"
+    networks:
+    - unbreakout
   node:
     image: node:lts
     user: 1000:1000
     working_dir: /opt/app
     env_file: docker.env
-    ports:
-    - 3000:3000
     volumes:
     - .:/opt/app
-    command: yarn start
-
+    command: npm run start
+  python:
+    image: python:3
+    user: 1000:1000
+    working_dir: /opt/app
+    env_file: docker.env
+    environment:
+    - REDIS_HOST=redis
+    ports:
+    - 8000:8000
+    volumes:
+    - .:/opt/app
+    depends_on:
+    - postgres
+    - node
+    - redis
+    networks:
+    - unbreakout
+    command: /opt/app/venv/bin/python manage.py runserver 0.0.0.0:8000
+networks:
+  unbreakout:
