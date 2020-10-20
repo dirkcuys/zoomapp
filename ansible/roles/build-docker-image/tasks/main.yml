@@ -6,15 +6,15 @@
 
 - name: get code from git
   git: 
-    dest: /usr/local/src/zoomapp
-    repo: https://github.com/dirkcuys/zoomapp.git
+    dest: /usr/local/src/unbreakout
+    repo: https://github.com/dirkcuys/unbreakout.git
     version: "master"
 
 - name: Build docker iamge
   docker_image:
-    name: local/zoomapp
+    name: local/unbreakout
     build:
-      path: /usr/local/src/zoomapp
+      path: /usr/local/src/unbreakout
       pull: yes
     tag: latest
     source: build
