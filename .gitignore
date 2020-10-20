@@ -1,1 +1,6 @@
 *.pyc
+venv
+node_modules/
+db.sqlite3
+ansible/
+docker.env
