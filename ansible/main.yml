@@ -7,6 +7,7 @@
   - vars/zoom.code27.co.za.yml
   roles:
   #- common
-  - docker_ubuntu
+  - dockerxubuntu
   - nginx-proxy
-  - dummy
+  - build-docker-image
+  - django-app

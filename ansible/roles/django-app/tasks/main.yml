@@ -19,22 +19,19 @@
 - name: setup static and media file hosting through nginx-proxy
   template: src=static.j2 dest=/var/docker_volumes/nginx/vhosts.d/{{DOMAIN}}
 
-# Doing this before restarting the containers, keeps the currently running image + container
-- name: Remove old docker images & containers
-  docker_prune:
-    images: yes
-    containers: yes
-    builder_cache: yes
-
 # Setup env variables for sharing between django containers and celery containers. They need basically the same ENV variables except for the Nginx specific ones.
 - set_fact:
-    lc_nginx_env:
+    nginx_env:
       VIRTUAL_HOST: "{{DOMAIN}}"
       LETSENCRYPT_HOST: "{{DOMAIN}}"
-      LETSENCRYPT_EMAIL: "admin@p2pu.org"
+      LETSENCRYPT_EMAIL: "dirkcuys@gmail.com"
+
+- set_fact:
+    django_env:
+      HOST: "{{DOMAIN}}"
 
 - set_fact: 
-    lc_app_env: "{{ lc_docker_env | combine(lc_nginx_env) }}"
+    docker_env: "{{ django_env | combine(nginx_env) }}"
 
 - name: start docker container for django
   docker_container:
@@ -50,6 +47,4 @@
     - "/var/docker_volumes/nginx/static/{{DOMAIN}}/media:/opt/app/upload"
     - "/var/docker_volumes/{{DOMAIN}}/celery:/var/lib/celery"
     - "/var/docker_volumes/{{DOMAIN}}/log:/var/log"
-    links:
-    - "postgres"
-    env: "{{lc_app_env}}"
+    env: "{{docker_env}}"

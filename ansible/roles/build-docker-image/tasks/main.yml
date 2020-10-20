@@ -1,0 +1,22 @@
+---
+- name: Remove old docker images & containers
+  docker_prune:
+    images: yes
+    containers: yes
+
+- name: get code from git
+  git: 
+    dest: /usr/local/src/zoomapp
+    repo: https://github.com/dirkcuys/zoomapp.git
+    version: "master"
+
+- name: Build docker iamge
+  docker_image:
+    name: local/zoomapp
+    build:
+      path: /usr/local/src/zoomapp
+      pull: yes
+    tag: latest
+    source: build
+    force_source: yes
+    state: present
