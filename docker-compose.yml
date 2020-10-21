@@ -30,10 +30,8 @@ services:
     volumes:
     - .:/opt/app
     command: npm run start
-  python:
-    image: python:3
-    user: 1000:1000
-    working_dir: /opt/app
+  django:
+    build: .
     env_file: docker.env
     environment:
     - REDIS_HOST=redis

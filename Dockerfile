@@ -19,4 +19,4 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 COPY docker/entry.sh /entry.sh
 EXPOSE 80
 ENTRYPOINT ["/entry.sh"]
-CMD ["/opt/app-venv/bin/gunicorn", "reunhangout.asgi:application", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:80", "--forwarded-allow-ips=\"*\""]
+CMD ["/opt/app-venv/bin/gunicorn", "unbreakout.asgi:application", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:80", "--forwarded-allow-ips=\"*\""]

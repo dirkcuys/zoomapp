@@ -10,7 +10,7 @@
     repo: https://github.com/dirkcuys/unbreakout.git
     version: "master"
 
-- name: Build docker iamge
+- name: Build docker image
   docker_image:
     name: local/unbreakout
     build:

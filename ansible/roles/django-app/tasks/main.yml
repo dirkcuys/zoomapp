@@ -55,7 +55,7 @@
 #     docker_container:
 #       name: "{{DOMAIN}}-celery"
 #       image: local/unbreakout
-#       command: /opt/app-venv/bin/celery worker -A reunhangout
+#       command: /opt/app-venv/bin/celery worker -A unbreakout
 #       user: celery
 #       state: started
 #       #pull: yes # TODO
@@ -77,7 +77,7 @@
 #     docker_container:
 #       name: "{{DOMAIN}}-celerybeat"
 #       image: local/unbreakout
-#       command: /opt/app-venv/bin/celery beat -A reunhangout --schedule=/var/lib/celery/celerybeat-schedule --pidfile=/var/lib/celery/celerybeat.pid
+#       command: /opt/app-venv/bin/celery beat -A unbreakout --schedule=/var/lib/celery/celerybeat-schedule --pidfile=/var/lib/celery/celerybeat.pid
 #       user: celery
 #       state: started
 #       #pull: yes # TODO
