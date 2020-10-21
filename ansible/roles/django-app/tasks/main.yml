@@ -63,10 +63,10 @@
 #       restart: yes
 #       restart_policy: always
 #       volumes:
-#       - "/var/docker-volumes/nginx/static/{{DOMAIN}}/static:/opt/app/public"
-#       - "/var/docker-volumes/nginx/static/{{DOMAIN}}/media:/opt/app/media"
-#       - "/var/docker-volumes/{{DOMAIN}}/celery:/var/lib/celery"
-#       - "/var/docker-volumes/{{DOMAIN}}/log:/var/log"
+#       - "/var/docker_volumes/nginx/static/{{DOMAIN}}/static:/opt/app/public"
+#       - "/var/docker_volumes/nginx/static/{{DOMAIN}}/media:/opt/app/media"
+#       - "/var/docker_volumes/{{DOMAIN}}/celery:/var/lib/celery"
+#       - "/var/docker_volumes/{{DOMAIN}}/log:/var/log"
 #       links:
 #       - postgres
 #       - redis
@@ -85,10 +85,10 @@
 #       restart: yes
 #       restart_policy: always
 #       volumes:
-#       - "/var/docker-volumes/nginx/static/{{DOMAIN}}/static:/opt/app/public"
-#       - "/var/docker-volumes/nginx/static/{{DOMAIN}}/media:/opt/app/media"
-#       - "/var/docker-volumes/{{DOMAIN}}/celery:/var/lib/celery"
-#       - "/var/docker-volumes/{{DOMAIN}}/log:/var/log"
+#       - "/var/docker_volumes/nginx/static/{{DOMAIN}}/static:/opt/app/public"
+#       - "/var/docker_volumes/nginx/static/{{DOMAIN}}/media:/opt/app/media"
+#       - "/var/docker_volumes/{{DOMAIN}}/celery:/var/lib/celery"
+#       - "/var/docker_volumes/{{DOMAIN}}/log:/var/log"
 #       links:
 #       - postgres
 #       - redis

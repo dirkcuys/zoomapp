@@ -15,7 +15,7 @@
     - /var/docker_volumes/nginx/certs:/etc/nginx/certs:ro
     - /var/docker_volumes/nginx/extra.conf:/etc/nginx/conf.d/extra.conf:ro
     - /var/docker_volumes/nginx/vhosts.d:/etc/nginx/vhost.d
-    - /var/dpcler_volumes/nginx/static:/var/www/extra/
+    - /var/docker_volumes/nginx/static:/var/www/extra/
     - /usr/share/nginx/html
     labels: 
       com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"

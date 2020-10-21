@@ -20,10 +20,10 @@
   tags: redis
 
 - name: create directory for redis.conf
-  file: path=/var/docker-volumes/redis/ state=directory
+  file: path=/var/docker_volumes/redis/ state=directory
 
 - name: copy redis.conf
-  copy: src=redis.conf dest=/var/docker-volumes/redis/redis.conf
+  copy: src=redis.conf dest=/var/docker_volumes/redis/redis.conf
   tags: redis
 
 - name: start redis docker image
@@ -35,7 +35,7 @@
     restart: yes
     restart_policy: always
     volumes:
-    - "/var/docker-volumes/redis/redis.conf:/usr/local/etc/redis/redis.conf"
+    - "/var/docker_volumes/redis/redis.conf:/usr/local/etc/redis/redis.conf"
     command: redis-server /usr/local/etc/redis/redis.conf
 
 - name: Allow overcommit_memory on boot

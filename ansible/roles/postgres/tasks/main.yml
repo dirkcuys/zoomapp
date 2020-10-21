@@ -12,7 +12,7 @@
     ports:
     - 127.0.0.1:5432:5432
     volumes:
-    - "/var/docker-volumes/postgres-11/data:/var/lib/postgresql/data"
+    - "/var/docker_volumes/postgres-11/data:/var/lib/postgresql/data"
     env:
       POSTGRES_PASSWORD: "{{postgres_admin_password}}"
 
