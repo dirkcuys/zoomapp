@@ -1,21 +1,4 @@
 ---
-- name: create postgres user
-  postgresql_user:
-    name: "{{DB_USER}}"
-    password: "{{DB_PASSWORD}}"
-    login_host: "127.0.0.1"
-    login_user: "{{PG_ADMIN_USER}}"
-    login_password: "{{PG_ADMIN_PASSWORD}}"
-
-- name: create postgres db
-  postgresql_db:
-    name: "{{DB_NAME}}"
-    encoding: UTF-8
-    login_host: "127.0.0.1"
-    login_user: "{{PG_ADMIN_USER}}"
-    login_password: "{{PG_ADMIN_PASSWORD}}"
-    owner: "{{DB_USER}}"
-
 - name: setup static and media file hosting through nginx-proxy
   template: src=static.j2 dest=/var/docker_volumes/nginx/vhosts.d/{{DOMAIN}}
 
@@ -28,23 +11,86 @@
 
 - set_fact:
     django_env:
-      HOST: "{{DOMAIN}}"
+      DOMAIN: "{{DOMAIN}}"
+      SECRET_KEY: "{{django_secret_key}}"
+      ADMIN_EMAIL: "{{admin_email}}"
+      DATABASE_URL: "postgres://{{django_postgres_user}}:{{django_postgres_password}}@postgres:5432/{{django_postgres_db}}"
+      POSTGRES_PORT: "5432"
+      MEMCACHED_HOST: memcached
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      BROKER_URL: redis://redis:6379/0
+      #EMAIL_HOST: "{{mailgun_smtp_hostname}}"
+      #EMAIL_HOST_USER: "{{mailgun_smtp_login}}"
+      #EMAIL_HOST_PASSWORD: "{{mailgun_smtp_password}}"
+      #GA_TRACKING_ID: "{{ga_tracking_id}}"
 
-- set_fact: 
-    docker_env: "{{ django_env | combine(nginx_env) }}"
+
+- set_fact:
+    uvicorn_vars:
+      FORWARDED_ALLOW_IPS: "nginx-proxy"
+      WEB_CONCURRENCY: "3"
+
 
 - name: start docker container for django
   docker_container:
     name: "{{DOMAIN}}"
-    image: "local/django-app"
+    image: local/unbreakout
     state: started
-    pull: yes
     recreate: true
     restart: yes
     restart_policy: always
+    links:
+    - postgres
+    - redis
     volumes:
     - "/var/docker_volumes/nginx/static/{{DOMAIN}}/static:/opt/app/static_serve"
     - "/var/docker_volumes/nginx/static/{{DOMAIN}}/media:/opt/app/upload"
     - "/var/docker_volumes/{{DOMAIN}}/celery:/var/lib/celery"
     - "/var/docker_volumes/{{DOMAIN}}/log:/var/log"
-    env: "{{docker_env}}"
+    env: "{{ django_env | combine(nginx_env) | combine(uvicorn_vars) }}"
+
+
+#   - name: Run docker container for celery worker
+#     docker_container:
+#       name: "{{DOMAIN}}-celery"
+#       image: local/unbreakout
+#       command: /opt/app-venv/bin/celery worker -A reunhangout
+#       user: celery
+#       state: started
+#       #pull: yes # TODO
+#       recreate: true
+#       restart: yes
+#       restart_policy: always
+#       volumes:
+#       - "/var/docker-volumes/nginx/static/{{DOMAIN}}/static:/opt/app/public"
+#       - "/var/docker-volumes/nginx/static/{{DOMAIN}}/media:/opt/app/media"
+#       - "/var/docker-volumes/{{DOMAIN}}/celery:/var/lib/celery"
+#       - "/var/docker-volumes/{{DOMAIN}}/log:/var/log"
+#       links:
+#       - postgres
+#       - redis
+#       env: "{{django_env}}"
+
+
+#   - name: Run docker container for celery beat worker
+#     docker_container:
+#       name: "{{DOMAIN}}-celerybeat"
+#       image: local/unbreakout
+#       command: /opt/app-venv/bin/celery beat -A reunhangout --schedule=/var/lib/celery/celerybeat-schedule --pidfile=/var/lib/celery/celerybeat.pid
+#       user: celery
+#       state: started
+#       #pull: yes # TODO
+#       recreate: true
+#       restart: yes
+#       restart_policy: always
+#       volumes:
+#       - "/var/docker-volumes/nginx/static/{{DOMAIN}}/static:/opt/app/public"
+#       - "/var/docker-volumes/nginx/static/{{DOMAIN}}/media:/opt/app/media"
+#       - "/var/docker-volumes/{{DOMAIN}}/celery:/var/lib/celery"
+#       - "/var/docker-volumes/{{DOMAIN}}/log:/var/log"
+#       links:
+#       - postgres
+#       - redis
+#       env: "{{django_env}}"
+

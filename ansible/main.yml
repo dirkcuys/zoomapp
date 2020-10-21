@@ -7,7 +7,15 @@
   - vars/zoom.code27.co.za.yml
   roles:
   #- common
-  - dockerxubuntu
+  #- users
+  - docker-ubuntu
   - nginx-proxy
+  - postgres
+  - role: postgres-role
+    vars:
+      DB_NAME: unbreakout
+      DB_USER: unbreakout
   - build-docker-image
   - django-app
+
+
