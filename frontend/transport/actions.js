@@ -1,5 +1,3 @@
-import {sendSocketMessage} from './index.js'
-
 export const CONNECTING = 'CONNECTING';
 export const connecting = (payload) => ({type: CONNECTING, payload});
 export const OPEN = 'OPEN';

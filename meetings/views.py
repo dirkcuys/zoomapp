@@ -1,12 +1,15 @@
-from django.shortcuts import render
-from django import http
-
-from .models import Meeting
-from zoom.api import zoom_post, zoom_get, zoom_patch
-from zoom.models import ZoomUser
-
 import json
 import logging
+
+from django.shortcuts import render
+from django import http
+from asgiref.sync import async_to_sync
+import channels.layers
+
+from zoom.api import zoom_post, zoom_get, zoom_patch
+from zoom.models import ZoomUser
+from .models import Meeting
+from .models import Breakout
 
 logger = logging.getLogger(__name__)
 
@@ -52,8 +55,25 @@ def register(request, slug):
     return http.JsonResponse({'code': 201, 'registration': resp.json()})
 
 
+def create_breakout(request, slug):
+    meeting = Meeting.objects.get(slug=slug)
+    data = json.loads(request.body)
+    breakout = Breakout.objects.create(meeting=meeting, title=data.get('title'))
+ 
+    # Send message to room group
+    channel_layer = channels.layers.get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'meeting_{meeting.slug}',
+        {
+            'type': 'meeting_message',
+            'message': {'type': 'ADD_BREAKOUT', 'breakout': _serialize_breakout(breakout) }
+        }
+    )
+    return http.JsonResponse({'code': 201, 'breakout': breakout.id})
+
+
 def _serialize_breakout(breakout):
-    return {'title': breakout.title, 'size': breakout.size, 'participants': []}
+    return {'id': breakout.pk, 'title': breakout.title, 'size': breakout.size, 'participants': []}
 
 
 def _serialize_meeting(meeting):
@@ -62,6 +82,7 @@ def _serialize_meeting(meeting):
         'slug': meeting.slug,
         'breakouts': list(map(_serialize_breakout, meeting.breakout_set.all())),
     }
+    meeting_json['breakouts'] += [{'id': 0, 'title': 'Test breakout', 'size': 8, 'participants': []}]
     return meeting_json
 
 

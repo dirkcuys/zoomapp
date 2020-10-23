@@ -10,7 +10,7 @@ import {connectSocket} from './transport';
 
 const reactProps = JSON.parse(document.getElementById('reactProps').textContent);
 
-const store = configureStore();
+const store = configureStore(reactProps);
 
 if (reactProps.meeting){
   connectSocket(`ws://localhost:8000/ws/meeting/${reactProps.meeting.slug}`, store);
@@ -19,7 +19,7 @@ if (reactProps.meeting){
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App {...reactProps} />
+      <App />
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

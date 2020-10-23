@@ -44,6 +44,7 @@ export class SocketClient {
   }
 
   onMessage(event) {
+    console.log(`Received ws message ${event.data}`);
     let data;
     try {
       data = JSON.parse(event.data);
@@ -51,23 +52,12 @@ export class SocketClient {
       console.error("Transport.onMessage: invalid JSON", e);
       return;
     }
+
+    this.store.dispatch(data);
     /*
-     * TODO
     switch (data.type) {
-      case "chat": 
-        this.store.dispatch(PLENARY_ACTIONS.chatMessageReceive(data.payload));
-        break;
-      case "chat_replace":
-        this.store.dispatch(PLENARY_ACTIONS.chatMessageReplace(data.payload));
-        break;
-      case "embeds":
-        this.store.dispatch(PLENARY_ACTIONS.setEmbeds(data.payload));
-        break;
       case "breakout_receive":
         this.store.dispatch(PLENARY_ACTIONS.breakoutReceive(data.payload));
-        break;
-      case "plenary":
-        this.store.dispatch(PLENARY_ACTIONS.setPlenary(data.payload));
         break;
       case "presence":
         this.store.dispatch(A.setPresence(data.payload));
@@ -78,20 +68,11 @@ export class SocketClient {
       case "message_breakouts":
         this.store.dispatch(BREAKOUT_ACTIONS.message(data.payload));
         break;
-      case "request_speaker_stats":
-        this.store.dispatch(A.requestSpeakerStats(data.payload));
-        break;
       case "breakout":
         this.store.dispatch(BREAKOUT_ACTIONS.setBreakout(data.payload));
         break;
       case "breakout_presence":
         this.store.dispatch(PLENARY_ACTIONS.setBreakoutPresence(data.payload));
-        break;
-      case "users":
-        this.store.dispatch(PLENARY_ACTIONS.setUsers(data.payload));
-        break;
-      case "auth":
-        this.store.dispatch(PLENARY_ACTIONS.setAuth(data.payload));
         break;
       case "error":
         let error = data.error ? data.error : data;

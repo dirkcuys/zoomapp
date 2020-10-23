@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux'
 
 import MeetingList from 'components/MeetingList';
 import ZoomAuth from 'components/ZoomAuth';
@@ -21,4 +22,10 @@ function App(props) {
   }
 }
 
-export default App;
+const mapStateToProps = (state, ownProps) => {
+  return {...state}
+}
+
+
+const Appa = connect(mapStateToProps, null)(App)
+export default Appa;
