@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block scripts %}
-{% render_bundle 'index' %}
+  {{ react_props | json_script:"reactProps" }}
+  {% render_bundle 'index' %}
 {% endblock %}
 
