@@ -3,8 +3,8 @@ import {post} from 'utils/api';
 
 export default function MeetingRegistration(props){
 
-  const [email, setEmail] = useState();
-  const [name, setName] = useState();
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
 
   const onSubmit = e => {
     e.preventDefault();
@@ -15,7 +15,7 @@ export default function MeetingRegistration(props){
     };
     post(`${props.meeting.slug}/register`, data).then(meeting => {
       if (meeting.code == '201'){
-        window.location = meeting.url;
+        window.location = `${props.meeting.slug}`;
       }
     });
   };

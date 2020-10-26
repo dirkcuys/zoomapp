@@ -4,7 +4,7 @@ import {post} from 'utils/api';
 function Breakout(props){
   const {title, size, participants} = props.breakout;
   return (
-    <div>
+    <div className="list-group-item">
       {title} {participants.length}/{size}
     </div>
   );
@@ -20,7 +20,7 @@ function BreakoutForm(props){
     };
     post(`${props.meeting.slug}/create_breakout`, data).then(resp => {
       if (resp.code == '201'){
-        console.log('added breakout');
+        setTitle('');
       }
     });
   };
@@ -43,18 +43,41 @@ function BreakoutForm(props){
   );
 }
 
+function UserProfile(props){
+  if (!props.userRegistration){
+    return null;
+  }
+  return (
+    <a href={props.userRegistration.join_url}>Join meeting</a>
+  );
+}
+
+function Registrants(props){
+  const {registrants} = props.meeting;
+  return (
+    <ul>
+      {registrants.map(user => <li>{user.name}</li>)}
+    </ul>
+  );
+}
+
 export default function Meeting(props) {
   const {breakouts = []} = props.meeting;
   return (
-    <div className="meeting">
-      <div>
-        Meeting {props.meeting.zoom_id}
+    <div className="meeting row">
+      <div className="col-md-3">
+        <h2>Meeting {props.meeting.topic}</h2>
+        <hr/>
+        <UserProfile {...props} />
       </div>
-      <div>
-        { breakouts.map( breakout => <Breakout key={breakout.id} breakout={breakout} {...props} /> )}
-      </div>
-      <div>
+      <div className="col-md-6">
+        <div className="list-group">{ breakouts.map( breakout => <Breakout key={breakout.id} breakout={breakout} {...props} /> )}
+        </div>
+
         <BreakoutForm {...props} />
+      </div>
+      <div className="col-md-3">
+        <Registrants {...props} />
       </div>
     </div>
   );

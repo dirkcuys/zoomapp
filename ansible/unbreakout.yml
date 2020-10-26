@@ -1,0 +1,25 @@
+---
+- name: unbreakout
+  hosts: unbreakout
+  become: yes
+  become_method: sudo
+  vars_files: 
+  - vars/unbreakout.media.mit.edu.yml
+  roles:
+  - common
+  - users
+  - swap
+  - docker-ubuntu
+  - nginx-proxy
+  - redis
+  - postgres
+  - role: postgres-role
+    vars:
+      DB_NAME: "{{django_postgres_db}}"
+      DB_USER: "{{django_postgres_user}}"
+      DB_PASSWORD: "{{django_postgres_password}}"
+  - build-docker-image
+  - role: django-app
+    tags: ['django-app']
+
+

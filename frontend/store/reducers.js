@@ -1,12 +1,21 @@
 export * from '../transport/reducers';
 import * as A from './actions';
 
+
+const defaultMeeting = {
+  breakouts: [],
+  presence: [],
+  participants: []
+};
+
 export function meeting(state=null, action){
-  console.log(`super snuiter ${JSON.stringify(action)}`);
   switch (action.type) {
     case A.ADD_BREAKOUT:
-      return {breakouts: state.breakouts.push(action.breakout), ...state};
-    break;
+      return {...state, breakouts: state.breakouts.concat([action.payload])};
+      break;
+    case 'SET_REGISTRANTS':
+      return {...state, registrants: action.payload};
+      break;
   }
   return state;
 }

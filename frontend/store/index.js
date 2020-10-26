@@ -23,4 +23,10 @@ export default function configureStore(initialState) {
   );
   return store;
 };
-    
+
+const messages = [
+  { action: 'participant joined' },
+  { action: 'participant left' },
+  { action: 'breakout added' },
+  { action: 'breakout update' },
+];

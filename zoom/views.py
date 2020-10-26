@@ -3,7 +3,7 @@ from django import http
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import ZoomUser
+from .models import ZoomUserToken
 from .api import zoom_get, zoom_post
 
 import requests
@@ -29,7 +29,7 @@ def callback(request):
     headers = {"Authorization": f'Bearer {access_token}'}
     api_resp = requests.get('https://api.zoom.us/v2/users/me', headers=headers)
     user_id = api_resp.json().get('id')
-    user, created = ZoomUser.objects.update_or_create(zoom_user_id=user_id, defaults={
+    user, created = ZoomUserToken.objects.update_or_create(zoom_user_id=user_id, defaults={
         'access_token': access_token,
         'refresh_token': refresh_token,
     })
@@ -46,6 +46,6 @@ def hook(request, path):
 
 def meetings(request):
     user_id = request.session['zoom_user'].get('id')
-    user = ZoomUser.objects.get(zoom_user_id=user_id)
+    user = ZoomUserToken.objects.get(zoom_user_id=user_id)
     api_resp = zoom_get(f'/users/{user_id}/meetings?type=scheduled', user)
     return http.JsonResponse(api_resp.json())

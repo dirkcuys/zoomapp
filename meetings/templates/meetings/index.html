@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block scripts %}
+  {% csrf_token %}
   {{ react_props | json_script:"reactProps" }}
   {% render_bundle 'index' %}
 {% endblock %}

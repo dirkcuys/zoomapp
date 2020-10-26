@@ -12,7 +12,7 @@ const reactProps = JSON.parse(document.getElementById('reactProps').textContent)
 
 const store = configureStore(reactProps);
 
-if (reactProps.meeting){
+if (reactProps.meeting && (reactProps.zoomUser || reactProps.userRegistration)){
   connectSocket(`ws://localhost:8000/ws/meeting/${reactProps.meeting.slug}`, store);
 }
 
