@@ -1,3 +1,13 @@
 // Override default variables
 
 @import '~bootstrap/scss/bootstrap.scss';
+
+.breakout-list>div{
+  padding: 0.5em;
+}
+
+.breakout {
+  padding: 0.5em;
+  border: 1px solid black;
+  height: 100%;
+}

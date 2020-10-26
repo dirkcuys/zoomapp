@@ -4,8 +4,10 @@ import {post} from 'utils/api';
 function Breakout(props){
   const {title, size, participants} = props.breakout;
   return (
-    <div className="list-group-item">
-      {title} {participants.length}/{size}
+    <div className="col-md-6">
+      <div className="breakout">
+        {title} {participants.length}/{size}
+      </div>
     </div>
   );
 }
@@ -55,7 +57,7 @@ function UserProfile(props){
 function Registrants(props){
   const {registrants} = props.meeting;
   return (
-    <ul>
+    <ul className="list-unstyled">
       {registrants.map(user => <li>{user.name}</li>)}
     </ul>
   );
@@ -71,7 +73,7 @@ export default function Meeting(props) {
         <UserProfile {...props} />
       </div>
       <div className="col-md-6">
-        <div className="list-group">{ breakouts.map( breakout => <Breakout key={breakout.id} breakout={breakout} {...props} /> )}
+        <div className="row breakout-list">{ breakouts.map( breakout => <Breakout key={breakout.id} breakout={breakout} {...props} /> )}
         </div>
 
         <BreakoutForm {...props} />
