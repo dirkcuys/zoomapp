@@ -13,7 +13,8 @@ const reactProps = JSON.parse(document.getElementById('reactProps').textContent)
 const store = configureStore(reactProps);
 
 if (reactProps.meeting && (reactProps.zoomUser || reactProps.userRegistration)){
-  connectSocket(`ws://localhost:8000/ws/meeting/${reactProps.meeting.slug}`, store);
+  const url = `${window.location.origin.replace(/^http/, 'ws')}/ws/meeting/${reactProps.meeting.slug}`;
+  connectSocket(url, store);
 }
 
 ReactDOM.render(
