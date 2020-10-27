@@ -1,4 +1,7 @@
 ---
+- name: create dir for nginx
+  file: path=/var/docker_volumes/nginx/ state=directory
+
 - name: Create proxy wide vars
   template: src=extra.j2 dest=/var/docker_volumes/nginx/extra.conf
 

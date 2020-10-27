@@ -20,6 +20,9 @@
       REDIS_HOST: redis
       REDIS_PORT: "6379"
       BROKER_URL: redis://redis:6379/0
+      ZOOM_CLIENT_ID: "{{ZOOM_CLIENT_ID}}"
+      ZOOM_CLIENT_SECRET: "{{ZOOM_CLIENT_SECRET}}"
+      ZOOM_REDIRECT_URL: "{{ZOOM_REDIRECT_URL}}"
       #EMAIL_HOST: "{{mailgun_smtp_hostname}}"
       #EMAIL_HOST_USER: "{{mailgun_smtp_login}}"
       #EMAIL_HOST_PASSWORD: "{{mailgun_smtp_password}}"
