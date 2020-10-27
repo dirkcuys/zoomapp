@@ -86,14 +86,16 @@ def register(request, slug):
     user = ZoomUserToken.objects.get(zoom_user_id=meeting.zoom_host_id)
     data = {"email": json_data.get('email'), 'first_name': json_data.get('name')}
     resp = zoom_post(f'/meetings/{meeting.zoom_id}/registrants', user, data)
+    logger.error(resp.json())
     registration, _ = Registration.objects.update_or_create(
         meeting=meeting, email=json_data.get('email'), 
         defaults={
+            'registrant_id': resp.json().get('registrant_id'),
+            'zoom_id': resp.json().get('id'),
             'name': json_data.get('name'),
             'zoom_data': json.dumps(resp.json()),
         }
     )
-    logger.error(resp.json())
     request.session['user_registration'] = registration.email
 
     # Send message to room group

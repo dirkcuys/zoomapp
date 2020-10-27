@@ -3,7 +3,7 @@ import {post} from 'utils/api';
 
 function User({user}){
   return (
-    <li className="avatar" key={user.zoom_registrant_id}>
+    <li className={"avatar" + (user.ws_active?' ws-active':'') + (user.call_active?' call-active': '')} key={user.zoom_registrant_id}>
       <a tabIndex="-1" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content={user.name.split(' ').slice(1)} >{user.name.split(' ')[0]}</a>
     </li>
   );
@@ -82,7 +82,7 @@ function Registrants(props){
   return (
     <ul className="list-unstyled">
       {registrants.filter(user => user.breakout_id == null).map(user => 
-        <li className="avatar" key={user.zoom_registrant_id}>
+        <li className={"avatar" + (user.ws_active?' ws-active':'') + (user.call_active?' call-active': '')} key={user.zoom_registrant_id}>
           <a tabIndex="-1" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content={user.name.split(' ').slice(1)} >{user.name.split(' ')[0]}</a>
         </li>
       )}

@@ -1,20 +1,9 @@
 import json
+import datetime
+
+from django.utils import timezone
 
 from .models import Meeting, Breakout, Registration
-#from rest_framework import serializers
-
-
-#class MeetingSerializer(serializers.HyperlinkedModelSerializer):
-#    class Meta:
-#        model = Meeting
-#        fields = ['url', 'username', 'email', 'groups']
-
-
-#class BreakoutSerialize(serializers.ModelSerializer):
-#    class Meta:
-#        model = Breakout
-#        fields = ['id', 'title', 'size']
-
 
 def serialize_breakout(breakout):
     return {
@@ -45,5 +34,7 @@ def serialize_registration(registration):
         "breakout_id": registration.breakout_id,
         "zoom_registrant_id": zoom_data.get('registrant_id'),
         "join_url": zoom_data.get('join_url'),
+        "ws_active": not registration.ws_left_at and registration.ws_joined_at and (registration.ws_active_at - timezone.now() < datetime.timedelta(minutes=30)),
+        "call_active": not registration.call_left_at and registration.call_joined_at,
     }
 

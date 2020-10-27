@@ -5,9 +5,11 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import ZoomUserToken
 from .api import zoom_get, zoom_post
+from .signals import zoom_webhook, ZoomApp
 
 import requests
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +43,8 @@ def callback(request):
 def hook(request, path):
     logger.error(f'** hook: {path}')
     logger.error(request.body)
+    data = json.loads(request.body)
+    zoom_webhook.send(sender=ZoomApp, event=data.get('event'), payload=data.get('payload'))   
     return http.HttpResponse(status=200)
 
 

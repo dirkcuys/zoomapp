@@ -16,11 +16,11 @@ function Meeting(props) {
     });
   }
   return (
-    <div>
+    <div className="meeting-form">
       <h2>{topic}</h2>
-      <p>{start_time}</p>
+      <p>{new Date(start_time).toLocaleString()}</p>
       <form onSubmit={handleSubmit} >
-        <button>Go</button>
+        <button className="btn btn-primary">Go</button>
       </form>
     </div>
   );
@@ -60,9 +60,13 @@ export default class MeetingList extends React.Component {
   render(){
     const {first_name, last_name} = this.props.zoomUser;
     return (
-      <div>
-        <p>hello {first_name} {last_name}</p>
-        { this.state.items.map( (meeting) => <Meeting {...meeting} />) }
+      <div className="container-md">
+        <div className="row">
+          <div className="col-md-6 offset-md-3">
+            <p>hello {first_name} {last_name}</p>
+            { this.state.items.map( (meeting) => <Meeting key={meeting.id} {...meeting} />) }
+          </div>
+        </div>
       </div>
     );
   }
