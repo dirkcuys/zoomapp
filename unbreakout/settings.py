@@ -91,7 +91,7 @@ DATABASES = {
     }
 }
 
-# reads DATABASE_URL from env
+# read DATABASE_URL from env
 import dj_database_url
 DATABASES['default'] = dj_database_url.config(default=f'sqlite:///{BASE_DIR / "db.sqlite3"}')
 

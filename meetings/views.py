@@ -56,6 +56,20 @@ def create(request):
         meeting_data = zoom_patch(f'/meetings/{zoom_meeting_id}', zoom_auth, data)
         logger.error(meeting_data.content)
         # TODO check return
+
+    # Create a registration for the Host
+    registration, _ = Registration.objects.update_or_create(
+        meeting=meeting,
+        email=request.session['zoom_user'].get('email'),
+        defaults={
+            'name': f"🔱 {request.session['zoom_user'].get('first_name')}",
+            'zoom_data': json.dumps({
+                'zoom_registrant_id': zoom_host_id,
+                'join_url': zoom_meeting.json().get('start_url'),
+            }),
+        }
+    )
+    request.session['user_registration'] = registration.email
     return http.JsonResponse({"code": "201", "url": f'/{meeting.slug}'})
 
 
@@ -95,31 +109,44 @@ def register(request, slug):
     return http.JsonResponse({'code': 201, 'registration': resp.json()})
 
 
-@registration_required
-def create_breakout(request, slug):
-    meeting = Meeting.objects.get(slug=slug)
-    data = json.loads(request.body)
-    breakout = Breakout.objects.create(meeting=meeting, title=data.get('title'))
- 
+def _ws_set_breakouts(meeting):
     # Send message to room group
     channel_layer = channels.layers.get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         f'meeting_{meeting.slug}',
         {
             'type': 'meeting_message',
-            'message': {'type': 'ADD_BREAKOUT', 'payload': serialize_breakout(breakout) }
+            'message': {
+                'type': 'SET_BREAKOUTS', 
+                'payload': list(map(serialize_breakout, meeting.breakout_set.all()))
+            }
         }
     )
+
+
+@registration_required
+def create_breakout(request, slug):
+    meeting = Meeting.objects.get(slug=slug)
+    data = json.loads(request.body)
+    breakout = Breakout.objects.create(meeting=meeting, title=data.get('title'))
+ 
+    _ws_set_breakouts(meeting)
     return http.JsonResponse({'code': 201, 'breakout': breakout.id})
 
 
 @registration_required
-def join_breakout(request, slug):
+def join_breakout(request, slug, breakout_id):
     meeting = Meeting.objects.get(slug=slug)
-    breakout = Breakout.objects.get(pk=data.get('id'))
+    breakout = Breakout.objects.get(pk=breakout_id)
+
     data = json.loads(request.body)
-    #user = 
-    # TODO
+    email = request.session.get('user_registration')
+    registration = meeting.registration_set.filter(email=email).first()
+    registration.breakout = breakout
+    registration.save()
+
+    _ws_set_breakouts(meeting)
+    return http.JsonResponse({'code': 201});
 
 
 def unbreakout(request, slug):

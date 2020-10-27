@@ -17,7 +17,12 @@ from .models import Meeting, Breakout, Registration
 
 
 def serialize_breakout(breakout):
-    return {'id': breakout.pk, 'title': breakout.title, 'size': breakout.size, 'participants': []}
+    return {
+        'id': breakout.pk,
+        'title': breakout.title,
+        'size': breakout.size,
+        'participants': list(map(serialize_registration, breakout.registration_set.all())),
+    }
 
 
 def serialize_meeting(meeting):
@@ -37,6 +42,7 @@ def serialize_registration(registration):
     return {
         "name": registration.name,
         "email": registration.email,
+        "breakout_id": registration.breakout_id,
         "zoom_registrant_id": zoom_data.get('registrant_id'),
         "join_url": zoom_data.get('join_url'),
     }

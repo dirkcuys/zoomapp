@@ -13,6 +13,9 @@ export function meeting(state=null, action){
     case A.ADD_BREAKOUT:
       return {...state, breakouts: state.breakouts.concat([action.payload])};
       break;
+    case 'SET_BREAKOUTS':
+      return {...state, breakouts: action.payload};
+      break;
     case 'SET_REGISTRANTS':
       return {...state, registrants: action.payload};
       break;

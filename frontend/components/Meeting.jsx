@@ -1,12 +1,28 @@
 import React, { useState } from 'react';
 import {post} from 'utils/api';
 
+function User({user}){
+  return (
+    <li className="avatar" key={user.zoom_registrant_id}>
+      <a tabIndex="-1" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content={user.name.split(' ').slice(1)} >{user.name.split(' ')[0]}</a>
+    </li>
+  );
+}
+
 function Breakout(props){
-  const {title, size, participants} = props.breakout;
+  const {id, title, size, participants} = props.breakout;
+  const onClick = () => {
+    post(`${props.meeting.slug}/breakout/${id}/join`, {});
+  };
   return (
     <div className="col-md-6">
       <div className="breakout">
-        {title} {participants.length}/{size}
+        <a className="float-right" onClick={onClick}>Join</a>
+        <h4>{title}</h4>
+        <p>{participants.length}/{size}</p>
+        <ul className="unstyled">
+          { participants.map(user => <User key={user.zoom_registrant_id} user={user} />) }
+        </ul>
       </div>
     </div>
   );
@@ -28,29 +44,36 @@ function BreakoutForm(props){
   };
 
   return (
-      <form onSubmit={onSubmit} >
-        <div className="form-group">
-          <label htmlFor="titleInput">Title</label>
+    <form onSubmit={onSubmit} >
+      <div className="form-group">
+        <div className="input-group">
           <input 
             name="title"
             id="titleInput"
             type="text"
             className="form-control"
+            placeholder="Suggest a breakout"
             value={title}
             onChange={e => setTitle(e.target.value)}
           />
+          <div className="input-group-append">
+            <button type="submit" className="btn btn-primary"><strong>+</strong></button>
+          </div>
         </div>
-        <button type="submit" className="btn btn-primary">Add breakout</button>
-      </form>
+      </div>
+    </form>
   );
 }
 
-function UserProfile(props){
-  if (!props.userRegistration){
+function UserProfile({userRegistration}){
+  if (!userRegistration){
     return null;
   }
   return (
-    <a href={props.userRegistration.join_url}>Join meeting</a>
+    <div>
+      <p>Hello {userRegistration.name}</p>
+      <a href={userRegistration.join_url}>Join meeting</a>
+    </div>
   );
 }
 
@@ -58,9 +81,9 @@ function Registrants(props){
   const {registrants} = props.meeting;
   return (
     <ul className="list-unstyled">
-      {registrants.map(user => 
+      {registrants.filter(user => user.breakout_id == null).map(user => 
         <li className="avatar" key={user.zoom_registrant_id}>
-          <a tabIndex="-1" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content={user.name.split(' ').pop()} >{user.name.split(' ')[0]}</a>
+          <a tabIndex="-1" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content={user.name.split(' ').slice(1)} >{user.name.split(' ')[0]}</a>
         </li>
       )}
     </ul>
@@ -78,6 +101,8 @@ export default function Meeting(props) {
         <div className="col-md-6 offset-md-3">
           <h2>Meeting {props.meeting.topic}</h2>
           <hr/>
+        </div>
+        <div className="col-md-3">
           <UserProfile {...props} />
         </div>
       </div>

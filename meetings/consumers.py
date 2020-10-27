@@ -23,6 +23,7 @@ class MeetingConsumer(WebsocketConsumer):
         elif self.scope["session"].get('zoom_user'):
             self.user = {}
         else:
+            logger.error(self.scope['session'].get('zoom_user'))
             raise Exception('No user found!')
 
         # Join meeting group
