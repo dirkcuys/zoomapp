@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'popper.js';
+import 'bootstrap';
 import './custom.scss';
 import App from './App';
 //import store from './app/store';
@@ -30,3 +32,7 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
+$(function () {
+  $('[data-toggle="popover"]').popover()
+})

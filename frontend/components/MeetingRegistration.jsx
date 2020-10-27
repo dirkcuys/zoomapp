@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import {post} from 'utils/api';
+import {randomEmoji} from 'utils/emoji';
 
 export default function MeetingRegistration(props){
 
+  const [emoji, setEmoji] = useState(randomEmoji());
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
@@ -11,7 +13,7 @@ export default function MeetingRegistration(props){
     let data = {
       meeting_id: props.meeting.zoom_id,
       email,
-      name,
+      name: `${emoji} ${name}`,
     };
     post(`${props.meeting.slug}/register`, data).then(meeting => {
       if (meeting.code == '201'){
@@ -25,14 +27,26 @@ export default function MeetingRegistration(props){
       <form onSubmit={onSubmit} >
         <div className="form-group">
           <label htmlFor="nameInput">Name</label>
-          <input 
-            name="name"
-            id="nameInput"
-            type="text"
-            className="form-control"
-            value={name}
-            onChange={e => setName(e.target.value)}
-          />
+          <div className="input-group">
+            <div className="input-group-prepend">
+              <span className="input-group-text">{emoji}</span>
+            </div>
+            <input 
+              name="name"
+              id="nameInput"
+              type="text"
+              className="form-control"
+              value={name}
+              onChange={e => setName(e.target.value)}
+            />
+          <div className="input-group-append">
+            <button 
+              className="btn btn-outline-secondary" type="button" 
+              onClick={e => setEmoji(randomEmoji())}
+            >⟳</button>
+          </div>
+
+          </div>
         </div>
         <div className="form-group">
           <label htmlFor="emailInput">Email address</label>
