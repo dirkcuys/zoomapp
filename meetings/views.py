@@ -59,6 +59,11 @@ def create(request):
     return http.JsonResponse({"code": "201", "url": f'/{meeting.slug}'})
 
 
+def clear(request):
+    del request.session['user_registration']
+    return http.HttpResponseRedirect('/')
+
+
 def register(request, slug):
     meeting = Meeting.objects.get(slug=slug)
     json_data = json.loads(request.body)
