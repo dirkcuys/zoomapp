@@ -71,7 +71,8 @@ class MeetingConsumer(WebsocketConsumer):
         Registration.objects.filter(email=email, meeting__slug=self.meeting_slug).update(
             ws_active_at=timezone.now()
         )
-        logger.error(text_data)
+        if text_data != 'heartbeat':
+            logger.error(text_data)
 
     # Receive message from channels layer and forward to connected ws client
     def meeting_message(self, event):

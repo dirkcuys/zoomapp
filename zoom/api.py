@@ -38,9 +38,11 @@ def zoom_get(url, user):
 def zoom_post(url, user, data, retries=1):
     headers = {
         "Authorization": f'Bearer {user.access_token}',
-        "Content-Type": "application/json",
+        "Content-Type": "application/json; charset=utf-8",
     }
-    api_resp = requests.post(_API_URL + url, headers=headers, data=json.dumps(data))
+    post_data = json.dumps(data, ensure_ascii=False).encode('utf-8')
+    logger.error(post_data)
+    api_resp = requests.post(_API_URL + url, headers=headers, data=post_data)
     logger.error(api_resp.content)
     if api_resp.json().get('code') == 124 and retries > 0:
         _refresh_token(user)
@@ -55,8 +57,9 @@ def zoom_patch(url, user, data, retries=1):
     }
     api_resp = requests.patch(_API_URL + url, headers=headers, data=json.dumps(data))
     logger.error(api_resp.content)
-    if api_resp.json().get('code') == 124 and retries > 0:
-        _refresh_token(user)
-        return zoom_post(url, user, data, retries-1)
+    # TODO PATCH doesn't return a json body, no idea how an expired oauth token will be indicated
+    #if api_resp.json().get('code') == 124 and retries > 0:
+    #    _refresh_token(user)
+    #    return zoom_post(url, user, data, retries-1)
     return api_resp
 

@@ -2,7 +2,21 @@
 {% load render_bundle from webpack_loader %}
 
 {% block body %}
-<div id="root"></div>
+<div class="container-md text-center flex-grow-1">
+  <div class="row">
+  <div class="hero col-10 offset-1 col-sm-6 offset-sm-3 p-md-5 pt-3 pb-3">
+    <h1>Unbreakout</h1>
+    <p>Participatory Zoom breakouts, from the folks who brought you Unhangout</p>
+  </div>
+  </div>
+  <p>
+  <a class="btn btn-secondary" href={% url 'redirect' %}>Hosts &gt; Connect your Zoom account</a>
+  </p>
+</div>
+<footer class="text-center">
+  <p>made by the MIT Media Lab <a href="https://www.media.mit.edu/groups/digital-learning-studio/overview/">Digital Learning & Collaboration Studio</a></p>
+</footer>
+
 {% endblock %}
 
 {% block scripts %}

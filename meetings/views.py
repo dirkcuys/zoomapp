@@ -26,6 +26,12 @@ def index(request):
     return render(request, 'meetings/index.html', context)
 
 
+def list(request):
+    context = {}
+    context['react_props'] = {"zoomUser": request.session.get('zoom_user')}
+    return render(request, 'meetings/app.html', context)
+
+
 def create(request):
     zoom_host_id = request.session['zoom_user'].get('id')
     json_data = json.loads(request.body)
@@ -47,14 +53,15 @@ def create(request):
         )
     if created:
         slug = "".join([random.choice(string.digits+string.ascii_letters) for i in range(16)])
+        short_code = "".join([random.choice(string.digits+string.ascii_letters) for i in range(4)])
         meeting.slug = slug
+        meeting.short_code = short_code
         meeting.save()
 
     # update the meeting via API to require registration
     if zoom_meeting.json().get('settings').get('approval_type') == 2: # no registration required
         data = {'settings': {'approval_type': 0}}
-        meeting_data = zoom_patch(f'/meetings/{zoom_meeting_id}', zoom_auth, data)
-        logger.error(meeting_data.content)
+        zoom_patch(f'/meetings/{zoom_meeting_id}', zoom_auth, data)
         # TODO check return
 
     # Create a registration for the Host
@@ -91,7 +98,6 @@ def register(request, slug):
         meeting=meeting, email=json_data.get('email'), 
         defaults={
             'registrant_id': resp.json().get('registrant_id'),
-            'zoom_id': resp.json().get('id'),
             'name': json_data.get('name'),
             'zoom_data': json.dumps(resp.json()),
         }
@@ -167,4 +173,4 @@ def unbreakout(request, slug):
             'meeting': meeting_json
         }
     }
-    return render(request, 'meetings/index.html', context)
+    return render(request, 'meetings/app.html', context)

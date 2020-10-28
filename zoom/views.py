@@ -34,16 +34,17 @@ def callback(request):
     user, created = ZoomUserToken.objects.update_or_create(zoom_user_id=user_id, defaults={
         'access_token': access_token,
         'refresh_token': refresh_token,
+        'zoom_api_data': json.dumps(api_resp.json()),
     })
     request.session['zoom_user'] = api_resp.json()
-    return http.HttpResponseRedirect('/')
+    return http.HttpResponseRedirect('/list')
 
 
 @csrf_exempt
 def hook(request, path):
     logger.error(f'** hook: {path}')
-    logger.error(request.body)
     data = json.loads(request.body)
+    logger.error(data)
     zoom_webhook.send(sender=ZoomApp, event=data.get('event'), payload=data.get('payload'))   
     return http.HttpResponse(status=200)
 

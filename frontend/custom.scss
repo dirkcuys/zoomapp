@@ -1,11 +1,28 @@
 // Override default variables
+@use "sass:color";
 
 $primary: #77A6FF;
+$secondary: #75DC93;
 
 $light-gray: #F1F1F1;
 $dark-gray: #555;
 
 @import '~bootstrap/scss/bootstrap.scss';
+
+$hero-color: #F7B499;
+$hero-background: transparentize($hero-color, 0.93);
+
+body {
+  min-height: 100vh; 
+}
+
+.hero {
+  margin-top: 30vh;
+  margin-bottom: 2em;
+  background-color: $hero-background;
+  border: 2px solid $hero-color;
+  border-radius: 22px;
+}
 
 .meeting-form {
   background-color: $light-gray;

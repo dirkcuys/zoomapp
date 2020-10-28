@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('list', views.list, name='list'),
     path('create', views.create, name='create'),
     path('clear', views.clear, name='clear'),
     re_path(r'^(?P<slug>\w+)$', views.unbreakout, name='meeting'),

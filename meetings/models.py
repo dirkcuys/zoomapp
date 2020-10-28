@@ -4,6 +4,7 @@ from django.db import models
 
 class Meeting(models.Model):
     slug = models.SlugField()
+    short_code = models.CharField(max_length=64)
     zoom_id = models.CharField(max_length=256)
     zoom_host_id = models.CharField(max_length=256)
     zoom_data = models.TextField()

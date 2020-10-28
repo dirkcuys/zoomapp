@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block body %}
+<div id="root"></div>
+{% endblock %}
+
+{% block scripts %}
+  {% csrf_token %}
+  {{ react_props | json_script:"reactProps" }}
+  {% render_bundle 'index' %}
+{% endblock %}
+
