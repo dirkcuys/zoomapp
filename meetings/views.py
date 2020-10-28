@@ -2,6 +2,7 @@ import json
 import logging
 import string
 import random
+import unicodecsv as csv
 
 from django.shortcuts import render
 from django import http
@@ -130,6 +131,21 @@ def _ws_set_breakouts(meeting):
             }
         }
     )
+
+@host_required
+def export_breakouts(request, slug):
+    meeting = Meeting.objects.get(slug=slug)
+    response = http.HttpResponse(content_type="text/csv")
+    response['Content-Disposition'] = f'attachment; filename="meeting-{slug}.csv"'
+    fields = [
+        'Pre-assign Room Name',
+        'Email Address',
+    ]
+    writer = csv.writer(response, encoding="utf-8")
+    writer.writerow(fields)
+    for registration in meeting.registration_set.filter(breakout__isnull=False):
+        writer.writerow([registration.breakout.title, registration.email])
+    return response
 
 
 @registration_required
