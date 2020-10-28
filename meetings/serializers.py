@@ -21,6 +21,7 @@ def serialize_meeting(meeting):
         'short_code': meeting.short_code,
         'topic': json.loads(meeting.zoom_data).get('topic'),
         'breakouts': list(map(serialize_breakout, meeting.breakout_set.all())),
+        'breakouts_frozen': meeting.breakouts_frozen,
         'registrants': list(map(serialize_registration, meeting.registration_set.all())),
         'presence': [],
     }
@@ -33,9 +34,8 @@ def serialize_registration(registration):
         "name": registration.name,
         "email": registration.email,
         "breakout_id": registration.breakout_id,
-        "zoom_registrant_id": zoom_data.get('registrant_id'),
+        "registrant_id": registration.registrant_id,
         "join_url": zoom_data.get('join_url'),
         "ws_active": not registration.ws_left_at and registration.ws_joined_at and (registration.ws_active_at - timezone.now() < datetime.timedelta(minutes=30)),
-        "call_active": not registration.call_left_at and registration.call_joined_at,
     }
 

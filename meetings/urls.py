@@ -12,6 +12,8 @@ urlpatterns = [
     path('clear', views.clear, name='clear'),
     re_path(r'^(?P<slug>\w+)/register$', views.register, name='register'),
     re_path(r'^(?P<slug>\w+)/export$', views.export_breakouts, name='export'),
+    re_path(r'^(?P<slug>\w+)/freeze$', views.freeze_breakouts, name='freeze_breakouts'),
+    re_path(r'^(?P<slug>\w+)/clear$', views.clear_breakouts, name='clear_breakouts'),
     re_path(r'^(?P<slug>\w+)/create_breakout$', views.create_breakout, name='create_breakout'),
     path('<slug:slug>/breakout/<int:breakout_id>/join', views.join_breakout, name='join_breakout'),
 

@@ -3,7 +3,7 @@ import {post} from 'utils/api';
 
 function User({user}){
   return (
-    <li className={"avatar" + (user.ws_active?' ws-active':'') + (user.call_active?' call-active': '')} key={user.zoom_registrant_id}>
+    <li className={"avatar" + (user.ws_active?' ws-active':'')} key={user.registrant_id}>
       <a tabIndex="-1" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content={user.name.split(' ').slice(1)} >{user.name.split(' ')[0]}</a>
     </li>
   );
@@ -14,14 +14,17 @@ function Breakout(props){
   const onClick = () => {
     post(`/${props.meeting.slug}/breakout/${id}/join`, {});
   };
+  const areaClick = e => {
+    console.log(e.pageX, e.pageY);
+  };
   return (
     <div className="col-md-6">
-      <div className="breakout">
+      <div className="breakout" onClick={areaClick} >
         <a className="float-right" onClick={onClick}>Join</a>
         <h4>{title}</h4>
         <p>{participants.length}/{size}</p>
         <ul className="unstyled">
-          { participants.map(user => <User key={user.zoom_registrant_id} user={user} />) }
+          { participants.map(user => <User key={user.registrant_id} user={user} />) }
         </ul>
       </div>
     </div>
@@ -67,10 +70,21 @@ function BreakoutForm(props){
 
 
 function AdminActions(props){
+
+  const freeze = () => {
+    post(`/${props.meeting.slug}/freeze`, {});
+  }
+
+  const clear = () => {
+    post(`/${props.meeting.slug}/clear`, {});
+  }
+
   const registrationUrl = `${document.location.origin}/${props.meeting.short_code}`
   return (
     <div>
       <p>Registration link: <a href={registrationUrl}>{registrationUrl}</a></p>
+      <p><a className="btn btn-primary" onClick={freeze}>{props.meeting.breakouts_frozen?'Unfreeze breakouts':'Freeze breakouts'}</a></p>
+      <p><a className="btn btn-primary" onClick={clear}>Clear breakouts</a></p>
       <p><a href={`/${props.meeting.slug}/export`} className="btn btn-primary">Export breakouts CSV</a></p>
       <p><a href={`https://zoom.us/meeting/${props.meeting.zoom_id}/edit`} target="_blank">Edit zoom meeting</a></p>
     </div>
@@ -85,8 +99,12 @@ function UserProfile(props){
   }
   return (
     <div>
-      <p>Hello {userRegistration.name}</p>
-      <a href={userRegistration.join_url}>Join meeting</a>
+      <p>
+        <span className="avatar">
+          <a>{userRegistration.name.split(' ')[0]}</a>
+        </span>
+        &nbsp;{userRegistration.name.split(' ').slice(1)}
+      </p>
       { zoomUser && <AdminActions {...props} /> }
     </div>
   );
@@ -97,7 +115,7 @@ function Registrants(props){
   return (
     <ul className="list-unstyled">
       {registrants.filter(user => user.breakout_id == null).map(user => 
-        <li className={"avatar" + (user.ws_active?' ws-active':'') + (user.call_active?' call-active': '')} key={user.zoom_registrant_id}>
+        <li className={"avatar" + (user.ws_active?' ws-active':'')} key={user.registrant_id}>
           <a tabIndex="-1" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content={user.name.split(' ').slice(1)} >{user.name.split(' ')[0]}</a>
         </li>
       )}

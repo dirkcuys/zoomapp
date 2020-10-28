@@ -19,6 +19,9 @@ export function meeting(state=null, action){
     case 'SET_REGISTRANTS':
       return {...state, registrants: action.payload};
       break;
+    case 'UPDATE_MEETING':
+      return {...state, ...action.payload};
+      break;
   }
   return state;
 }

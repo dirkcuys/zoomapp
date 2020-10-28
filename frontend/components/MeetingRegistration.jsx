@@ -87,7 +87,7 @@ export default function MeetingRegistration(props){
       <hr/>
 
       {!userRegistration && <RegistrationForm onSubmit={onSubmit} {...props} />}
-      {userRegistration && <RegistrationInfo userRegistration={userRegistration} {...props} />}
+      {userRegistration && <RegistrationInfo {...props} userRegistration={userRegistration} />}
     </div>
   )
 }

@@ -71,12 +71,14 @@ def create(request):
         email=request.session['zoom_user'].get('email'),
         defaults={
             'name': f"🔱 {request.session['zoom_user'].get('first_name')}",
+            'registrant_id': zoom_host_id,
             'zoom_data': json.dumps({
-                'zoom_registrant_id': zoom_host_id,
+                'registrant_id': zoom_host_id,
                 'join_url': zoom_meeting.json().get('start_url'),
             }),
         }
     )
+    logger.error(zoom_host_id)
     request.session['user_registration'] = registration.email
     return http.JsonResponse({"code": "201", "url": f'/m/{meeting.slug}'})
 
@@ -115,7 +117,7 @@ def register(request, slug):
         }
     )
 
-    return http.JsonResponse({'code': 201, 'registration': resp.json()})
+    return http.JsonResponse({'code': 201, 'registration': serialize_registration(registration)})
 
 
 def _ws_set_breakouts(meeting):
@@ -126,8 +128,11 @@ def _ws_set_breakouts(meeting):
         {
             'type': 'meeting_message',
             'message': {
-                'type': 'SET_BREAKOUTS', 
-                'payload': list(map(serialize_breakout, meeting.breakout_set.all()))
+                'type': 'UPDATE_MEETING', 
+                'payload': {
+                    'breakouts': list(map(serialize_breakout, meeting.breakout_set.all())),
+                    'registrants': list(map(serialize_registration, meeting.registration_set.all())),
+                }
             }
         }
     )
@@ -146,6 +151,36 @@ def export_breakouts(request, slug):
     for registration in meeting.registration_set.filter(breakout__isnull=False):
         writer.writerow([registration.breakout.title, registration.email])
     return response
+
+
+@host_required
+def freeze_breakouts(request, slug):
+    meeting = Meeting.objects.get(slug=slug)
+    meeting.breakouts_frozen = not meeting.breakouts_frozen
+    meeting.save()
+    # ws broadcast
+    channel_layer = channels.layers.get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'meeting_{meeting.slug}',
+        {
+            'type': 'meeting_message',
+            'message': {
+                'type': 'UPDATE_MEETING', 
+                'payload': {'breakouts_frozen': meeting.breakouts_frozen},
+            }
+        }
+    )
+
+    return http.JsonResponse({'code': 202})
+
+
+@host_required
+def clear_breakouts(request, slug):
+    Breakout.objects.filter(meeting__slug=slug).delete()
+
+    meeting = Meeting.objects.get(slug=slug)
+    _ws_set_breakouts(meeting)
+    return http.JsonResponse({'code': 202})
 
 
 @registration_required
