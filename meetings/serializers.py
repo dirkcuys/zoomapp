@@ -18,6 +18,7 @@ def serialize_meeting(meeting):
     return {
         'zoom_id': meeting.zoom_id,
         'slug': meeting.slug,
+        'short_code': meeting.short_code,
         'topic': json.loads(meeting.zoom_data).get('topic'),
         'breakouts': list(map(serialize_breakout, meeting.breakout_set.all())),
         'registrants': list(map(serialize_registration, meeting.registration_set.all())),

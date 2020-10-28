@@ -11,11 +11,13 @@ import * as serviceWorker from './serviceWorker';
 import {connectSocket} from './transport';
 
 const reactProps = JSON.parse(document.getElementById('reactProps').textContent);
+const {meeting, zoomUser, userRegistration, shortCode} = reactProps;
 
 const store = configureStore(reactProps);
 
-if (reactProps.meeting && (reactProps.zoomUser || reactProps.userRegistration)){
-  const url = `${window.location.origin.replace(/^http/, 'ws')}/ws/meeting/${reactProps.meeting.slug}`;
+// TODO maybe there's a better way to indicate when to connect? a dispatch action inside the component requiring it?
+if (meeting && (zoomUser || userRegistration) && !shortCode){
+  const url = `${window.location.origin.replace(/^http/, 'ws')}/ws/meeting/${meeting.slug}`;
   connectSocket(url, store);
 }
 

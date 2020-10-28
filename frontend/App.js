@@ -6,9 +6,10 @@ import ZoomAuth from 'components/ZoomAuth';
 import Meeting from 'components/Meeting';
 import MeetingRegistration from 'components/MeetingRegistration';
 
+
 function App(props) {
-  const {meeting, zoomUser, userRegistration} = props;
-  if (meeting && (zoomUser || userRegistration)){
+  const {meeting, zoomUser, userRegistration, shortCode} = props;
+  if (meeting && (zoomUser || userRegistration) && !shortCode ){
     return <Meeting {...props} />;
   }
   if (!zoomUser && !meeting){
@@ -17,15 +18,15 @@ function App(props) {
   if (zoomUser && !meeting){
     return <MeetingList {...props} />;
   }
-  if (meeting){
+  if (meeting && shortCode){
     return <MeetingRegistration {...props} />;
   }
 }
 
+
 const mapStateToProps = (state, ownProps) => {
   return {...state}
 }
-
 
 const Appa = connect(mapStateToProps, null)(App)
 export default Appa;

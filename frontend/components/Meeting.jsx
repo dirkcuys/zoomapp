@@ -65,7 +65,19 @@ function BreakoutForm(props){
   );
 }
 
-function UserProfile({userRegistration}){
+
+function AdminActions(props){
+  const registrationUrl = `${document.location.origin}/${props.meeting.short_code}`
+  return (
+    <div>
+      <p>Registration link: <a href={registrationUrl}>{registrationUrl}</a></p>
+    </div>
+  );
+}
+
+
+function UserProfile(props){
+  const {userRegistration, zoomUser} = props;
   if (!userRegistration){
     return null;
   }
@@ -73,6 +85,7 @@ function UserProfile({userRegistration}){
     <div>
       <p>Hello {userRegistration.name}</p>
       <a href={userRegistration.join_url}>Join meeting</a>
+      { zoomUser && <AdminActions {...props} /> }
     </div>
   );
 }

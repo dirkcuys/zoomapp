@@ -31,5 +31,5 @@ export function userRegistration(state=null, action){
   return state;
 }
 
-
+export const shortCode = (state=null) => state;
 

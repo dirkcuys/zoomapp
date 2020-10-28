@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 
+
 class Meeting(models.Model):
     slug = models.SlugField()
     short_code = models.CharField(max_length=64)
@@ -25,8 +26,7 @@ class Registration(models.Model):
     breakout = models.ForeignKey(Breakout, null=True, on_delete=models.SET_NULL)
     zoom_data = models.TextField()
     call_joined_at = models.DateTimeField(blank=True, null=True)
-    call_left_at =  models.DateTimeField(blank=True, null=True)
+    call_left_at = models.DateTimeField(blank=True, null=True)
     ws_joined_at = models.DateTimeField(blank=True, null=True)
-    ws_left_at =  models.DateTimeField(blank=True, null=True)
+    ws_left_at = models.DateTimeField(blank=True, null=True)
     ws_active_at = models.DateTimeField(blank=True, null=True)
-

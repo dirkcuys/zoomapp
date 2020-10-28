@@ -26,7 +26,7 @@ def index(request):
     return render(request, 'meetings/index.html', context)
 
 
-def list(request):
+def list_meetings(request):
     context = {}
     context['react_props'] = {"zoomUser": request.session.get('zoom_user')}
     return render(request, 'meetings/app.html', context)
@@ -77,7 +77,7 @@ def create(request):
         }
     )
     request.session['user_registration'] = registration.email
-    return http.JsonResponse({"code": "201", "url": f'/{meeting.slug}'})
+    return http.JsonResponse({"code": "201", "url": f'/m/{meeting.slug}'})
 
 
 def clear(request):
@@ -155,6 +155,24 @@ def join_breakout(request, slug, breakout_id):
 
     _ws_set_breakouts(meeting)
     return http.JsonResponse({'code': 201});
+
+
+def registration(request, short_code):
+    meeting = Meeting.objects.get(short_code=short_code)
+    email = request.session.get('user_registration')
+    if email and meeting.registration_set.filter(email=email).exists():
+        user_registration = serialize_registration(meeting.registration_set.get(email=email))
+    else:
+        user_registration = None
+    meeting_json = serialize_meeting(meeting)
+    context = {
+        'react_props': {
+            'shortCode': short_code,
+            'userRegistration': user_registration or None,
+            'meeting': meeting_json,
+        }
+    }
+    return render(request, 'meetings/app.html', context)
 
 
 def unbreakout(request, slug):
