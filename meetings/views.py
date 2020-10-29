@@ -130,7 +130,7 @@ def _ws_update_meeting(meeting):
             'message': {
                 'type': 'UPDATE_MEETING', 
                 'payload': {
-                    'breakouts': list(map(serialize_breakout, meeting.breakout_set.all())),
+                    'breakouts': list(map(serialize_breakout, meeting.breakout_set.all().order_by('pk'))),
                     'registrants': list(map(serialize_registration, meeting.registration_set.all())),
                 }
             }
