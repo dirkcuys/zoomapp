@@ -57,8 +57,15 @@ function RegistrationInfo(props){
   const {userRegistration} = props;
   return (
     <div>
-      <p>You are registered as {userRegistration.name}</p>
-      <a href={userRegistration.join_url}>Join meeting</a>
+      <p>Thank you for registering!</p>
+      <p>Your ID for this meeting is:</p>
+      <div className="d-flex p-2 pt-3 pb-3 bg-light mb-5 align-items-center">
+        <div className="avatar mr-2">{userRegistration.name.split(' ')[0]}</div>
+        <strong className="flex-grow-1">{userRegistration.name.split(' ').slice(1).join(' ')}</strong>
+      </div>
+      <p>
+        <a className="btn btn-primary" href={userRegistration.join_url}>Join meeting on Zoom</a>
+      </p>
     </div>
   );
 }
@@ -74,7 +81,6 @@ export default function MeetingRegistration(props){
     };
     post(`/${props.meeting.slug}/register`, data).then(meeting => {
       if (meeting.code == '201'){
-        //window.location = `${props.meeting.slug}`;
         //TODO pass request through redux + update state of userRegistration on success
         setUserRegistration(meeting.registration);
       }
@@ -82,12 +88,17 @@ export default function MeetingRegistration(props){
   };
 
   return (
-    <div className="col-md-6 offset-md-3">
-      <h2>Meeting {props.meeting.topic}</h2>
-      <hr/>
-
-      {!userRegistration && <RegistrationForm onSubmit={onSubmit} {...props} />}
-      {userRegistration && <RegistrationInfo {...props} userRegistration={userRegistration} />}
+    <div className="container-md flex-grow-1 d-flex flex-column">
+      <div className="row flex-grow-1 d-flex flex-column">
+        <div className="col-10 offset-1 col-md-6 offset-md-3 flex-grow-1 d-flex justify-content-around flex-column">
+          <div>
+            <h2>Meeting {props.meeting.topic}</h2>
+            <hr/>
+            {!userRegistration && <RegistrationForm onSubmit={onSubmit} {...props} />}
+            {userRegistration && <RegistrationInfo {...props} userRegistration={userRegistration} />}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
