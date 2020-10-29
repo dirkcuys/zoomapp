@@ -32,6 +32,14 @@ const reactBuild = {
   module: {
     rules: [
       {
+        test: /\.woff2?$|\.ttf$|\.eot$|\.svg$|\.png$/,
+        use: [
+          {
+            loader: 'file-loader',
+          }
+        ]
+      },
+      {
         test: /\.scss$/,
         use: [
           { loader: 'style-loader'},

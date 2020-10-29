@@ -156,7 +156,7 @@ function Registrant(props){
     }
     if (div){
       const rect = div.getBoundingClientRect();
-      style.top = rect.y + user.y/100*rect.height - 30 + window.scrollY;
+      style.top = rect.y + user.y/100*rect.height - 40 + window.scrollY;
       style.left = rect.x + user.x/100*rect.width - 30 + window.scrollX;
     }
   }
@@ -208,10 +208,11 @@ export default function Meeting(props) {
     cursor: 'default',
     transition: 'all .1s ease-out',
     position: 'fixed',
-    top: mousePosition.y-25,
-    left: mousePosition.x-25,
+    top: mousePosition.y-23,
+    left: mousePosition.x-23,
     zIndex: 999,
-    opacity: show?0.7:0,
+    opacity: show?0.6:0,
+    fontSize: '18px',
   };
 
   return (
@@ -221,7 +222,7 @@ export default function Meeting(props) {
         <div className="col-md-3 d-flex flex-column">
           <div>
             <strong>Welcome!</strong>
-            <p>{!props.meeting.breakouts_frozen?'Please join a room by cliking on the room or add your own room':'Breakouts are now frozen, please wait for the host to assign you to your breakout in the Zoom call.'}</p>
+            <p>{!props.meeting.breakouts_frozen?'Please join a room by clicking on the room or add your own room':'Breakouts are now frozen, please wait for the host to assign you to your breakout in the Zoom call.'}</p>
           </div>
           <div className="lobby flex-grow-1" onMouseOver={() => setShow(true)} onMouseOut={()=> setShow(false)}>
             <Registrants {...props} />
