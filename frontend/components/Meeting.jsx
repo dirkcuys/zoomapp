@@ -211,7 +211,7 @@ export default function Meeting(props) {
     top: mousePosition.y-25,
     left: mousePosition.x-25,
     zIndex: 999,
-    opacity: show?1:0,
+    opacity: show?0.7:0,
   };
 
   return (
