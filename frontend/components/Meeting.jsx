@@ -1,46 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {post} from 'utils/api';
 
-function User({user}){
-  return (
-    <li className={"avatar" + (user.ws_active?' ws-active':'')} key={user.registrant_id}>
-      <a tabIndex="-1" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content={user.name.split(' ').slice(1)} >{user.name.split(' ')[0]}</a>
-    </li>
-  );
-}
 
 function Breakout(props){
   const {id, title, size, participants} = props.breakout;
   const {showPointer} = props;
   const onClick = e => {
     e.preventDefault();
-    if (props.meeting.breakouts_frozen){
-      return;
-    }
-    //post(`/${props.meeting.slug}/breakout/${id}/join`, {});
-  };
-  const areaClick = e => {
-    e.preventDefault();
-    if (props.meeting.breakouts_frozen){
-      return;
-    }
+    if (props.meeting.breakouts_frozen) return;
     let div = document.getElementById(`breakout-${id}`)
     let rect = div.getBoundingClientRect();
     const x = (e.clientX - rect.x)/rect.width*100; // normalize position to 0..100
     const y = (e.clientY - rect.y)/rect.height*100; // normalize position to 0..100
     post(`/${props.meeting.slug}/breakout/${id}/join`, {x, y});
-    e.persist();
     console.log(x, y);
   };
   return (
     <div className="col-lg-6 mb-4">
-      <div id={'breakout-'+id} className="breakout" onClick={areaClick} onMouseOver={() => showPointer(true)} onMouseOut={()=> showPointer(false)}>
-        <a href="#" className="float-right" onClick={onClick}>JOIN</a>
+      <div id={'breakout-'+id} className="breakout" onClick={onClick} onMouseOver={() => showPointer(true)} onMouseOut={()=> showPointer(false)}>
         <h4>{title}</h4>
-        <p>{participants.length}/{size}</p>
-        <ul className="unstyled">
-          { false && participants.map(user => <User key={user.registrant_id} user={user} />) }
-        </ul>
+        <p>({participants.length})</p>
       </div>
     </div>
   );
@@ -51,6 +30,10 @@ function BreakoutForm(props){
   const onSubmit = e => {
     e.preventDefault();
     if (title.length == 0){
+      return;
+    }
+    if (!!props.meeting.breakouts.filter(breakout => breakout.title == title).pop()){
+      // TODO - an error would be nice
       return;
     }
     let data = {
@@ -160,9 +143,13 @@ function Registrant(props){
       style.left = rect.x + user.x/100*rect.width - 30 + window.scrollX;
     }
   }
-
+  const [element, setElement] = useState(null);
+  useEffect(() => {
+    if (element)
+      $(element).popover();
+  });
   return (
-    <a style={style} className={"avatar" + (user.ws_active?' ws-active':'')} tabIndex="-1" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content={user.name.split(' ').slice(1).join(' ')} >
+    <a ref={setElement} style={style} className={"avatar" + (user.ws_active?' ws-active':'')} tabIndex="-1" role="button" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content={user.name.split(' ').slice(1).join(' ')} >
       <span>
         {user.name.split(' ')[0]}
       </span>
