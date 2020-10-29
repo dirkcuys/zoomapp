@@ -35,6 +35,8 @@ def serialize_registration(registration):
         "email": registration.email,
         "breakout_id": registration.breakout_id,
         "registrant_id": registration.registrant_id,
+        "x": registration.x,
+        "y": registration.y,
         "join_url": zoom_data.get('join_url'),
         "ws_active": not registration.ws_left_at and registration.ws_joined_at and (registration.ws_active_at - timezone.now() < datetime.timedelta(minutes=30)),
     }

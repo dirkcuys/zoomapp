@@ -44,12 +44,14 @@ export class SocketClient {
   }
 
   onMessage(event) {
-    console.log(`Received ws message ${event.data}`);
+    //console.log(`Received ws message ${event.data}`);
     let data;
     try {
       data = JSON.parse(event.data);
+      console.log(`WS message received: ${data.type}`);
     } catch (e) {
       console.error("Transport.onMessage: invalid JSON", e);
+      console.error(`Message ${event.data}`);
       return;
     }
 

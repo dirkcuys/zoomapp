@@ -24,6 +24,8 @@ class Registration(models.Model):
     email = models.EmailField()
     name = models.CharField(max_length=256)
     breakout = models.ForeignKey(Breakout, null=True, on_delete=models.SET_NULL)
+    x = models.PositiveSmallIntegerField(default=0)
+    y = models.PositiveSmallIntegerField(default=0)
     ws_joined_at = models.DateTimeField(blank=True, null=True)
     ws_left_at = models.DateTimeField(blank=True, null=True)
     ws_active_at = models.DateTimeField(blank=True, null=True)

@@ -120,7 +120,7 @@ def register(request, slug):
     return http.JsonResponse({'code': 201, 'registration': serialize_registration(registration)})
 
 
-def _ws_set_breakouts(meeting):
+def _ws_update_meeting(meeting):
     # Send message to room group
     channel_layer = channels.layers.get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -136,6 +136,7 @@ def _ws_set_breakouts(meeting):
             }
         }
     )
+
 
 @host_required
 def export_breakouts(request, slug):
@@ -170,16 +171,16 @@ def freeze_breakouts(request, slug):
             }
         }
     )
-
     return http.JsonResponse({'code': 202})
 
 
 @host_required
 def clear_breakouts(request, slug):
     Breakout.objects.filter(meeting__slug=slug).delete()
+    Registration.objects.filter(meeting__slug=slug).update(x=0, y=0);
 
     meeting = Meeting.objects.get(slug=slug)
-    _ws_set_breakouts(meeting)
+    _ws_update_meeting(meeting)
     return http.JsonResponse({'code': 202})
 
 
@@ -189,7 +190,7 @@ def create_breakout(request, slug):
     data = json.loads(request.body)
     breakout = Breakout.objects.create(meeting=meeting, title=data.get('title'))
  
-    _ws_set_breakouts(meeting)
+    _ws_update_meeting(meeting)
     return http.JsonResponse({'code': 201, 'breakout': breakout.id})
 
 
@@ -202,9 +203,28 @@ def join_breakout(request, slug, breakout_id):
     email = request.session.get('user_registration')
     registration = meeting.registration_set.filter(email=email).first()
     registration.breakout = breakout
+    if 'x' in data and 'y' in data:
+        registration.x = data.get('x')
+        registration.y = data.get('y')
     registration.save()
 
-    _ws_set_breakouts(meeting)
+    _ws_update_meeting(meeting)
+    return http.JsonResponse({'code': 201});
+
+
+@registration_required
+def unjoin_breakout(request, slug):
+    meeting = Meeting.objects.get(slug=slug)
+    email = request.session.get('user_registration')
+    registration = meeting.registration_set.filter(email=email).first()
+    registration.breakout = None
+    data = json.loads(request.body)
+    if 'x' in data and 'y' in data:
+        registration.x = data.get('x')
+        registration.y = data.get('y')
+    registration.save()
+
+    _ws_update_meeting(meeting)
     return http.JsonResponse({'code': 201});
 
 
