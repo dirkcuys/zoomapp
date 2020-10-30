@@ -14,7 +14,7 @@ function RegistrationForm(props){
   return (
     <form onSubmit={onSubmit} >
       <div className="form-group">
-        <p>Emoji</p>
+        <p>Choose your icon</p>
         <div className="d-flex align-items-center">
           <div className="avatar me profile" >{emoji}</div>
           <button 
