@@ -44,7 +44,6 @@ export class SocketClient {
   }
 
   onMessage(event) {
-    //console.log(`Received ws message ${event.data}`);
     let data;
     try {
       data = JSON.parse(event.data);
@@ -54,38 +53,7 @@ export class SocketClient {
       console.error(`Message ${event.data}`);
       return;
     }
-
     this.store.dispatch(data);
-    /*
-    switch (data.type) {
-      case "breakout_receive":
-        this.store.dispatch(PLENARY_ACTIONS.breakoutReceive(data.payload));
-        break;
-      case "presence":
-        this.store.dispatch(A.setPresence(data.payload));
-        break;
-      case "videosync":
-        this.store.dispatch(VIDEOSYNC_ACTIONS.tick(data.payload));
-        break;
-      case "message_breakouts":
-        this.store.dispatch(BREAKOUT_ACTIONS.message(data.payload));
-        break;
-      case "breakout":
-        this.store.dispatch(BREAKOUT_ACTIONS.setBreakout(data.payload));
-        break;
-      case "breakout_presence":
-        this.store.dispatch(PLENARY_ACTIONS.setBreakoutPresence(data.payload));
-        break;
-      case "error":
-        let error = data.error ? data.error : data;
-        alert(`Server error: ${error}`);
-        console.error(error);
-        break;
-      default:
-        console.log("transport.js: Unhandled message:", data);
-        break;
-    }
-    */
   }
 
   onOpen(event) {
