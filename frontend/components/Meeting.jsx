@@ -11,12 +11,12 @@ function UserProfile({userRegistration, ...props}){
     return null;
   let breakout = props.meeting.breakouts.filter(room => room.id == user.breakout_id).pop();
   return (
-    <div className="d-flex align-items-start mb-3">
+    <div className="d-flex align-items-start">
       <span className="avatar me profile mr-2">{user.name.split(' ')[0]}</span>
-      <p><strong>{user.name.split(' ').slice(1).join(' ')}</strong><br/>
+      <div><strong>{user.name.split(' ').slice(1).join(' ')}</strong> (You)<br/>
         {breakout?(<><strong>You're in:</strong> {breakout.title}</>):'No room joined'}
-  </p>
-</div>
+      </div>
+    </div>
   );
 }
 
@@ -107,8 +107,7 @@ function Breakout(props){
   };
   return (
     <div id={'breakout-'+id} className="breakout" onClick={onClick} onMouseOver={() => showPointer(true)} onMouseOut={()=> showPointer(false)}>
-      <h4>{title}</h4>
-      <p>({participants.length})</p>
+      <h5>{title} <small class="text-muted">({participants.length})</small></h5>
     </div>
   );
 }
@@ -143,12 +142,6 @@ function Registrant(props){
       const parentRect = parentDiv.getBoundingClientRect();
       const destRect = destDiv.getBoundingClientRect();
       const [x, y] = calcRegistrantAttrs(user.x, user.y, parentRect.x, parentRect.y, destRect.x, destRect.y, destRect.width, destRect.height);
-      if (user.breakout_id){
-        const el = document.getElementById('breakout-list-container');
-        if (el && y + parentRect.y < el.getBoundingClientRect().y){
-          style.opacity = 0;
-        }
-      }
       style.top = y;
       style.left = x;
     }
@@ -204,9 +197,9 @@ function Registrants(props){
 function StatusMessage(props){
   const breakouts_frozen = props.meeting.breakouts_frozen;
   return (
-    <div className={`p-3${breakouts_frozen?' breakouts-frozen':''}`}>
+    <div className={`p-2${breakouts_frozen?' breakouts-frozen':''}`}>
       <strong>{!breakouts_frozen?'Welcome!':'Thanks for joining!'}</strong>
-      <p>{!breakouts_frozen?'Please join a room by clicking on the room or add your own room':'Please wait for the host to open breakouts on Zoom.'}</p>
+      <p className="m-0">{!breakouts_frozen?'Please join a room by clicking on the room or add your own room':'Please wait for the host to open breakouts on Zoom.'}</p>
     </div>
   );
 }
@@ -235,12 +228,12 @@ export default function Meeting(props) {
   return (
     <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
       <span className="ghost" style={style} onMouseOver={() => setShow(true)} onMouseOut={()=> setShow(false)}>{props.userRegistration.name.split(' ')[0]}</span>
-      <div className="row">
+      <div className="row d-flex align-items-center mb-3">
         <div className="col-md-3 order-1 order-md-0">
           <StatusMessage {...props} />
         </div>
         <div className="col-md-6 order-0 order-md-1">
-          <h1>Meeting {props.meeting.topic}</h1>
+          <h1>{props.meeting.topic}</h1>
         </div>
         <div className="col-md-3 order-2 order-md-2">
           <UserProfile {...props} />

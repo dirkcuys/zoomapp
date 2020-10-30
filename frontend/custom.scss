@@ -28,6 +28,12 @@ body {
   }
 }
 
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+}
+
 .modal {
   position: fixed;
   width: 100vw;
@@ -39,12 +45,13 @@ body {
 
 .breakouts-frozen {
   background-color: #e2eaff;
+  border-radius: 5px;
 }
 
 .meeting-form {
   background-color: $light-gray;
   padding: 0.5em;
-  border-radius: 15px;
+  border-radius: 5px;
   min-height: 100px;
   margin-bottom: 1em;
 }
@@ -103,7 +110,6 @@ body {
 .avatar {
   display: inline-block;
   justify-content: center;
-  //align-items: center;
   border-radius: 50%;
   border: 2px solid #b5b3b3;
   background-color: transparentize(#17A398, 0.9);
@@ -126,9 +132,9 @@ body {
 }
 
 .avatar.profile {
-  width: 64px;
-  min-width: 64px;
-  height: 64px;
-  line-height: 60px;
-  font-size: 32px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  line-height: 40px;
+  font-size: 24px;
 }
