@@ -108,16 +108,17 @@ h1 {
 }
 
 .avatar {
-  display: inline-block;
+  display: flex;
   justify-content: center;
+  align-items: center;
   border-radius: 50%;
   border: 2px solid #b5b3b3;
   background-color: transparentize(#17A398, 0.9);
   width: 36px;
   min-width: 36px;
   height: 36px;
-  line-height: 32px;
-  text-align: center;
+  //line-height: 32px;
+  //text-align: center;
   font-size: 16px;
 }
 
