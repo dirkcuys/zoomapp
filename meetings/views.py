@@ -258,6 +258,8 @@ def unbreakout(request, slug):
     else:
         user_registration = None
     meeting_json = serialize_meeting(meeting)
+    if not user_registration:
+        return http.HttpResponseRedirect(f'/{meeting.short_code}')
     context = {
         'react_props': {
             "zoomUser": request.session.get('zoom_user'),
