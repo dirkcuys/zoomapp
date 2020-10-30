@@ -227,20 +227,14 @@ export default function Meeting(props) {
   const [show, setShow] = useState(false);
   const [mousePosition, setMousePosition] = useState({x:0, y:0});
   const style = {
-    cursor: 'default',
-    pointerEvents: 'none',
-    transition: 'all .1s ease-out',
-    position: 'fixed',
     top: mousePosition.y-23,
     left: mousePosition.x-23,
-    zIndex: 999,
     opacity: (show&&!props.meeting.breakouts_frozen)?0.6:0,
-    fontSize: '24px',
   };
 
   return (
     <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
-      <span className="avatard" style={style} onMouseOver={() => setShow(true)} onMouseOut={()=> setShow(false)}>{props.userRegistration.name.split(' ')[0]}</span>
+      <span className="ghost" style={style} onMouseOver={() => setShow(true)} onMouseOut={()=> setShow(false)}>{props.userRegistration.name.split(' ')[0]}</span>
       <div className="row">
         <div className="col-md-3 order-1 order-md-0">
           <StatusMessage {...props} />

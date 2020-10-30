@@ -88,6 +88,15 @@ body {
   height: 100%;
 }
 
+.ghost {
+  cursor: default;
+  pointer-events: none;
+  transition: all .1s ease-out;
+  position: fixed;
+  z-index: 999;
+  font-size: 18px;
+}
+
 .avatar {
   display: inline-block;
   justify-content: center;
@@ -100,7 +109,7 @@ body {
   height: 36px;
   line-height: 34px;
   text-align: center;
-  font-size: 24px;
+  font-size: 18px;
 }
 
 .avatar.ws-active {
