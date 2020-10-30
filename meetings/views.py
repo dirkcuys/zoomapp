@@ -94,7 +94,10 @@ def register(request, slug):
     # TODO check if a registration already exists for the user
     # call API to create registration
     user = ZoomUserToken.objects.get(zoom_user_id=meeting.zoom_host_id)
-    data = {"email": json_data.get('email'), 'first_name': json_data.get('name')}
+    data = {
+        "email": json_data.get('email'),
+        'first_name': ' '.join(json_data.get('name').split(' ')[1:])
+    }
     resp = zoom_post(f'/meetings/{meeting.zoom_id}/registrants', user, data)
     logger.error(resp.json())
     registration, _ = Registration.objects.update_or_create(
