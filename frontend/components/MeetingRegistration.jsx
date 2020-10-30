@@ -47,6 +47,7 @@ function RegistrationForm(props){
         <input 
           ref={setEmailField}
           name="email"
+          required="True"
           id="emailInput"
           type="email"
           className="form-control"
