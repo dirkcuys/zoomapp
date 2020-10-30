@@ -35,12 +35,36 @@ body {
   margin-bottom: 1em;
 }
 
+#breakout-list-container {
+  position: relative;
+  overflow: auto;
+}
+
+.breakout-list {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
+}
+
+@include media-breakpoint-up(md) {
+  .breakout-list {
+    position: absolute;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.participant-count {
+  position: fixed;
+  bottom: 0;
+}
+
 .breakout {
   background-color: $light-gray;
   padding: 0.5em;
-  height: 100%;
   border-radius: 5px;
   height: 15vh;
+
 }
 
 .meeting {
@@ -65,10 +89,23 @@ body {
   height: 36px;
   line-height: 34px;
   text-align: center;
-  font-size: 18px;
+  font-size: 24px;
 }
 
 .avatar.ws-active {
   border: 2px solid #9BB7FF;
   line-height: 32px;
+}
+
+.avatar.me {
+  border: 2px solid #F7B499;
+  background-color: transparentize(#F7B499, 0.9);
+}
+
+.avatar.profile {
+  width: 64px;
+  min-width: 64px;
+  height: 64px;
+  line-height: 60px;
+  font-size: 32px;
 }

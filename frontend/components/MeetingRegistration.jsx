@@ -11,34 +11,31 @@ function RegistrationForm(props){
     e.preventDefault();
     props.onSubmit(`${emoji} ${name}`, email);
   }
-
   return (
     <form onSubmit={onSubmit} >
       <div className="form-group">
-        <label htmlFor="nameInput">Name</label>
-        <div className="input-group">
-          <div className="input-group-prepend">
-            <span className="input-group-text">{emoji}</span>
-          </div>
-          <input 
-            name="name"
-            id="nameInput"
-            type="text"
-            className="form-control"
-            value={name}
-            onChange={e => setName(e.target.value)}
-          />
-          <div className="input-group-append">
-            <button 
-              className="btn btn-outline-secondary" type="button" 
-              onClick={e => setEmoji(randomEmoji())}
-            >⟳</button>
-          </div>
-
+        <p>Emoji</p>
+        <div className="d-flex align-items-center">
+          <div className="avatar me profile" >{emoji}</div>
+          <button 
+            className="btn btn-outline-secondary ml-2" type="button" 
+            onClick={e => setEmoji(randomEmoji())}
+          >⟳</button>
         </div>
       </div>
       <div className="form-group">
-        <label htmlFor="emailInput">Email address</label>
+        <label htmlFor="nameInput">Name</label>
+        <input 
+          name="name"
+          id="nameInput"
+          type="text"
+          className="form-control"
+          value={name}
+          onChange={e => setName(e.target.value)}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="emailInput">Email</label>
         <input 
           name="email"
           id="emailInput"
@@ -60,7 +57,7 @@ function RegistrationInfo(props){
       <p>Thank you for registering!</p>
       <p>Your ID for this meeting is:</p>
       <div className="d-flex p-2 pt-3 pb-3 bg-light mb-5 align-items-center">
-        <div className="avatar mr-2">{userRegistration.name.split(' ')[0]}</div>
+        <div className="avatar profile me mr-2">{userRegistration.name.split(' ')[0]}</div>
         <strong className="flex-grow-1">{userRegistration.name.split(' ').slice(1).join(' ')}</strong>
       </div>
       <p>
