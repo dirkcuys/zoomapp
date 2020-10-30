@@ -14,7 +14,7 @@ function UserProfile({userRegistration, ...props}){
     <div className="d-flex align-items-start mb-3">
       <span className="avatar me profile mr-2">{user.name.split(' ')[0]}</span>
       <p><strong>{user.name.split(' ').slice(1).join(' ')}</strong><br/>
-        {breakout?(<><strong>You're in:</strong> breakout.title</>):'No room joined'}
+        {breakout?(<><strong>You're in:</strong> {breakout.title}</>):'No room joined'}
   </p>
 </div>
   );
