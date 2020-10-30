@@ -22,9 +22,20 @@ body {
 .hero {
   margin-top: 30vh;
   margin-bottom: 2em;
-  background-color: $hero-background;
   border: 2px solid $hero-color;
-  border-radius: 22px;
+}
+
+.modal {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: $dark-gray;
+  display: block;
+  opacity: 0.9;
+}
+
+.breakouts-frozen {
+  background-color: #e2eaff;
 }
 
 .meeting-form {

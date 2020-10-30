@@ -204,9 +204,20 @@ function Registrants(props){
 function StatusMessage(props){
   const breakouts_frozen = props.meeting.breakouts_frozen;
   return (
-    <div className={`p-3${breakouts_frozen?' bg-light':''}`}>
+    <div className={`p-3${breakouts_frozen?' breakouts-frozen':''}`}>
       <strong>{!breakouts_frozen?'Welcome!':'Thanks for joining!'}</strong>
-      <p>{!breakouts_frozen?'Please join a room by clicking on the room or add your own room':'Please wait for the host to open Breakouts on Zoom.'}</p>
+      <p>{!breakouts_frozen?'Please join a room by clicking on the room or add your own room':'Please wait for the host to open breakouts on Zoom.'}</p>
+    </div>
+  );
+}
+
+function Modal(props){
+  return (
+    <div className="modal">
+      <div className="modal-body">
+        <h2>Thanks for joining!</h2>
+        <p>Please wait for the host to open breakouts on Zoom.</p>
+      </div>
     </div>
   );
 }
@@ -223,7 +234,7 @@ export default function Meeting(props) {
     top: mousePosition.y-23,
     left: mousePosition.x-23,
     zIndex: 999,
-    opacity: show?0.6:0,
+    opacity: (show&&!props.meeting.breakouts_frozen)?0.6:0,
     fontSize: '24px',
   };
 
