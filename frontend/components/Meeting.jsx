@@ -220,8 +220,8 @@ export default function Meeting(props) {
   const [show, setShow] = useState(false);
   const [mousePosition, setMousePosition] = useState({x:0, y:0});
   const style = {
-    top: mousePosition.y-20,
-    left: mousePosition.x-20,
+    top: mousePosition.y-25,
+    left: mousePosition.x-25,
     opacity: (show&&!props.meeting.breakouts_frozen)?0.6:0,
   };
 
