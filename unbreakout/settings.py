@@ -44,10 +44,12 @@ INSTALLED_APPS = [
     # 3rd party
     'webpack_loader',
     'channels',
+    'tinymce',
 
     'registration',
     'zoom',
     'meetings',
+    'cms',
 ]
 
 MIDDLEWARE = [
