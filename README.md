@@ -1,4 +1,4 @@
-A django app to test what information is sent by Zoom webhooks
+An experiment in participatory Zoom breakouts.
 
 To run:
 ```
