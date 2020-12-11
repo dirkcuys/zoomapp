@@ -7,8 +7,14 @@ function RegistrationForm(props){
   const [emoji, setEmoji] = useState(randomEmoji());
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [nameField, setNameField] = useState(null);
+  const [emailField, setEmailField] = useState(null);
   const onSubmit = e => {
     e.preventDefault();
+    if (!emailField.checkValidity() || !nameField.checkValidity()){
+      console.log('error');
+      return;
+    }
     props.onSubmit(`${emoji} ${name}`, email);
   }
   return (
@@ -26,7 +32,9 @@ function RegistrationForm(props){
       <div className="form-group">
         <label htmlFor="nameInput">Name</label>
         <input 
+          ref={setNameField}
           name="name"
+          required="True"
           id="nameInput"
           type="text"
           className="form-control"
@@ -37,7 +45,9 @@ function RegistrationForm(props){
       <div className="form-group">
         <label htmlFor="emailInput">Email</label>
         <input 
+          ref={setEmailField}
           name="email"
+          required="True"
           id="emailInput"
           type="email"
           className="form-control"
@@ -89,7 +99,7 @@ export default function MeetingRegistration(props){
       <div className="row flex-grow-1 d-flex flex-column">
         <div className="col-10 offset-1 col-md-6 offset-md-3 flex-grow-1 d-flex justify-content-around flex-column">
           <div>
-            <h2>Meeting {props.meeting.topic}</h2>
+            <h2>{props.meeting.topic}</h2>
             <hr/>
             {!userRegistration && <RegistrationForm onSubmit={onSubmit} {...props} />}
             {userRegistration && <RegistrationInfo {...props} userRegistration={userRegistration} />}

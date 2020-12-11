@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block body %}
+<div class="container-md text-center flex-grow-1">
+  <div class="row">
+  <div class="col-10 offset-1 col-sm-8 offset-sm-2 p-md-5 pt-3 pb-3">
+    <h1>{{ page.title }}</h1>
+    <div>
+      {{ page.content|safe }}
+    </div>
+  </div>
+  </div>
+</div>
+<footer class="text-center">
+  <p>made by the MIT Media Lab <a href="https://www.media.mit.edu/groups/digital-learning-studio/overview/">Digital Learning & Collaboration Studio</a></p>
+</footer>
+
+{% endblock %}
+
+{% block scripts %}
+  {% csrf_token %}
+  {{ react_props | json_script:"reactProps" }}
+  {% render_bundle 'index' %}
+{% endblock %}
+

@@ -20,6 +20,8 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('zoom/', include('zoom.urls')),
+    path('tinymce/', include('tinymce.urls')),
+    path('', include('cms.urls')),
     path('', include('meetings.urls')),
 ]
 
