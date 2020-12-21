@@ -40,6 +40,36 @@ def callback(request):
     return http.HttpResponseRedirect('/list')
 
 
+def _data_compliance(deauth_data):
+    data = {
+        "client_id": settings.ZOOM_CLIENT_ID,
+        "user_id": deauth_data.get('user_id'),
+        "account_id": deauth_data.get('account_id'),
+        "deauthorization_event_received": deauth_data,
+        "compliance_completed": True
+    }
+    compliance_url = 'https://api.zoom.us/oauth/data/compliance'
+    headers = {
+        "Content-Type": "application/json; charset=utf-8",
+    }
+    auth = (settings.ZOOM_CLIENT_ID, settings.ZOOM_CLIENT_SECRET)
+    post_data = json.dumps(data, ensure_ascii=False).encode('utf-8')
+    api_resp = requests.post(compliance_url, headers=headers, data=post_data, auth=auth)
+    if api_resp.status_code != 200:
+        raise Exception('data compliance API call failed')
+
+
+@csrf_exempt
+def deauth(request):
+    data = json.loads(request.body)
+    user_id = data.get('payload').get('user_id')
+    data_retention = data.get('payload').get('user_data_retention')
+    ZoomUserToken.objects.get(zoom_user_id=user_id).delete()
+    if not data_retention:
+        _data_compliance(data.get('payload'))
+    return http.HttpResponse(status=200)
+
+
 @csrf_exempt
 def hook(request, path):
     logger.error(f'** hook: {path}')
