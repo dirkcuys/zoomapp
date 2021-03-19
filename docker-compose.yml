@@ -29,7 +29,7 @@ services:
     env_file: docker.env
     volumes:
     - .:/opt/app
-    command: npm run start
+    command: sh -c "npm i && npm run start"
   django:
     build: .
     env_file: docker.env
@@ -46,6 +46,6 @@ services:
     - redis
     networks:
     - unbreakout
-    command: /opt/app/venv/bin/python manage.py runserver 0.0.0.0:8000
+    command: /opt/app-venv/bin/python manage.py runserver 0.0.0.0:8000
 networks:
   unbreakout:
