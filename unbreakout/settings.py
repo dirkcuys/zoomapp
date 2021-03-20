@@ -30,6 +30,8 @@ DEBUG = env('DEBUG', '') == 'True'
 ALLOWED_HOSTS = []
 if env('DOMAIN'):
     ALLOWED_HOSTS = [env('DOMAIN')]
+if DEBUG:
+    ALLOWED_HOSTS += ['localhost']
 
 
 # Application definition
