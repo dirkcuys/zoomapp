@@ -29,6 +29,12 @@ function AdminActions(props){
   const clear = () => {
     post(`/${props.meeting.slug}/clear`, {});
   }
+
+  const transfer = () => {
+    post(`/${props.meeting.slug}/freeze`, {}); 
+    props.showModal(true);
+  }
+
   const registrationUrl = `${document.location.origin}/${props.meeting.short_code}`
   return (
     <div>
@@ -41,7 +47,10 @@ function AdminActions(props){
       <hr/>
       <p className="mb-4"><a className="btn" onClick={clear}>Delete all breakouts</a></p>
 
-      <p><a href={`/${props.meeting.slug}/export`} className="btn btn-primary">Export breakouts CSV</a></p>
+      {/* <p><a href={`/${props.meeting.slug}/export`} className="btn btn-primary">Export breakouts CSV</a></p> */}
+      <button type="button" className="btn btn-primary" onClick={transfer} data-toggle="modal" data-target="#breakout-assign-modal">
+        Open Breakouts
+      </button>
     </div>
   );
 }
@@ -107,7 +116,7 @@ function Breakout(props){
   };
   return (
     <div id={'breakout-'+id} className="breakout" onClick={onClick} onMouseOver={() => showPointer(true)} onMouseOut={()=> showPointer(false)}>
-      <h5>{title} <small class="text-muted">({participants.length})</small></h5>
+      <h5>{title} <small className="text-muted">({participants.length})</small></h5>
     </div>
   );
 }
@@ -215,19 +224,44 @@ function Modal(props){
   );
 }
 
+function BreakoutModal(props){
+  return (
+  <div className="modal" tabindex="-1" role="dialog">
+    <div className="modal-dialog" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Modal title</h5>
+          <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div className="modal-body">
+          <p>Modal body text goes here.</p>
+        </div>
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" onClick={() => props.showModal(false)} data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  );
+}
+
 export default function Meeting(props) {
   const {breakouts = []} = props.meeting;
-  const [show, setShow] = useState(false);
+  const [showPointer, setShowPointer] = useState(false);
+  const [showBreakoutModal, setShowModal] = useState(false);
   const [mousePosition, setMousePosition] = useState({x:0, y:0});
   const style = {
     top: mousePosition.y-25,
     left: mousePosition.x-25,
-    opacity: (show&&!props.meeting.breakouts_frozen)?0.6:0,
+    opacity: (showPointer&&!props.meeting.breakouts_frozen)?0.6:0,
   };
 
   return (
     <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
-      <span className="ghost" style={style} onMouseOver={() => setShow(true)} onMouseOut={()=> setShow(false)}>{props.userRegistration.name.split(' ')[0]}</span>
+      {showBreakoutModal ? <BreakoutModal showModal={setShowModal} {...props} /> : null}
+      <span className="ghost" style={style} onMouseOver={() => setShowPointer(true)} onMouseOut={()=> setShowPointer(false)}>{props.userRegistration.name.split(' ')[0]}</span>
       <div className="row d-flex align-items-center mb-3">
         <div className="col-md-3 order-1 order-md-0">
           <StatusMessage {...props} />
@@ -241,7 +275,7 @@ export default function Meeting(props) {
       </div>
       <div className="row flex-grow-1">
         <div className="col-md-3 d-flex flex-column">
-          <div className="lobby flex-grow-1" onMouseOver={() => setShow(true)} onMouseOut={()=> setShow(false)}>
+          <div className="lobby flex-grow-1" onMouseOver={() => setShowPointer(true)} onMouseOut={()=> setShowPointer(false)}>
             <Registrants {...props} />
           </div>
           <div className="participant-count">
@@ -252,12 +286,12 @@ export default function Meeting(props) {
           <BreakoutForm {...props} />
           <div id="breakout-list-container" className="flex-grow-1">
             <div className="breakout-list w-100">
-              { breakouts.map( breakout => <Breakout key={breakout.id} breakout={breakout} {...props} showPointer={setShow} /> )}
+              { breakouts.map( breakout => <Breakout key={breakout.id} breakout={breakout} {...props} showPointer={setShowPointer} /> )}
             </div>
           </div>
         </div>
         <div className="col-md-3">
-          { props.zoomUser && <AdminActions {...props} /> }
+          { props.zoomUser && <AdminActions showModal={setShowModal} {...props} /> }
         </div>
       </div>
     </div>
