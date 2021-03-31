@@ -218,14 +218,15 @@ function Modal(props){
 
 function BreakoutModal(props){
   return (
-  <div className="modal" tabindex="-1" role="dialog">
+  <div className="modal" role="dialog">
     <div className="modal-dialog" role="document">
-      <div className="modal-content">
+      <div className="modal-content align-middle">
         <div className="modal-header">
           <h5 className="modal-title">Breakout List</h5>
         </div>
         <div className="modal-body">
-          <p>Modal body text goes here.</p>
+          <p>If you’re not connected to Zoom or don’t want participants to move calls, manually open breakouts and copy them from here.</p>
+          <BreakoutList {...props} />
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={() => props.showModal(false)} data-dismiss="modal">Done</button>
@@ -234,6 +235,55 @@ function BreakoutModal(props){
     </div>
   </div>
   );
+}
+
+function BreakoutList(props){
+  const {breakouts = []} = props.meeting;
+  return (
+    <div className="accordion" id="accordion">
+      { breakouts.map( breakout => 
+        <BreakoutCard dataParent="accordion" key={breakout.id} breakout={breakout} {...props} /> 
+      )}
+      {/* <div className="card">
+        <div className="card-header" id="headingone">
+          <h2 className="mb-0">
+            <button className="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseone" aria-expanded="true" aria-controls="collapseone">
+              collapsible group item #1
+            </button>
+          </h2>
+        </div>
+
+        <div id="collapseone" className="collapse" aria-labelledby="headingone" data-parent="#accordionexample">
+          <div className="card-body">
+            some placeholder content for the first accordion panel. this panel is shown by default, thanks to the <code>.show</code> class.
+          </div>
+        </div>
+      </div> */}
+    </div>
+  );
+}
+
+function BreakoutCard(props){
+  const [collapsed, setCollapsed] = useState(true);
+  const {id, title, participants} = props.breakout;
+  const names = participants.map(registrant => registrant.name);
+  return (
+    <div className="card">
+      <div className="card-header" id={id}>
+        <h2 className="mb-0">
+          <button className="btn btn-link btn-block text-left" type="button" onClick={() => setCollapsed(!collapsed)} aria-expanded="true" aria-controls="collapseone">
+            {title}
+          </button>
+        </h2>
+      </div>
+
+      <div id={id} className={collapsed ? "collapse hide" : "collapse show"} aria-labelledby="headingone" data-parent={props.dataParent} >
+        <div className="card-body">
+          <ul className="list-group list-group-flush">{names}</ul>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function Meeting(props) {
@@ -246,6 +296,7 @@ export default function Meeting(props) {
     left: mousePosition.x-25,
     opacity: (showPointer&&!props.meeting.breakouts_frozen)?0.6:0,
   };
+  document.body.setAttribute('style', showBreakoutModal ? "position: fixed" : "");
 
   return (
     <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
