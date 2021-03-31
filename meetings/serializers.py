@@ -31,6 +31,7 @@ def serialize_registration(registration):
     # TODO email and join_url should maybe not be serialized by default!
     zoom_data = json.loads(registration.zoom_data)
     return {
+        "is_host": registration.is_host,
         "name": registration.name,
         "email": registration.email,
         "breakout_id": registration.breakout_id,
