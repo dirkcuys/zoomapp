@@ -6,6 +6,7 @@ import unicodecsv as csv
 
 from django.shortcuts import render
 from django import http
+from django.urls import reverse
 from asgiref.sync import async_to_sync
 import channels.layers
 
@@ -27,12 +28,6 @@ def index(request):
     return render(request, 'meetings/index.html', context)
 
 
-def list_meetings(request):
-    context = {}
-    context['react_props'] = {"zoomUser": request.session.get('zoom_user')}
-    return render(request, 'meetings/app.html', context)
-
-
 def create(request):
     """ Create a meeting"""
     # check that this is a HTTP POST
@@ -44,11 +39,11 @@ def create(request):
     short_code = "".join([random.choice(string.digits+string.ascii_letters) for i in range(6)])
     meeting = Meeting.objects.create(slug=short_code, short_code=short_code, zoom_data='{}')
     meeting.save()
-    # TODO use reverse to lookup URL
-    return http.HttpResponseRedirect(f'/m/{meeting.slug}')
+    return http.HttpResponseRedirect(reverse('meeting', args=(meeting.slug,)))
 
 
 def unbreakout(request, slug):
+    """ View meeting unbreakout interface """
     # TODO need to set CSRF cookie here?
     meeting = Meeting.objects.get(slug=slug)
     email = request.session.get('user_registration')
@@ -57,9 +52,6 @@ def unbreakout(request, slug):
     else:
         user_registration = None
     meeting_json = serialize_meeting(meeting)
-    # dont't redirect user anymore
-    #if not user_registration:
-    #    return http.HttpResponseRedirect(f'/{meeting.short_code}')
     context = {
         'react_props': {
             'zoomUser': request.session.get('zoom_user'),
@@ -70,60 +62,17 @@ def unbreakout(request, slug):
     return render(request, 'meetings/app.html', context)
 
 
-
 def clear(request):
+    """ clear user session """
     del request.session['user_registration']
     return http.HttpResponseRedirect('/')
 
 
-def create_meeting_from_zoom(request):
-    zoom_host_id = request.session['zoom_user'].get('id')
-    json_data = json.loads(request.body)
-    zoom_meeting_id = json_data.get('meeting_id')
-    if not zoom_meeting_id or not zoom_host_id:
-        return http.JsonResponse({"code": 400, "error": f'incorrect data'})
-
-    zoom_auth = ZoomUserToken.objects.get(zoom_user_id=zoom_host_id)
-    zoom_meeting = zoom_get(f'/meetings/{zoom_meeting_id}', zoom_auth)
-    # TODO handle failure of this API call
-    logger.error(zoom_meeting.json())
-
-    # only create 1 Meeting for a given zoom meeting_id
-    meeting, created = Meeting.objects.update_or_create(
-        zoom_id=zoom_meeting_id, 
-        defaults={
-            "zoom_host_id": zoom_host_id,
-            "zoom_data": json.dumps(zoom_meeting.json())}
-        )
-    if created:
-        slug = "".join([random.choice(string.digits+string.ascii_letters) for i in range(16)])
-        short_code = "".join([random.choice(string.digits+string.ascii_letters) for i in range(4)])
-        meeting.slug = slug
-        meeting.short_code = short_code
-        meeting.save()
-
-    # update the meeting via API to require registration
-    if zoom_meeting.json().get('settings').get('approval_type') == 2: # no registration required
-        data = {'settings': {'approval_type': 0}}
-        zoom_patch(f'/meetings/{zoom_meeting_id}', zoom_auth, data)
-        # TODO check return
-
-    # Create a registration for the Host
-    registration, _ = Registration.objects.update_or_create(
-        meeting=meeting,
-        email=request.session['zoom_user'].get('email'),
-        defaults={
-            'name': f"🔱 {request.session['zoom_user'].get('first_name')}",
-            'registrant_id': zoom_host_id,
-            'zoom_data': json.dumps({
-                'registrant_id': zoom_host_id,
-                'join_url': zoom_meeting.json().get('start_url'),
-            }),
-        }
-    )
-    logger.error(zoom_host_id)
-    request.session['user_registration'] = registration.email
-    return http.JsonResponse({"code": "201", "url": f'/m/{meeting.slug}'})
+def list_meetings(request):
+    """ old """
+    context = {}
+    context['react_props'] = {"zoomUser": request.session.get('zoom_user')}
+    return render(request, 'meetings/app.html', context)
 
 
 def register(request, slug):
@@ -131,6 +80,7 @@ def register(request, slug):
 
     # TODO validate data
     json_data = json.loads(request.body)
+
     registration, _ = Registration.objects.update_or_create(
         meeting=meeting,
         email=json_data.get('email'), 
@@ -139,42 +89,11 @@ def register(request, slug):
             'zoom_data': '{}',
         }
     )
-    # TODO should we rename this session variable?
-    request.session['user_registration'] = registration.email
+    # Make the first registrant host
+    if Registration.objects.filter(meeting=meeting).count() == 1:
+        registration.is_host = True
+        registration.save()
 
-    # Send message to room group
-    channel_layer = channels.layers.get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f'meeting_{meeting.slug}',
-        {
-            'type': 'meeting_message',
-            'message': {'type': 'SET_REGISTRANTS', 'payload': list(map(serialize_registration, meeting.registration_set.all())) }
-        }
-    )
-
-    return http.JsonResponse({'code': 201, 'registration': serialize_registration(registration)})
-
-
-def register_zoom(request, slug):
-    meeting = Meeting.objects.get(slug=slug)
-    json_data = json.loads(request.body)
-    # TODO check if a registration already exists for the user
-    # call API to create registration
-    user = ZoomUserToken.objects.get(zoom_user_id=meeting.zoom_host_id)
-    data = {
-        "email": json_data.get('email'),
-        'first_name': ' '.join(json_data.get('name').split(' ')[1:])
-    }
-    resp = zoom_post(f'/meetings/{meeting.zoom_id}/registrants', user, data)
-    logger.error(resp.json())
-    registration, _ = Registration.objects.update_or_create(
-        meeting=meeting, email=json_data.get('email'), 
-        defaults={
-            'registrant_id': resp.json().get('registrant_id'),
-            'name': json_data.get('name'),
-            'zoom_data': json.dumps(resp.json()),
-        }
-    )
     request.session['user_registration'] = registration.email
 
     # Send message to room group
@@ -298,20 +217,87 @@ def unjoin_breakout(request, slug):
     return http.JsonResponse({'code': 201});
 
 
-def registration(request, short_code):
-    meeting = Meeting.objects.get(short_code=short_code)
-    email = request.session.get('user_registration')
-    if email and meeting.registration_set.filter(email=email).exists():
-        user_registration = serialize_registration(meeting.registration_set.get(email=email))
-    else:
-        user_registration = None
-    meeting_json = serialize_meeting(meeting)
-    context = {
-        'react_props': {
-            'shortCode': short_code,
-            'userRegistration': user_registration or None,
-            'meeting': meeting_json,
-        }
+def register_zoom(request, slug):
+    # Outdated view
+    meeting = Meeting.objects.get(slug=slug)
+    json_data = json.loads(request.body)
+    # TODO check if a registration already exists for the user
+    # call API to create registration
+    user = ZoomUserToken.objects.get(zoom_user_id=meeting.zoom_host_id)
+    data = {
+        "email": json_data.get('email'),
+        'first_name': ' '.join(json_data.get('name').split(' ')[1:])
     }
-    return render(request, 'meetings/app.html', context)
+    resp = zoom_post(f'/meetings/{meeting.zoom_id}/registrants', user, data)
+    logger.error(resp.json())
+    registration, _ = Registration.objects.update_or_create(
+        meeting=meeting, email=json_data.get('email'), 
+        defaults={
+            'registrant_id': resp.json().get('registrant_id'),
+            'name': json_data.get('name'),
+            'zoom_data': json.dumps(resp.json()),
+        }
+    )
+    request.session['user_registration'] = registration.email
 
+    # Send message to room group
+    channel_layer = channels.layers.get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'meeting_{meeting.slug}',
+        {
+            'type': 'meeting_message',
+            'message': {'type': 'SET_REGISTRANTS', 'payload': list(map(serialize_registration, meeting.registration_set.all())) }
+        }
+    )
+    return http.JsonResponse({'code': 201, 'registration': serialize_registration(registration)})
+
+
+def create_meeting_from_zoom(request):
+    # Outdated view
+    zoom_host_id = request.session['zoom_user'].get('id')
+    json_data = json.loads(request.body)
+    zoom_meeting_id = json_data.get('meeting_id')
+    if not zoom_meeting_id or not zoom_host_id:
+        return http.JsonResponse({"code": 400, "error": f'incorrect data'})
+
+    zoom_auth = ZoomUserToken.objects.get(zoom_user_id=zoom_host_id)
+    zoom_meeting = zoom_get(f'/meetings/{zoom_meeting_id}', zoom_auth)
+    # TODO handle failure of this API call
+    logger.error(zoom_meeting.json())
+
+    # only create 1 Meeting for a given zoom meeting_id
+    meeting, created = Meeting.objects.update_or_create(
+        zoom_id=zoom_meeting_id, 
+        defaults={
+            "zoom_host_id": zoom_host_id,
+            "zoom_data": json.dumps(zoom_meeting.json())}
+        )
+    if created:
+        slug = "".join([random.choice(string.digits+string.ascii_letters) for i in range(16)])
+        short_code = "".join([random.choice(string.digits+string.ascii_letters) for i in range(4)])
+        meeting.slug = slug
+        meeting.short_code = short_code
+        meeting.save()
+
+    # update the meeting via API to require registration
+    if zoom_meeting.json().get('settings').get('approval_type') == 2: # no registration required
+        data = {'settings': {'approval_type': 0}}
+        zoom_patch(f'/meetings/{zoom_meeting_id}', zoom_auth, data)
+        # TODO check return
+
+    # Create a registration for the Host
+    registration, _ = Registration.objects.update_or_create(
+        meeting=meeting,
+        email=request.session['zoom_user'].get('email'),
+        defaults={
+            'name': f"🔱 {request.session['zoom_user'].get('first_name')}",
+            'registrant_id': zoom_host_id,
+            'zoom_data': json.dumps({
+                'registrant_id': zoom_host_id,
+                'join_url': zoom_meeting.json().get('start_url'),
+            }),
+        }
+    )
+    logger.error(zoom_host_id)
+    request.session['user_registration'] = registration.email
+    return http.JsonResponse({"code": "201", "url": f'/m/{meeting.slug}'})

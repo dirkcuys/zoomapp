@@ -5,7 +5,7 @@ import {post} from 'utils/api';
 function UserProfile({userRegistration, ...props}){
   if (!userRegistration)
     return null;
-  let users = props.meeting.registrants.filter(user => user.registrant_id == userRegistration.registrant_id);
+  let users = props.meeting.registrants.filter(user => user.id == userRegistration.id);
   const user = users.pop();
   if (!user)
     return null;
@@ -186,9 +186,9 @@ function Registrants(props){
     <div id="registrants" style={style} onClick={onClick} >
       {registrants.map(user =>
         <Registrant 
-          key={user.registrant_id}
+          key={user.id}
           user={user}
-          isMe={user.registrant_id == props.userRegistration.registrant_id}
+          isMe={user.id == props.userRegistration.id}
         />
       )}
     </div>
@@ -331,7 +331,7 @@ export default function Meeting(props) {
           </div>
         </div>
         <div className="col-md-3">
-          { props.zoomUser && <AdminActions showModal={setShowModal} {...props} /> }
+          { props.userRegistration.is_host && <AdminActions showModal={setShowModal} {...props} /> }
         </div>
       </div>
     </div>
