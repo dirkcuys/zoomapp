@@ -17,6 +17,4 @@ urlpatterns = [
     re_path(r'^(?P<slug>\w+)/create_breakout$', views.create_breakout, name='create_breakout'),
     path('<slug:slug>/breakout/<int:breakout_id>/join', views.join_breakout, name='join_breakout'),
     path('<slug:slug>/breakout/unjoin', views.unjoin_breakout, name='unjoin_breakout'),
-
-    re_path(r'^(?P<short_code>\w+)$', views.registration, name='registration'),
 ]
