@@ -15,6 +15,7 @@ def serialize_breakout(breakout):
 
 
 def serialize_meeting(meeting):
+    # TODO replace topic with title stored in model
     return {
         'zoom_id': meeting.zoom_id,
         'slug': meeting.slug,
@@ -29,10 +30,11 @@ def serialize_meeting(meeting):
 
 def serialize_registration(registration):
     # TODO email and join_url should maybe not be serialized by default!
+    # TODO registration.zoom_data wont exist
     zoom_data = json.loads(registration.zoom_data)
     return {
+        "id": registration.pk,
         "name": registration.name,
-        "email": registration.email,
         "breakout_id": registration.breakout_id,
         "registrant_id": registration.registrant_id,
         "x": registration.x,
