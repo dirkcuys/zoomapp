@@ -223,13 +223,13 @@ function BreakoutModal(props){
     <div className="modal-dialog" role="document">
       <div className="modal-content align-middle">
         <div className="modal-body">
-          <h5 className="modal-title">Transfer Breakouts</h5>
+          <h5 className="modal-title text-center">Transfer Breakouts to a Zoom Call</h5>
           <ul class="nav nav-tabs justify-content-center">
             <li class="nav-item">
-              <a class={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual</a>
+              <a class={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual Copy</a>
             </li>
             <li class="nav-item">
-              <a class={tabView === 1 ? "nav-link active" : "nav-link"}  onClick={() => setTabView(1)} href="#">Zoom it Up!</a>
+              <a class={tabView === 1 ? "nav-link active" : "nav-link"}  onClick={() => setTabView(1)} href="#">Pre-Populate in New Call</a>
             </li>
           </ul>
            <span> </span>
@@ -279,7 +279,7 @@ function BreakoutList(props){
 function BreakoutCard(props){
   const [collapsed, setCollapsed] = useState(true);
   const {id, title, participants} = props.breakout;
-  const names = participants.map(registrant => registrant.name);
+  const names = participants.map(registrant => registrant.name.substring(3)).sort();
   return (
     <div className="card">
       <div className="card-header" id={id}>
@@ -292,7 +292,9 @@ function BreakoutCard(props){
 
       <div id={id} className={collapsed ? "collapse hide" : "collapse show"} aria-labelledby="headingone" data-parent={props.dataParent} >
         <div className="card-body">
-          <ul className="list-group list-group-flush">{names}</ul>
+          <ul className="list-group list-group-flush">
+            {names.map(name => <li class="list-group-item">{name}</li>)}
+          </ul>
         </div>
       </div>
     </div>
