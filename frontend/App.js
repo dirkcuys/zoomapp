@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
 
-import MeetingList from 'components/MeetingList';
-import ZoomAuth from 'components/ZoomAuth';
 import Meeting from 'components/Meeting';
 import MeetingRegistration from 'components/MeetingRegistration';
 
