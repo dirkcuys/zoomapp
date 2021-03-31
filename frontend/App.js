@@ -9,20 +9,11 @@ import MeetingRegistration from 'components/MeetingRegistration';
 
 function App(props) {
   const {meeting, zoomUser, userRegistration, shortCode} = props;
-  if (meeting && (zoomUser || userRegistration) && !shortCode ){
-    return <Meeting {...props} />;
-  }
-  if (!zoomUser && !meeting){
-    return <ZoomAuth {...props} />;
-  }
-  if (zoomUser && !meeting){
-    return <MeetingList {...props} />;
-  }
-  if (meeting && shortCode){
+  if (!userRegistration){
     return <MeetingRegistration {...props} />;
-  }
+  } 
+  return <Meeting {...props} />;
 }
-
 
 const mapStateToProps = (state, ownProps) => {
   return {...state}
