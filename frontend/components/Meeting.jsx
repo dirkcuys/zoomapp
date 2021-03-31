@@ -217,16 +217,28 @@ function Modal(props){
 }
 
 function BreakoutModal(props){
+  const [tabView, setTabView] = useState(0);
   return (
   <div className="modal" role="dialog">
     <div className="modal-dialog" role="document">
       <div className="modal-content align-middle">
-        <div className="modal-header">
-          <h5 className="modal-title">Breakout List</h5>
-        </div>
         <div className="modal-body">
-          <p>If you’re not connected to Zoom or don’t want participants to move calls, manually open breakouts and copy them from here.</p>
-          <BreakoutList {...props} />
+          <h5 className="modal-title">Transfer Breakouts</h5>
+          <ul class="nav nav-tabs justify-content-center">
+            <li class="nav-item">
+              <a class={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual</a>
+            </li>
+            <li class="nav-item">
+              <a class={tabView === 1 ? "nav-link active" : "nav-link"}  onClick={() => setTabView(1)} href="#">Zoom it Up!</a>
+            </li>
+          </ul>
+           <span> </span>
+           <span> </span>
+            {(tabView === 0 &&
+                <BreakoutList {...props} />)
+            || (tabView === 1 &&
+                null)
+            }
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={() => props.showModal(false)} data-dismiss="modal">Done</button>
@@ -241,6 +253,7 @@ function BreakoutList(props){
   const {breakouts = []} = props.meeting;
   return (
     <div className="accordion" id="accordion">
+      <p>If you’re not connected to Zoom or don’t want participants to move calls, manually open breakouts and copy them from here.</p>
       { breakouts.map( breakout => 
         <BreakoutCard dataParent="accordion" key={breakout.id} breakout={breakout} {...props} /> 
       )}
