@@ -257,7 +257,7 @@ export default function Meeting(props) {
           </div>
         </div>
         <div className="col-md-3">
-          { props.zoomUser && <AdminActions {...props} /> }
+          { props.userRegistration.is_host && <AdminActions {...props} /> }
         </div>
       </div>
     </div>

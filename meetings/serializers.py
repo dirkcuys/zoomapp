@@ -34,6 +34,7 @@ def serialize_registration(registration):
     zoom_data = json.loads(registration.zoom_data)
     return {
         "id": registration.pk,
+        "is_host": registration.is_host,
         "name": registration.name,
         "breakout_id": registration.breakout_id,
         "registrant_id": registration.registrant_id,

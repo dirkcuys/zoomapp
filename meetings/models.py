@@ -21,6 +21,7 @@ class Breakout(models.Model):
 class Registration(models.Model):
     meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
     registrant_id = models.CharField(max_length=256, blank=True)
+    is_host = models.BooleanField(default=False)
     email = models.EmailField()
     name = models.CharField(max_length=256)
     breakout = models.ForeignKey(Breakout, null=True, on_delete=models.SET_NULL)
