@@ -75,13 +75,12 @@ def list_meetings(request):
     return render(request, 'meetings/app.html', context)
 
 
-
-
 def register(request, slug):
     meeting = Meeting.objects.get(slug=slug)
 
     # TODO validate data
     json_data = json.loads(request.body)
+
     registration, _ = Registration.objects.update_or_create(
         meeting=meeting,
         email=json_data.get('email'), 
@@ -90,7 +89,11 @@ def register(request, slug):
             'zoom_data': '{}',
         }
     )
-    # TODO should we rename this session variable?
+    # Make the first registrant host
+    if Registration.objects.filter(meeting=meeting).count() == 1:
+        registration.is_host = True
+        registration.save()
+
     request.session['user_registration'] = registration.email
 
     # Send message to room group
