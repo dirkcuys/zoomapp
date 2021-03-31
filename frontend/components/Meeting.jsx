@@ -41,16 +41,8 @@ function AdminActions(props){
       <h5>Host controls</h5>
       <p>Registration link: <a href={registrationUrl}>{registrationUrl}</a></p>
       <hr/>
-      {/* <p><a className="btn" href={`https://zoom.us/meeting/${props.meeting.zoom_id}/edit`} target="_blank">Edit zoom meeting</a></p>
-      <hr/> */}
-      <p><a className="btn" onClick={freeze}>{props.meeting.breakouts_frozen?'Unfreeze breakouts':'Freeze breakouts'}</a></p>
-      <hr/>
-      <p className="mb-4"><a className="btn" onClick={clear}>Delete all breakouts</a></p>
-
-      {/* <p><a href={`/${props.meeting.slug}/export`} className="btn btn-primary">Export breakouts CSV</a></p> */}
-      <button type="button" className="btn btn-primary" onClick={transfer} data-toggle="modal" data-target="#breakout-assign-modal">
-        Transfer to Zoom
-      </button>
+      <p><a onClick={clear} className="btn btn-primary">Clear Breakouts</a></p>
+      <p><a onClick={transfer} className="btn btn-primary">Transfer to Zoom</a></p>
     </div>
   );
 }
