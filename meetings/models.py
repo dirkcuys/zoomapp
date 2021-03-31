@@ -6,8 +6,8 @@ from django.db import models
 class Meeting(models.Model):
     slug = models.SlugField()
     short_code = models.CharField(max_length=64)
-    zoom_id = models.CharField(max_length=256)
-    zoom_host_id = models.CharField(max_length=256)
+    zoom_id = models.CharField(max_length=256, blank=True)
+    zoom_host_id = models.CharField(max_length=256, blank=True)
     zoom_data = models.TextField()
     breakouts_frozen = models.BooleanField(default=False)
 
@@ -20,7 +20,7 @@ class Breakout(models.Model):
 
 class Registration(models.Model):
     meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
-    registrant_id = models.CharField(max_length=256)
+    registrant_id = models.CharField(max_length=256, blank=True)
     email = models.EmailField()
     name = models.CharField(max_length=256)
     breakout = models.ForeignKey(Breakout, null=True, on_delete=models.SET_NULL)

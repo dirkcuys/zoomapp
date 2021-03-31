@@ -11,7 +11,10 @@
   </div>
   </div>
   <p>
-  <a class="btn btn-primary" href={% url 'redirect' %}>Hosts &gt; Connect your Zoom account</a>
+  <form action="{% url 'create' %}" method="POST">
+    {% csrf_token %}
+    <button class="btn btn-primary" href={% url 'create' %}>Create an ubreakout</button>
+  </form>
   </p>
 </div>
 <footer class="text-center">
