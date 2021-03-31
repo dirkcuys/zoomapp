@@ -60,26 +60,8 @@ function RegistrationForm(props){
   );
 }
 
-function RegistrationInfo(props){
-  const {userRegistration} = props;
-  return (
-    <div>
-      <p>Thank you for registering!</p>
-      <p>Your ID for this meeting is:</p>
-      <div className="d-flex p-2 pt-3 pb-3 bg-light mb-5 align-items-center">
-        <div className="avatar profile me mr-2">{userRegistration.name.split(' ')[0]}</div>
-        <strong className="flex-grow-1">{userRegistration.name.split(' ').slice(1).join(' ')}</strong>
-      </div>
-      <p>
-        <a className="btn btn-primary" href={userRegistration.join_url}>Join meeting on Zoom</a>
-      </p>
-    </div>
-  );
-}
 
 export default function MeetingRegistration(props){
-  const [userRegistration, setUserRegistration] = useState(props.userRegistration);
-
   const onSubmit = (name, email) => {
     let data = {
       meeting_id: props.meeting.zoom_id,
@@ -88,8 +70,7 @@ export default function MeetingRegistration(props){
     };
     post(`/${props.meeting.slug}/register`, data).then(meeting => {
       if (meeting.code == '201'){
-        //TODO pass request through redux + update state of userRegistration on success
-        setUserRegistration(meeting.registration);
+        location.reload();
       }
     });
   };
@@ -101,8 +82,7 @@ export default function MeetingRegistration(props){
           <div>
             <h2>{props.meeting.topic}</h2>
             <hr/>
-            {!userRegistration && <RegistrationForm onSubmit={onSubmit} {...props} />}
-            {userRegistration && <RegistrationInfo {...props} userRegistration={userRegistration} />}
+            <RegistrationForm onSubmit={onSubmit} {...props} />
           </div>
         </div>
       </div>

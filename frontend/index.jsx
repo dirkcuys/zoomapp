@@ -16,7 +16,7 @@ const {meeting, zoomUser, userRegistration, shortCode} = reactProps;
 const store = configureStore(reactProps);
 
 // TODO maybe there's a better way to indicate when to connect? a dispatch action inside the component requiring it?
-if (meeting && (zoomUser || userRegistration) && !shortCode){
+if (meeting){
   const url = `${window.location.origin.replace(/^http/, 'ws')}/ws/meeting/${meeting.slug}`;
   connectSocket(url, store);
 }

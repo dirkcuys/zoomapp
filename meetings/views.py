@@ -34,6 +34,49 @@ def list_meetings(request):
 
 
 def create(request):
+    """ Create a meeting"""
+    # check that this is a HTTP POST
+    if request.method != 'POST':
+        return ''
+    # TODO generate a title for the meeting
+
+    # create and save db object and redirect user to meeting page
+    short_code = "".join([random.choice(string.digits+string.ascii_letters) for i in range(6)])
+    meeting = Meeting.objects.create(slug=short_code, short_code=short_code, zoom_data='{}')
+    meeting.save()
+    # TODO use reverse to lookup URL
+    return http.HttpResponseRedirect(f'/m/{meeting.slug}')
+
+
+def unbreakout(request, slug):
+    # TODO need to set CSRF cookie here?
+    meeting = Meeting.objects.get(slug=slug)
+    email = request.session.get('user_registration')
+    if email and meeting.registration_set.filter(email=email).exists():
+        user_registration = serialize_registration(meeting.registration_set.get(email=email))
+    else:
+        user_registration = None
+    meeting_json = serialize_meeting(meeting)
+    # dont't redirect user anymore
+    #if not user_registration:
+    #    return http.HttpResponseRedirect(f'/{meeting.short_code}')
+    context = {
+        'react_props': {
+            'zoomUser': request.session.get('zoom_user'),
+            'userRegistration': user_registration or None,
+            'meeting': meeting_json
+        }
+    }
+    return render(request, 'meetings/app.html', context)
+
+
+
+def clear(request):
+    del request.session['user_registration']
+    return http.HttpResponseRedirect('/')
+
+
+def create_meeting_from_zoom(request):
     zoom_host_id = request.session['zoom_user'].get('id')
     json_data = json.loads(request.body)
     zoom_meeting_id = json_data.get('meeting_id')
@@ -83,12 +126,36 @@ def create(request):
     return http.JsonResponse({"code": "201", "url": f'/m/{meeting.slug}'})
 
 
-def clear(request):
-    del request.session['user_registration']
-    return http.HttpResponseRedirect('/')
-
-
 def register(request, slug):
+    meeting = Meeting.objects.get(slug=slug)
+
+    # TODO validate data
+    json_data = json.loads(request.body)
+    registration, _ = Registration.objects.update_or_create(
+        meeting=meeting,
+        email=json_data.get('email'), 
+        defaults={
+            'name': json_data.get('name'),
+            'zoom_data': '{}',
+        }
+    )
+    # TODO should we rename this session variable?
+    request.session['user_registration'] = registration.email
+
+    # Send message to room group
+    channel_layer = channels.layers.get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'meeting_{meeting.slug}',
+        {
+            'type': 'meeting_message',
+            'message': {'type': 'SET_REGISTRANTS', 'payload': list(map(serialize_registration, meeting.registration_set.all())) }
+        }
+    )
+
+    return http.JsonResponse({'code': 201, 'registration': serialize_registration(registration)})
+
+
+def register_zoom(request, slug):
     meeting = Meeting.objects.get(slug=slug)
     json_data = json.loads(request.body)
     # TODO check if a registration already exists for the user
@@ -248,23 +315,3 @@ def registration(request, short_code):
     }
     return render(request, 'meetings/app.html', context)
 
-
-def unbreakout(request, slug):
-    # TODO need to set CSRF cookie here?
-    meeting = Meeting.objects.get(slug=slug)
-    email = request.session.get('user_registration')
-    if email and meeting.registration_set.filter(email=email).exists():
-        user_registration = serialize_registration(meeting.registration_set.get(email=email))
-    else:
-        user_registration = None
-    meeting_json = serialize_meeting(meeting)
-    if not user_registration:
-        return http.HttpResponseRedirect(f'/{meeting.short_code}')
-    context = {
-        'react_props': {
-            "zoomUser": request.session.get('zoom_user'),
-            'userRegistration': user_registration or None,
-            'meeting': meeting_json
-        }
-    }
-    return render(request, 'meetings/app.html', context)
