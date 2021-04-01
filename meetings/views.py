@@ -3,6 +3,7 @@ import logging
 import string
 import random
 import unicodecsv as csv
+import datetime
 
 from django.shortcuts import render
 from django import http
@@ -171,6 +172,53 @@ def clear_breakouts(request, slug):
     meeting = Meeting.objects.get(slug=slug)
     _ws_update_meeting(meeting)
     return http.JsonResponse({'code': 202})
+
+
+@host_required
+def create_zoom_meeting(request, slug):
+    if request.method != 'POST':
+        return http.JsonResponse({'code': 400, 'error': 'Expecting a post'})
+
+    meeting = Meeting.objects.get(slug=slug)
+
+    zoom_host_id = request.session['zoom_user'].get('id')
+    if not zoom_host_id:
+        return http.JsonResponse({'code': 400, 'error': 'User not authenticated with Zoom'})
+    zoom_auth = ZoomUserToken.objects.get(zoom_user_id=zoom_host_id)
+    zoom_meeting_data = {
+        'topic': meeting.slug, #'TODO - meetings need a title first',
+        'type': 2,
+        'start_time': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
+        'settings': {
+            'approval_type': 0,
+            'registrants_confirmation_email': False,
+            'breakout_room': {
+                'enable': True,
+                'rooms': [ 
+                    { 
+                        'name': breakout.title,
+                        'participants': [user.email for user in breakout.registration_set.all()] 
+                    } 
+                    for breakout in meeting.breakout_set.all()
+                ]
+            }
+        }
+    }
+    logger.error(zoom_meeting_data)
+    resp = zoom_post(f'/users/{zoom_host_id}/meetings/', zoom_auth, zoom_meeting_data)
+    logger.error(resp.json())
+
+    # TODO register users
+
+    # update meeting object with zoom meeeting id
+    meeting.zoom_id = resp.get('id')
+    meeting.zoom_host_id = zoom_host_id
+    meeting.zoom_data = resp.json()
+    meetings.save()
+
+    # TODO send updated meeting via websocket connection
+
+    return http.JsonResponse({'code': 202, 'resp': resp.json()})
 
 
 @registration_required
