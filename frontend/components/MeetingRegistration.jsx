@@ -16,26 +16,25 @@ function RegistrationForm(props){
       console.log('error');
       return;
     }
-    props.onSubmit(`${emoji} ${name}`, email);
+    props.onSubmit(`${emoji} ${name}`, email, meetingTitle);
   }
   return (
     <form onSubmit={onSubmit} >
 
-    {!props.meeting.registrants.length && 
-    <div className="form-group">
-        <label htmlFor="nameInput">Meeting Title</label>
-        <input 
-          name="title"
-          required="True"
-          id="titleInput"
-          type="text"
-          className="form-control"
-          value={meetingTitle}
-          onChange={e => setMeetingTitle(e.target.value)}
-        />
-      </div>
-    }
-
+      {props.isHost && 
+      <div className="form-group">
+          <label htmlFor="nameInput">Meeting Title</label>
+          <input 
+            name="title"
+            required="True"
+            id="titleInput"
+            type="text"
+            className="form-control"
+            value={meetingTitle}
+            onChange={e => setMeetingTitle(e.target.value)}
+          />
+        </div>
+      }
 
       <div className="form-group">
         <p>Choose your icon</p>
@@ -48,7 +47,7 @@ function RegistrationForm(props){
         </div>
       </div>
       <div className="form-group">
-        <label htmlFor="nameInput">Name</label>
+        <label htmlFor="nameInput">Name (as it appears in Zoom)</label>
         <input 
           ref={setNameField}
           name="name"
@@ -75,7 +74,9 @@ function RegistrationForm(props){
           onChange={e => setEmail(e.target.value)} 
         />
       </div>
-      <button type="submit" className="btn btn-primary">Register</button>
+      <button type="submit" className="btn btn-primary">
+        {props.isHost ? 'Launch as Host' : 'Join'}
+      </button>
     </form>
   );
 }
@@ -87,7 +88,7 @@ export default function MeetingRegistration(props){
       meeting_id: props.meeting.zoom_id,
       email,
       name,
-      title,
+      title: title,
     };
     post(`/${props.meeting.slug}/register`, data).then(meeting => {
       if (meeting.code == '201'){
@@ -95,15 +96,16 @@ export default function MeetingRegistration(props){
       }
     });
   };
+  const isHost = !props.meeting.registrants.length;
 
   return (
     <div className="container-md flex-grow-1 d-flex flex-column">
       <div className="row flex-grow-1 d-flex flex-column">
         <div className="col-10 offset-1 col-md-6 offset-md-3 flex-grow-1 d-flex justify-content-around flex-column">
           <div>
-            <h2>{props.meeting.topic}</h2>
-            <hr/>
-            <RegistrationForm onSubmit={onSubmit} {...props} />
+                <h2>{isHost ? "Create an Unbreakout" : props.meeting.title}</h2>
+                <hr/>
+            <RegistrationForm onSubmit={onSubmit} isHost={isHost} {...props} />
           </div>
         </div>
       </div>

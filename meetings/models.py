@@ -9,6 +9,7 @@ class Meeting(models.Model):
     zoom_id = models.CharField(max_length=256, blank=True)
     zoom_host_id = models.CharField(max_length=256, blank=True)
     zoom_data = models.TextField()
+    title=models.CharField(max_length=256, blank=True)
     breakouts_frozen = models.BooleanField(default=False)
 
 
