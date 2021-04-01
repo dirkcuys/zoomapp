@@ -340,7 +340,7 @@ export default function Meeting(props) {
     left: mousePosition.x-15,
     opacity: (showPointer&&!props.meeting.breakouts_frozen)?0.6:0,
   };
-  // document.body.setAttribute('style', showBreakoutModal ? "position: fixed" : "");
+  showBreakoutModal ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'unset';
 
   return (
     <div>
