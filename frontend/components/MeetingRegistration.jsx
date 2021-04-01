@@ -51,6 +51,8 @@ function RegistrationForm(props){
           id="emailInput"
           type="email"
           className="form-control"
+          pattern="^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$"
+          title="The domain part of your email address doesn't seem right"
           value={email}
           onChange={e => setEmail(e.target.value)} 
         />
