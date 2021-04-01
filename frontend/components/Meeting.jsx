@@ -224,18 +224,26 @@ function Modal(props){
 
 function BreakoutModal(props){
   const [tabView, setTabView] = useState(0);
+  const close = () => {
+    post(`/${props.meeting.slug}/freeze`, {}); 
+    props.showModal(false);
+  }
+  
   return (
   <div className="modal" role="dialog">
     <div className="modal-dialog" role="document">
       <div className="modal-content align-middle">
         <div className="modal-body">
+        <button type="button" className="close" onClick={close} aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
           <h5 className="modal-title text-center">Transfer Breakouts to a Zoom Call</h5>
-          <ul class="nav nav-tabs justify-content-center">
-            <li class="nav-item">
-              <a class={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual Copy</a>
+          <ul className="nav nav-tabs justify-content-center">
+            <li className="nav-item">
+              <a className={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual Copy</a>
             </li>
-            <li class="nav-item">
-              <a class={tabView === 1 ? "nav-link active" : "nav-link"}  onClick={() => setTabView(1)} href="#">Pre-Populate in New Call</a>
+            <li className="nav-item">
+              <a className={tabView === 1 ? "nav-link active" : "nav-link"}  onClick={close} href="#">Pre-Populate in New Call</a>
             </li>
           </ul>
            <span> </span>
@@ -247,7 +255,7 @@ function BreakoutModal(props){
             }
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={() => props.showModal(false)} data-dismiss="modal">Done</button>
+          <button type="button" className="btn btn-secondary" onClick={() => close()} data-dismiss="modal">done</button>
         </div>
       </div>
     </div>
@@ -284,7 +292,7 @@ function BreakoutCard(props){
       <div id={id} className={collapsed ? "collapse hide" : "collapse show"} aria-labelledby="headingone" data-parent={props.dataParent} >
         <div className="card-body">
           <ul className="list-group list-group-flush">
-            {names.map(name => <li class="list-group-item">{name}</li>)}
+            {names.map(name => <li className="list-group-item">{name}</li>)}
           </ul>
         </div>
       </div>
@@ -314,6 +322,7 @@ export default function Meeting(props) {
             <StatusMessage {...props} />
           </div>
           <div className="col-md-6 order-0 order-md-1">
+            {/* TODO add meeting title */}
             <h1>{props.meeting.topic}</h1>
           </div>
           <div className="col-md-3 order-2 order-md-2">
