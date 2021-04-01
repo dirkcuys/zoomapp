@@ -21,7 +21,7 @@ function RegistrationForm(props){
   return (
     <form onSubmit={onSubmit} >
 
-      {!props.meeting.registrants.length && 
+      {props.isHost && 
       <div className="form-group">
           <label htmlFor="nameInput">Meeting Title</label>
           <input 
@@ -47,7 +47,7 @@ function RegistrationForm(props){
         </div>
       </div>
       <div className="form-group">
-        <label htmlFor="nameInput">Name</label>
+        <label htmlFor="nameInput">Name (as it appears in Zoom)</label>
         <input 
           ref={setNameField}
           name="name"
@@ -74,7 +74,9 @@ function RegistrationForm(props){
           onChange={e => setEmail(e.target.value)} 
         />
       </div>
-      <button type="submit" className="btn btn-primary">Register</button>
+      <button type="submit" className="btn btn-primary">
+        {props.isHost ? 'Launch as Host' : 'Join'}
+      </button>
     </form>
   );
 }
@@ -94,15 +96,16 @@ export default function MeetingRegistration(props){
       }
     });
   };
+  const isHost = !props.meeting.registrants.length;
 
   return (
     <div className="container-md flex-grow-1 d-flex flex-column">
       <div className="row flex-grow-1 d-flex flex-column">
         <div className="col-10 offset-1 col-md-6 offset-md-3 flex-grow-1 d-flex justify-content-around flex-column">
           <div>
-            <h2>{props.meeting.title}</h2>
-            <hr/>
-            <RegistrationForm onSubmit={onSubmit} {...props} />
+                <h2>{isHost ? "Create an Unbreakout" : props.meeting.title}</h2>
+                <hr/>
+            <RegistrationForm onSubmit={onSubmit} isHost={isHost} {...props} />
           </div>
         </div>
       </div>

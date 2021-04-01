@@ -243,7 +243,7 @@ function BreakoutModal(props){
               <a className={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual Copy</a>
             </li>
             <li className="nav-item">
-              <a className={tabView === 1 ? "nav-link active" : "nav-link"}  onClick={close} href="#">Pre-Populate in New Call</a>
+              <a className={tabView === 1 ? "nav-link active" : "nav-link"}  onClick={() => setTabView(1)} href="#">Pre-Populate in New Call</a>
             </li>
           </ul>
            <span> </span>
@@ -255,7 +255,7 @@ function BreakoutModal(props){
             }
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={() => close()} data-dismiss="modal">Done</button>
+          <button type="button" className="btn btn-secondary" onClick={close} data-dismiss="modal">Done</button>
         </div>
       </div>
     </div>
