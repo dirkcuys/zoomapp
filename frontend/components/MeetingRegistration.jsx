@@ -6,6 +6,7 @@ import {randomEmoji} from 'utils/emoji';
 function RegistrationForm(props){
   const [emoji, setEmoji] = useState(randomEmoji());
   const [email, setEmail] = useState('');
+  const [meetingTitle, setMeetingTitle] = useState('');
   const [name, setName] = useState('');
   const [nameField, setNameField] = useState(null);
   const [emailField, setEmailField] = useState(null);
@@ -19,6 +20,23 @@ function RegistrationForm(props){
   }
   return (
     <form onSubmit={onSubmit} >
+
+    {!props.meeting.registrants.length && 
+    <div className="form-group">
+        <label htmlFor="nameInput">Meeting Title</label>
+        <input 
+          name="title"
+          required="True"
+          id="titleInput"
+          type="text"
+          className="form-control"
+          value={meetingTitle}
+          onChange={e => setMeetingTitle(e.target.value)}
+        />
+      </div>
+    }
+
+
       <div className="form-group">
         <p>Choose your icon</p>
         <div className="d-flex align-items-center">
@@ -64,11 +82,12 @@ function RegistrationForm(props){
 
 
 export default function MeetingRegistration(props){
-  const onSubmit = (name, email) => {
+  const onSubmit = (name, email, title) => {
     let data = {
       meeting_id: props.meeting.zoom_id,
       email,
       name,
+      title,
     };
     post(`/${props.meeting.slug}/register`, data).then(meeting => {
       if (meeting.code == '201'){
