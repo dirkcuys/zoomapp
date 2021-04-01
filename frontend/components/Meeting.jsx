@@ -35,20 +35,17 @@ function AdminActions(props){
     props.showModal(true);
   }
 
-  const createZoomMeeting = () => {
-    post(`/${props.meeting.slug}/create_zoom_meeting`, {});
-  }
-
   const registrationUrl = `${document.location.origin}/m/${props.meeting.slug}`
   return (
     <div>
       <h5>Host controls</h5>
       <p>Registration link: <a href={registrationUrl}>{registrationUrl}</a></p>
       <hr/>
+      {!props.zoomUser && <p><a href={`/zoom/redirect?next=/m/${props.meeting.slug}`} className="btn">Link Your Zoom Account</a></p>}
+      {props.zoomUser && <p>Zoom Account Linked!</p>}
+      <hr/>
       <p><a onClick={clear} className="btn btn-primary">Clear Breakouts</a></p>
       <p><a onClick={transfer} className="btn btn-primary">Transfer to Zoom</a></p>
-      {!props.zoomUser && <p><a href={`/zoom/redirect?next=/m/${props.meeting.slug}`} className="btn btn-primary">Link Zoom</a></p>}
-      {props.zoomUser && <p><a onClick={createZoomMeeting} className="btn btn-primary">Create zoom meeting</a></p>}
     </div>
   );
 }
@@ -205,7 +202,7 @@ function StatusMessage(props){
   const breakouts_frozen = props.meeting.breakouts_frozen;
   return (
     <div className={`p-2${breakouts_frozen?' breakouts-frozen':''}`}>
-      <strong>{!breakouts_frozen?'Welcome!':'Thanks for joining!'}</strong>
+      <strong>{!breakouts_frozen?'Welcome!':'The host has frozen breakouts.'}</strong>
       <p className="m-0">{!breakouts_frozen?'Please join a room by clicking on the room or add your own room':'Please wait for the host to open breakouts on Zoom.'}</p>
     </div>
   );
@@ -215,7 +212,7 @@ function Modal(props){
   return (
     <div className="modal">
       <div className="modal-body">
-        <h2>Thanks for joining!</h2>
+        <h2>The host has frozen breakouts.</h2>
         <p>Please wait for the host to open breakouts on Zoom.</p>
       </div>
     </div>
@@ -251,7 +248,7 @@ function BreakoutModal(props){
             {(tabView === 0 &&
                 <BreakoutList {...props} />)
             || (tabView === 1 &&
-                null)
+                <ZoomPanel {...props}/>)
             }
         </div>
         <div className="modal-footer">
@@ -263,14 +260,46 @@ function BreakoutModal(props){
   );
 }
 
+function ZoomPanel(props){
+  const createZoomMeeting = () => {
+    post(`/${props.meeting.slug}/create_zoom_meeting`, {});
+  }
+
+  return (
+    <div>
+      {!props.zoomUser && 
+        <div>
+          <p>You'll need to authenticate with your Zoom account before we can create a call for you.</p>
+          <span></span>
+          <div className="text-center">
+            <p><a href={`/zoom/redirect?next=/m/${props.meeting.slug}`} className="btn btn-primary justify-content-center">Link Your Zoom Account</a></p>
+          </div>
+        </div>
+      }
+      {props.zoomUser && 
+        <div>
+          <p>Unbreakout will create a new Zoom call with the breakouts pre-populated, and will give links to your participants to join.</p>
+          <span></span>
+          <div className="text-center">
+            {props.zoomUser && <p><a onClick={createZoomMeeting} className="btn btn-primary">Create Meeting</a></p>}
+          </div>
+        </div>
+      }
+    </div>
+  );
+}
+
 function BreakoutList(props){
   const {breakouts = []} = props.meeting;
   return (
     <div className="accordion" id="accordion">
       <p>If you’re not connected to Zoom or don’t want participants to move calls, manually open breakouts and copy them from here.</p>
-      { breakouts.map( breakout => 
-        <BreakoutCard dataParent="accordion" key={breakout.id} breakout={breakout} {...props} /> 
-      )}
+      <span></span>
+      {breakouts.length
+        ? breakouts.map( breakout => 
+          <BreakoutCard dataParent="accordion" key={breakout.id} breakout={breakout} {...props} />)
+        : <p className="text-center">No breakouts to display!</p>
+      }
     </div>
   );
 }
