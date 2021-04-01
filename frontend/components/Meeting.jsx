@@ -43,6 +43,8 @@ function AdminActions(props){
       <hr/>
       <p><a onClick={clear} className="btn btn-primary">Clear Breakouts</a></p>
       <p><a onClick={transfer} className="btn btn-primary">Transfer to Zoom</a></p>
+      {!props.zoomUser && <p><a href={`/zoom/redirect?next=/m/${props.meeting.slug}`} className="btn btn-primary">Link Zoom</a></p>}
+      {props.zoomUser && <p><a className="btn btn-primary">Link meeting</a></p>}
     </div>
   );
 }
