@@ -35,6 +35,10 @@ function AdminActions(props){
     props.showModal(true);
   }
 
+  const createZoomMeeting = () => {
+    post(`/${props.meeting.slug}/create_zoom_meeting`, {});
+  }
+
   const registrationUrl = `${document.location.origin}/${props.meeting.short_code}`
   return (
     <div>
@@ -44,7 +48,7 @@ function AdminActions(props){
       <p><a onClick={clear} className="btn btn-primary">Clear Breakouts</a></p>
       <p><a onClick={transfer} className="btn btn-primary">Transfer to Zoom</a></p>
       {!props.zoomUser && <p><a href={`/zoom/redirect?next=/m/${props.meeting.slug}`} className="btn btn-primary">Link Zoom</a></p>}
-      {props.zoomUser && <p><a className="btn btn-primary">Link meeting</a></p>}
+      {props.zoomUser && <p><a onClick={createZoomMeeting} className="btn btn-primary">Create zoom meeting</a></p>}
     </div>
   );
 }
