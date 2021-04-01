@@ -57,7 +57,7 @@ def unbreakout(request, slug):
         'react_props': {
             'zoomUser': request.session.get('zoom_user'),
             'userRegistration': user_registration or None,
-            'meeting': meeting_json
+            'meeting': meeting_json,
         }
     }
     return render(request, 'meetings/app.html', context)
@@ -94,6 +94,8 @@ def register(request, slug):
     if Registration.objects.filter(meeting=meeting).count() == 1:
         registration.is_host = True
         registration.save()
+    
+    # TODO if user is host, also use title and update meeting
 
     request.session['user_registration'] = registration.email
 
@@ -106,7 +108,6 @@ def register(request, slug):
             'message': {'type': 'SET_REGISTRANTS', 'payload': list(map(serialize_registration, meeting.registration_set.all())) }
         }
     )
-
     return http.JsonResponse({'code': 201, 'registration': serialize_registration(registration)})
 
 
@@ -207,14 +208,15 @@ def create_zoom_meeting(request, slug):
     logger.error(zoom_meeting_data)
     resp = zoom_post(f'/users/{zoom_host_id}/meetings/', zoom_auth, zoom_meeting_data)
     logger.error(resp.json())
+    api_data = resp.json()
 
     # TODO register users
 
     # update meeting object with zoom meeeting id
-    meeting.zoom_id = resp.get('id')
+    meeting.zoom_id = api_data.get('id')
     meeting.zoom_host_id = zoom_host_id
-    meeting.zoom_data = resp.json()
-    meetings.save()
+    meeting.zoom_data = api_data
+    meeting.save()
 
     # TODO send updated meeting via websocket connection
 
