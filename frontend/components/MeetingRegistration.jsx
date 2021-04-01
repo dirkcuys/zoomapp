@@ -16,26 +16,25 @@ function RegistrationForm(props){
       console.log('error');
       return;
     }
-    props.onSubmit(`${emoji} ${name}`, email);
+    props.onSubmit(`${emoji} ${name}`, email, meetingTitle);
   }
   return (
     <form onSubmit={onSubmit} >
 
-    {!props.meeting.registrants.length && 
-    <div className="form-group">
-        <label htmlFor="nameInput">Meeting Title</label>
-        <input 
-          name="title"
-          required="True"
-          id="titleInput"
-          type="text"
-          className="form-control"
-          value={meetingTitle}
-          onChange={e => setMeetingTitle(e.target.value)}
-        />
-      </div>
-    }
-
+      {!props.meeting.registrants.length && 
+      <div className="form-group">
+          <label htmlFor="nameInput">Meeting Title</label>
+          <input 
+            name="title"
+            required="True"
+            id="titleInput"
+            type="text"
+            className="form-control"
+            value={meetingTitle}
+            onChange={e => setMeetingTitle(e.target.value)}
+          />
+        </div>
+      }
 
       <div className="form-group">
         <p>Choose your icon</p>
@@ -87,7 +86,7 @@ export default function MeetingRegistration(props){
       meeting_id: props.meeting.zoom_id,
       email,
       name,
-      title,
+      title: title,
     };
     post(`/${props.meeting.slug}/register`, data).then(meeting => {
       if (meeting.code == '201'){
@@ -101,7 +100,7 @@ export default function MeetingRegistration(props){
       <div className="row flex-grow-1 d-flex flex-column">
         <div className="col-10 offset-1 col-md-6 offset-md-3 flex-grow-1 d-flex justify-content-around flex-column">
           <div>
-            <h2>{props.meeting.topic}</h2>
+            <h2>{props.meeting.title}</h2>
             <hr/>
             <RegistrationForm onSubmit={onSubmit} {...props} />
           </div>

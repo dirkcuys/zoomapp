@@ -94,9 +94,9 @@ def register(request, slug):
     if Registration.objects.filter(meeting=meeting).count() == 1:
         registration.is_host = True
         registration.save()
+        meeting.title = json_data.get('title')
+        meeting.save()
     
-    # TODO if user is host, also use title and update meeting
-
     request.session['user_registration'] = registration.email
 
     # Send message to room group

@@ -301,6 +301,7 @@ function BreakoutCard(props){
 }
 
 export default function Meeting(props) {
+  console.log(props);
   const {breakouts = []} = props.meeting;
   const [showPointer, setShowPointer] = useState(false);
   const [showBreakoutModal, setShowModal] = useState(false);
@@ -323,7 +324,7 @@ export default function Meeting(props) {
           </div>
           <div className="col-md-6 order-0 order-md-1">
             {/* TODO add meeting title */}
-            <h1>{props.meeting.topic}</h1>
+            <h1>{props.meeting.title}</h1>
           </div>
           <div className="col-md-3 order-2 order-md-2">
             <UserProfile {...props} />
