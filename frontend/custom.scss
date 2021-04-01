@@ -40,6 +40,7 @@ h1 {
   height: 100vh;
   background-color: #555c;
   display: block;
+  overflow-y: scroll;
 }
 
 .breakouts-frozen {
@@ -52,6 +53,14 @@ h1 {
   padding: 0.5em;
   border-radius: 5px;
   min-height: 100px;
+  margin-bottom: 1em;
+}
+
+.nav {
+  margin-bottom: 1em;
+}
+
+.modal-title {
   margin-bottom: 1em;
 }
 
