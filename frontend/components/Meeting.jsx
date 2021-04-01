@@ -39,7 +39,7 @@ function AdminActions(props){
     post(`/${props.meeting.slug}/create_zoom_meeting`, {});
   }
 
-  const registrationUrl = `${document.location.origin}/${props.meeting.short_code}`
+  const registrationUrl = `${document.location.origin}/m/${props.meeting.slug}`
   return (
     <div>
       <h5>Host controls</h5>
