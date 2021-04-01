@@ -255,7 +255,7 @@ function BreakoutModal(props){
             }
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={() => close()} data-dismiss="modal">done</button>
+          <button type="button" className="btn btn-secondary" onClick={() => close()} data-dismiss="modal">Done</button>
         </div>
       </div>
     </div>
