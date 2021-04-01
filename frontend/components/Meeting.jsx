@@ -121,7 +121,7 @@ function Breakout(props){
 
 
 function calcRegistrantAttrs(nX, nY, pX, pY, destX, destY, destW, destH){
-  const [offsetX, offsetY] = [-30, -30];
+  const [offsetX, offsetY] = [-21, -22];
   const x = offsetX + destX + nX/100*destW;
   const y = offsetY + destY + nY/100*destH - pY; // col has position: relative
   /*if (user.breakout_id){
@@ -263,21 +263,6 @@ function BreakoutList(props){
       { breakouts.map( breakout => 
         <BreakoutCard dataParent="accordion" key={breakout.id} breakout={breakout} {...props} /> 
       )}
-      {/* <div className="card">
-        <div className="card-header" id="headingone">
-          <h2 className="mb-0">
-            <button className="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseone" aria-expanded="true" aria-controls="collapseone">
-              collapsible group item #1
-            </button>
-          </h2>
-        </div>
-
-        <div id="collapseone" className="collapse" aria-labelledby="headingone" data-parent="#accordionexample">
-          <div className="card-body">
-            some placeholder content for the first accordion panel. this panel is shown by default, thanks to the <code>.show</code> class.
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 }
@@ -313,46 +298,48 @@ export default function Meeting(props) {
   const [showBreakoutModal, setShowModal] = useState(false);
   const [mousePosition, setMousePosition] = useState({x:0, y:0});
   const style = {
-    top: mousePosition.y-25,
-    left: mousePosition.x-25,
+    top: mousePosition.y-20,
+    left: mousePosition.x-15,
     opacity: (showPointer&&!props.meeting.breakouts_frozen)?0.6:0,
   };
-  document.body.setAttribute('style', showBreakoutModal ? "position: fixed" : "");
+  // document.body.setAttribute('style', showBreakoutModal ? "position: fixed" : "");
 
   return (
-    <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
+    <div>
       {showBreakoutModal ? <BreakoutModal showModal={setShowModal} {...props} /> : null}
-      <span className="ghost" style={style} onMouseOver={() => setShowPointer(true)} onMouseOut={()=> setShowPointer(false)}>{props.userRegistration.name.split(' ')[0]}</span>
-      <div className="row d-flex align-items-center mb-3">
-        <div className="col-md-3 order-1 order-md-0">
-          <StatusMessage {...props} />
-        </div>
-        <div className="col-md-6 order-0 order-md-1">
-          <h1>{props.meeting.topic}</h1>
-        </div>
-        <div className="col-md-3 order-2 order-md-2">
-          <UserProfile {...props} />
-        </div>
-      </div>
-      <div className="row flex-grow-1">
-        <div className="col-md-3 d-flex flex-column">
-          <div className="lobby flex-grow-1" onMouseOver={() => setShowPointer(true)} onMouseOut={()=> setShowPointer(false)}>
-            <Registrants {...props} />
+      <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
+        <span className="ghost" style={style} onMouseOver={() => setShowPointer(true)} onMouseOut={()=> setShowPointer(false)}>{props.userRegistration.name.split(' ')[0]}</span>
+        <div className="row d-flex align-items-center mb-3">
+          <div className="col-md-3 order-1 order-md-0">
+            <StatusMessage {...props} />
           </div>
-          <div className="participant-count">
-            <p>Total participants ({props.meeting.registrants.length})</p>
+          <div className="col-md-6 order-0 order-md-1">
+            <h1>{props.meeting.topic}</h1>
+          </div>
+          <div className="col-md-3 order-2 order-md-2">
+            <UserProfile {...props} />
           </div>
         </div>
-        <div className="col-md-6 d-flex flex-column">
-          <BreakoutForm {...props} />
-          <div id="breakout-list-container" className="flex-grow-1">
-            <div className="breakout-list w-100">
-              { breakouts.map( breakout => <Breakout key={breakout.id} breakout={breakout} {...props} showPointer={setShowPointer} /> )}
+        <div className="row flex-grow-1">
+          <div className="col-md-3 d-flex flex-column">
+            <div className="lobby flex-grow-1" onMouseOver={() => setShowPointer(true)} onMouseOut={()=> setShowPointer(false)}>
+              <Registrants {...props} />
+            </div>
+            <div className="participant-count">
+              <p>Total participants ({props.meeting.registrants.length})</p>
             </div>
           </div>
-        </div>
-        <div className="col-md-3">
-          { props.userRegistration.is_host && <AdminActions showModal={setShowModal} {...props} /> }
+          <div className="col-md-6 d-flex flex-column">
+            <BreakoutForm {...props} />
+            <div id="breakout-list-container" className="flex-grow-1">
+              <div className="breakout-list w-100">
+                { breakouts.map( breakout => <Breakout key={breakout.id} breakout={breakout} {...props} showPointer={setShowPointer} /> )}
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3">
+            { props.userRegistration.is_host && <AdminActions showModal={setShowModal} {...props} /> }
+          </div>
         </div>
       </div>
     </div>
