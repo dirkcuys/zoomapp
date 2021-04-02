@@ -21,7 +21,7 @@
   - role: build-docker-image
     vars:
       GIT_REPO: https://github.com/mitmedialab/unbreakout.git
-      CODE_VERSION: "master"
+      CODE_VERSION: "release"
     tags: ['django-app']
   - role: django-app
     tags: ['django-app']
