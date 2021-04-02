@@ -15,12 +15,11 @@ def serialize_breakout(breakout):
 
 
 def serialize_meeting(meeting):
-    # TODO replace topic with title stored in model
     return {
         'zoom_id': meeting.zoom_id,
         'slug': meeting.slug,
         'short_code': meeting.short_code,
-        'topic': json.loads(meeting.zoom_data).get('topic'),
+        'title': meeting.title,
         'breakouts': list(map(serialize_breakout, meeting.breakout_set.all().order_by('pk'))),
         'breakouts_frozen': meeting.breakouts_frozen,
         'registrants': list(map(serialize_registration, meeting.registration_set.all())),
