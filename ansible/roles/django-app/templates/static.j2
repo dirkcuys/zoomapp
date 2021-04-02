@@ -21,3 +21,7 @@ location /media/ {
     autoindex on;    
     root   /var/www/extra/{{DOMAIN}};
 }
+
+location /zoomverify/verifyzoom.html {
+    return 200 "a5d69be7c478490a8371d9369a6096fd";
+}
