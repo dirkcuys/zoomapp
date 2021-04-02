@@ -6,6 +6,7 @@ import {randomEmoji} from 'utils/emoji';
 function RegistrationForm(props){
   const [emoji, setEmoji] = useState(randomEmoji());
   const [email, setEmail] = useState('');
+  const [meetingTitle, setMeetingTitle] = useState('');
   const [name, setName] = useState('');
   const [nameField, setNameField] = useState(null);
   const [emailField, setEmailField] = useState(null);
@@ -15,10 +16,26 @@ function RegistrationForm(props){
       console.log('error');
       return;
     }
-    props.onSubmit(`${emoji} ${name}`, email);
+    props.onSubmit(`${emoji} ${name}`, email, meetingTitle);
   }
   return (
     <form onSubmit={onSubmit} >
+
+      {props.isHost && 
+      <div className="form-group">
+          <label htmlFor="nameInput">Meeting Title</label>
+          <input 
+            name="title"
+            required="True"
+            id="titleInput"
+            type="text"
+            className="form-control"
+            value={meetingTitle}
+            onChange={e => setMeetingTitle(e.target.value)}
+          />
+        </div>
+      }
+
       <div className="form-group">
         <p>Choose your icon</p>
         <div className="d-flex align-items-center">
@@ -30,7 +47,7 @@ function RegistrationForm(props){
         </div>
       </div>
       <div className="form-group">
-        <label htmlFor="nameInput">Name</label>
+        <label htmlFor="nameInput">Name (as it appears in Zoom)</label>
         <input 
           ref={setNameField}
           name="name"
@@ -51,58 +68,44 @@ function RegistrationForm(props){
           id="emailInput"
           type="email"
           className="form-control"
+          pattern="^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$"
+          title="The domain part of your email address doesn't seem right"
           value={email}
           onChange={e => setEmail(e.target.value)} 
         />
       </div>
-      <button type="submit" className="btn btn-primary">Register</button>
+      <button type="submit" className="btn btn-primary">
+        {props.isHost ? 'Launch as Host' : 'Join'}
+      </button>
     </form>
   );
 }
 
-function RegistrationInfo(props){
-  const {userRegistration} = props;
-  return (
-    <div>
-      <p>Thank you for registering!</p>
-      <p>Your ID for this meeting is:</p>
-      <div className="d-flex p-2 pt-3 pb-3 bg-light mb-5 align-items-center">
-        <div className="avatar profile me mr-2">{userRegistration.name.split(' ')[0]}</div>
-        <strong className="flex-grow-1">{userRegistration.name.split(' ').slice(1).join(' ')}</strong>
-      </div>
-      <p>
-        <a className="btn btn-primary" href={userRegistration.join_url}>Join meeting on Zoom</a>
-      </p>
-    </div>
-  );
-}
 
 export default function MeetingRegistration(props){
-  const [userRegistration, setUserRegistration] = useState(props.userRegistration);
-
-  const onSubmit = (name, email) => {
+  const onSubmit = (name, email, title) => {
     let data = {
       meeting_id: props.meeting.zoom_id,
       email,
       name,
+      title: title,
     };
     post(`/${props.meeting.slug}/register`, data).then(meeting => {
       if (meeting.code == '201'){
-        //TODO pass request through redux + update state of userRegistration on success
-        setUserRegistration(meeting.registration);
+        location.reload();
       }
     });
   };
+  const isHost = !props.meeting.registrants.length;
 
   return (
     <div className="container-md flex-grow-1 d-flex flex-column">
       <div className="row flex-grow-1 d-flex flex-column">
         <div className="col-10 offset-1 col-md-6 offset-md-3 flex-grow-1 d-flex justify-content-around flex-column">
           <div>
-            <h2>{props.meeting.topic}</h2>
-            <hr/>
-            {!userRegistration && <RegistrationForm onSubmit={onSubmit} {...props} />}
-            {userRegistration && <RegistrationInfo {...props} userRegistration={userRegistration} />}
+                <h2>{isHost ? "Create an Unbreakout" : props.meeting.title}</h2>
+                <hr/>
+            <RegistrationForm onSubmit={onSubmit} isHost={isHost} {...props} />
           </div>
         </div>
       </div>

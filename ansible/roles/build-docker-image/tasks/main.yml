@@ -7,8 +7,8 @@
 - name: get code from git
   git: 
     dest: /usr/local/src/unbreakout
-    repo: https://github.com/dirkcuys/unbreakout.git
-    version: "master"
+    repo: "{{GIT_REPO}}" 
+    version: "{{CODE_VERSION}}"
 
 - name: Build docker image
   docker_image:

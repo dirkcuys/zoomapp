@@ -1,10 +1,10 @@
 ---
-- name: unbreakout
-  hosts: unbreakout
+- name: unbreakout-unzoom
+  hosts: unbreakout-unzoom
   become: yes
   become_method: sudo
   vars_files: 
-  - vars/unbreakout.media.mit.edu.yml
+  - vars/unbreakout.unhangout.io.yml
   roles:
   - common
   - users
@@ -21,9 +21,7 @@
   - role: build-docker-image
     vars:
       GIT_REPO: https://github.com/mitmedialab/unbreakout.git
-      CODE_VERSION: "release"
+      CODE_VERSION: "unzoom"
     tags: ['django-app']
   - role: django-app
     tags: ['django-app']
-
-
