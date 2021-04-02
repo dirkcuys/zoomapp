@@ -34,7 +34,6 @@ def create(request):
     # check that this is a HTTP POST
     if request.method != 'POST':
         return ''
-    # TODO generate a title for the meeting
 
     # create and save db object and redirect user to meeting page
     short_code = "".join([random.choice(string.digits+string.ascii_letters) for i in range(6)])
@@ -94,6 +93,7 @@ def register(request, slug):
     if Registration.objects.filter(meeting=meeting).count() == 1:
         registration.is_host = True
         registration.save()
+        # and set title
         meeting.title = json_data.get('title')
         meeting.save()
     
@@ -120,10 +120,7 @@ def _ws_update_meeting(meeting):
             'type': 'meeting_message',
             'message': {
                 'type': 'UPDATE_MEETING', 
-                'payload': {
-                    'breakouts': list(map(serialize_breakout, meeting.breakout_set.all().order_by('pk'))),
-                    'registrants': list(map(serialize_registration, meeting.registration_set.all())),
-                }
+                'payload': serialize_meeting(meeting),
             }
         }
     )
@@ -187,7 +184,7 @@ def create_zoom_meeting(request, slug):
         return http.JsonResponse({'code': 400, 'error': 'User not authenticated with Zoom'})
     zoom_auth = ZoomUserToken.objects.get(zoom_user_id=zoom_host_id)
     zoom_meeting_data = {
-        'topic': meeting.slug, #'TODO - meetings need a title first',
+        'topic': meeting.title,
         'type': 2,
         'start_time': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
         'settings': {
@@ -210,6 +207,12 @@ def create_zoom_meeting(request, slug):
     logger.error(resp.json())
     api_data = resp.json()
 
+    # update meeting object with zoom meeeting id
+    meeting.zoom_id = api_data.get('id')
+    meeting.zoom_host_id = zoom_host_id
+    meeting.zoom_data = api_data
+    meeting.save()
+
     # register users
     # TODO this should be done async
     for user in meeting.registration_set.all():
@@ -220,16 +223,9 @@ def create_zoom_meeting(request, slug):
         resp = zoom_post(f'/meetings/{meeting.zoom_id}/registrants', zoom_auth, registration_data)
         logger.error(resp.json())
         zoom_registration = resp.json()
-        user.registrant_id = zoom_registration.get('registrant_id')
+        user.registrant_id = zoom_registration.get('registrant_id', '')
         user.zoom_data = json.dumps(zoom_registration)
         user.save()
-
-
-    # update meeting object with zoom meeeting id
-    meeting.zoom_id = api_data.get('id')
-    meeting.zoom_host_id = zoom_host_id
-    meeting.zoom_data = api_data
-    meeting.save()
 
     # send updated meeting via websocket connection
     _ws_update_meeting(meeting)

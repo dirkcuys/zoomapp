@@ -12,6 +12,9 @@ class Meeting(models.Model):
     title=models.CharField(max_length=256, blank=True)
     breakouts_frozen = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f'[{self.slug}] {self.title}'
+
 
 class Breakout(models.Model):
     meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
@@ -36,4 +39,7 @@ class Registration(models.Model):
     # TODO remove below
     call_joined_at = models.DateTimeField(blank=True, null=True)
     call_left_at = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
