@@ -210,7 +210,20 @@ def create_zoom_meeting(request, slug):
     logger.error(resp.json())
     api_data = resp.json()
 
-    # TODO register users
+    # register users
+    # TODO this should be done async
+    for user in meeting.registration_set.all():
+        registration_data = {
+            "email": user.email,
+            'first_name': user.name
+        }
+        resp = zoom_post(f'/meetings/{meeting.zoom_id}/registrants', zoom_auth, registration_data)
+        logger.error(resp.json())
+        zoom_registration = resp.json()
+        user.registrant_id = zoom_registration.get('registrant_id')
+        user.zoom_data = json.dumps(zoom_registration)
+        user.save()
+
 
     # update meeting object with zoom meeeting id
     meeting.zoom_id = api_data.get('id')
@@ -218,7 +231,8 @@ def create_zoom_meeting(request, slug):
     meeting.zoom_data = api_data
     meeting.save()
 
-    # TODO send updated meeting via websocket connection
+    # send updated meeting via websocket connection
+    _ws_update_meeting(meeting)
 
     return http.JsonResponse({'code': 202, 'resp': resp.json()})
 
