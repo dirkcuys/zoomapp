@@ -14,7 +14,14 @@ function App(props) {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return {...state}
+  let user = state.userRegistration;
+  if (user) {
+    // get latest state for user registration and replace prop with that
+    let users = state.meeting.registrants.filter(user => user.id == state.userRegistration.id);
+    user = users.pop();
+  }
+
+  return {...state, userRegistration: user}
 }
 
 const Appa = connect(mapStateToProps, null)(App)

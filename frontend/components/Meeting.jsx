@@ -199,11 +199,14 @@ function Registrants(props){
 }
 
 function StatusMessage(props){
-  const breakouts_frozen = props.meeting.breakouts_frozen;
+  const {breakouts_frozen} = props.meeting;
   return (
     <div className={`p-2${breakouts_frozen?' breakouts-frozen':''}`}>
       <strong>{!breakouts_frozen?'Welcome!':'The host has frozen breakouts.'}</strong>
       <p className="m-0">{!breakouts_frozen?'Please join a room by clicking on the room or add your own room':'Please wait for the host to open breakouts on Zoom.'}</p>
+      { breakouts_frozen && props.userRegistration.join_url && 
+        <p><a href={props.userRegistration.join_url}>Join meeting</a></p>
+      }
     </div>
   );
 }
@@ -213,7 +216,13 @@ function Modal(props){
     <div className="modal">
       <div className="modal-body">
         <h2>The host has frozen breakouts.</h2>
-        <p>Please wait for the host to open breakouts on Zoom.</p>
+        { !props.userRegistration.join_url &&
+            <p>Please wait for the host to open breakouts on Zoom.</p>
+        }
+        { props.userRegistration.join_url &&
+            <p>Join the new meeting on <a href={props.userRegistration.join_url}>zoom</a></p>
+        }
+
       </div>
     </div>
   );
@@ -281,7 +290,11 @@ function ZoomPanel(props){
           <p>Unbreakout will create a new Zoom call with the breakouts pre-populated, and will give links to your participants to join.</p>
           <span></span>
           <div className="text-center">
-            {props.zoomUser && <p><a onClick={createZoomMeeting} className="btn btn-primary">Create Meeting</a></p>}
+            {!props.meeting.zoom_id && <p><a onClick={createZoomMeeting} className="btn btn-primary">Create Meeting</a></p>}
+            { 
+              props.meeting.zoom_id && 
+              <p><a className="btn btn-primary">Start Zoom Call</a></p>
+            }
           </div>
         </div>
       }
