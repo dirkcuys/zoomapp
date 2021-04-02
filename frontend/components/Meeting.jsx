@@ -41,9 +41,11 @@ function AdminActions(props){
       <h5>Host controls</h5>
       <p>Registration link: <a href={registrationUrl}>{registrationUrl}</a></p>
       <hr/>
-      {!props.zoomUser && <p><a href={`/zoom/redirect?next=/m/${props.meeting.slug}`} className="btn">Link Your Zoom Account</a></p>}
-      {props.zoomUser && <p>Zoom Account Linked!</p>}
-      <hr/>
+      {props.zoomUser && 
+        <div>
+          <p>Zoom Account Linked!</p>
+          <hr/>
+        </div>}
       <p><a onClick={clear} className="btn btn-primary">Clear Breakouts</a></p>
       <p><a onClick={transfer} className="btn btn-primary">Transfer to Zoom</a></p>
     </div>
@@ -249,7 +251,10 @@ function BreakoutModal(props){
               <a className={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual Copy</a>
             </li>
             <li className="nav-item">
-              <a className={tabView === 1 ? "nav-link active" : "nav-link"}  onClick={() => setTabView(1)} href="#">Pre-Populate in New Call</a>
+              <a className={(props.zoomUser ? " " : "disabled ") + (tabView === 1 ? "nav-link active" : "nav-link")} 
+                onClick={() => setTabView(1)} href="#">
+                  Pre-Populate in New Call
+              </a>
             </li>
           </ul>
            <span> </span>
