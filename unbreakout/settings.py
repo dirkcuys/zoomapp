@@ -165,6 +165,9 @@ CHANNEL_LAYERS = {
     },
 }
 
+####### Celery config #######
+BROKER_URL = env("BROKER_URL", "redis://localhost:6379/0")
+
 ####### Django Webpack Loader config #######
 WEBPACK_LOADER = {
     'DEFAULT': {

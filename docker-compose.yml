@@ -32,6 +32,7 @@ services:
     command: sh -c "npm i && npm run start"
   django:
     build: .
+    image: unbreakout:local
     env_file: docker.env
     environment:
     - REDIS_HOST=redis
@@ -44,8 +45,28 @@ services:
     - postgres
     - node
     - redis
+    - celery
     networks:
     - unbreakout
     command: /opt/app-venv/bin/python manage.py runserver 0.0.0.0:8000
+  celery:
+    image: unbreakout:local
+    depends_on:
+    - redis
+    - postgres
+    - email
+    user: celery
+    volumes:
+    - .:/opt/app
+    working_dir: /opt/app
+    env_file: docker.env
+    environment:
+    - REDIS_HOST=redis
+    - DATABASE_URL=postgres://unbreakout:password@postgres:5432/unbreakout
+    - BROKER_URL=redis://redis:6379/0
+    networks:
+    - unbreakout
+    command: /opt/app-venv/bin/celery -A unbreakout worker --loglevel INFO
+
 networks:
   unbreakout:
