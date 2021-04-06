@@ -242,7 +242,7 @@ function BreakoutModal(props){
   
   return (
   <div className="modal" role="dialog">
-    <div className="modal-dialog" role="document">
+    <div className="modal-dialog modal-dialog-centered" role="document">
       <div className="modal-content align-middle">
         <div className="modal-body">
         <button type="button" className="close" onClick={close} aria-label="Close">
