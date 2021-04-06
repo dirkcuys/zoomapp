@@ -48,6 +48,9 @@ function AdminActions(props){
         </div>}
       <p><a onClick={clear} className="btn btn-primary">Clear Breakouts</a></p>
       <p><a onClick={transfer} className="btn btn-primary">Transfer to Zoom</a></p>
+      <hr/>
+      <p><a href="{% url 'docs' %}" target="_blank">How to use Unbreakout</a></p>
+      <hr/>
     </div>
   );
 }
