@@ -46,7 +46,7 @@ function AdminActions(props){
           <hr/>
         </div>}
       <p><a onClick={clear} className="btn btn-primary">Clear Breakouts</a></p>
-      <p><a onClick={transfer} className="btn btn-primary">Transfer to Zoom</a></p>
+      <p><a onClick={transfer} className="btn btn-primary">Freeze and Transfer</a></p>
       <hr/>
       <p><a href="{% url 'docs' %}" target="_blank">How to use Unbreakout</a></p>
       <hr/>
@@ -294,11 +294,16 @@ function CallCreateTab(props){
             <p>Unbreakout will create a new Zoom call with the breakouts pre-populated, and will give links to your participants to join.</p>
             <span></span>
             <div className="text-center">
-              {!props.meeting.zoom_id && <p><a onClick={createZoomMeeting} className="btn btn-primary">Create Meeting</a></p>}
-              { 
-                props.meeting.zoom_id && 
+
+              {!props.meeting.zoom_id && 
+                <div>
+                  {props.noBreakouts && <p className="text-center"><i>No breakouts to display or all breakouts are empty!</i></p>}
+                  <p><a onClick={createZoomMeeting} className={"btn btn-primary" + (props.noBreakouts ? ' disabled': "")}>Create Meeting</a></p>
+                </div>}
+              { props.meeting.zoom_id && 
+                <div>
                 <p><a className="btn btn-primary">Start Zoom Call</a></p>
-              }
+                </div>}
             </div>
           </div>
         }
@@ -312,21 +317,32 @@ function CallCreateTab(props){
 
 function ManualBreakoutTab(props){
   const {breakouts = []} = props.meeting;
+  // TODO: Change state in some way to let participants know to return to the main zoom call
+  const transfer = () => {
+
+  }
   return (
     <div>
       <div className="modal-body">
         <div className="accordion" id="accordion">
-          <p>If you’re not connected to Zoom or don’t want participants to move calls, manually open breakouts and copy them from here.</p>
+          <p>If you’re not connected to Zoom or don’t want participants to move calls, <strong>manually create breakouts</strong> and copy them from here.</p>
+          <p>When you press <strong>"Transfer Breakouts"</strong>, your participants will be prompted to return to your call.</p>
           <span></span>
-          {breakouts.length
-            ? breakouts.map( breakout => 
+          {props.noBreakouts
+            ? <p className="text-center"><i>No breakouts to display or all breakouts are empty!</i></p>
+            : breakouts.map( breakout => 
               <BreakoutCard dataParent="accordion" key={breakout.id} breakout={breakout} {...props} />)
-            : <p className="text-center">No breakouts to display!</p>
           }
         </div>
       </div>
       <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" onClick={close} data-dismiss="modal">Done</button>
+        <button type="button" className="btn btn-secondary" onClick={props.close} data-dismiss="modal">
+          Cancel
+        </button>
+        <button type="button" className={"btn btn-primary" + (props.noBreakouts ? ' disabled': "")}
+          onClick={transfer} data-dismiss="modal">
+          Transfer Participants
+        </button>
       </div>
     </div>
   );
@@ -363,6 +379,9 @@ export default function Meeting(props) {
   const transferring = props.meeting.breakouts_frozen;
   const [showPointer, setShowPointer] = useState(false);
   const [mousePosition, setMousePosition] = useState({x:0, y:0});
+  const noBreakouts = breakouts.reduce(
+    (accumulator, currentValue ) => accumulator + currentValue.participants.length, 0)
+    == 0;
   const style = {
     top: mousePosition.y-20,
     left: mousePosition.x-15,
@@ -372,7 +391,7 @@ export default function Meeting(props) {
 
   return (
     <div>
-      {props.meeting.breakouts_frozen  && <Modal {...props} />}
+      {props.meeting.breakouts_frozen  && <Modal noBreakouts={noBreakouts} {...props} />}
       <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
         <span className="ghost" style={style} onMouseOver={() => setShowPointer(true)} onMouseOut={()=> setShowPointer(false)}>{props.userRegistration.name.split(' ')[0]}</span>
         <div className="row d-flex align-items-center mb-3">
