@@ -45,7 +45,18 @@ h1 {
 
 .modal-dialog{
   max-width:100%;
+}
+
+.modal-dialog-host{
   width: 70%;
+}
+
+.modal-dialog-guest{
+  width: 50%;
+}
+
+.modal-content-guest{
+  background-color:#e2eaff; 
 }
 
 .breakouts-frozen {

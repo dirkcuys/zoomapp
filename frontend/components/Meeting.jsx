@@ -206,72 +206,76 @@ function StatusMessage(props){
   const {breakouts_frozen} = props.meeting;
   return (
     <div className={`p-2${breakouts_frozen?' breakouts-frozen':''}`}>
-      <strong>{!breakouts_frozen?'Welcome!':'The host has frozen breakouts.'}</strong>
-      <p className="m-0">{!breakouts_frozen?'Please join a room by clicking on the room or add your own room':'Please wait for the host to open breakouts on Zoom.'}</p>
-      { breakouts_frozen && props.userRegistration.join_url && 
-        <p><a href={props.userRegistration.join_url}>Join meeting</a></p>
-      }
+      <strong>Welcome!</strong>
+      <p className="m-0">Please join a room by clicking on the room or add your own room</p>
     </div>
   );
 }
 
 function Modal(props){
   return (
-    <div className="modal">
-      <div className="modal-body">
-        <h2>The host has frozen breakouts.</h2>
-        { !props.userRegistration.join_url &&
-            <p>Please wait for the host to open breakouts on Zoom.</p>
-        }
-        { props.userRegistration.join_url &&
-            <p>Join the new meeting on <a href={props.userRegistration.join_url}>zoom</a></p>
-        }
-
+    <div className="modal" role="dialog">
+        {props.userRegistration.is_host && <HostModal {... props} />}
+        {!props.userRegistration.is_host && <ParticipantModal {... props} />}
       </div>
+  );
+}
+
+function ParticipantModal(props){
+  return (
+    
+    <div className="modal-dialog modal-dialog-centered modal-dialog-guest" role="document">
+    <div className="modal-content modal-content-guest align-middle">
+      <div className="modal-body">
+        <h4 className="modal-title text-center">The host has frozen breakouts.</h4>
+        <p>Please wait for the host to open breakouts on Zoom.</p>
+        {props.meeting.breakouts_frozen && props.userRegistration.join_url && 
+          <p><a href={props.userRegistration.join_url}>Join Meeting</a></p>
+        }
+      </div>
+    </div>
     </div>
   );
 }
 
-function BreakoutModal(props){
+function HostModal(props){
   const [tabView, setTabView] = useState(0);
   const close = () => {
     post(`/${props.meeting.slug}/freeze`, {}); 
   }
   
   return (
-  <div className="modal" role="dialog">
-    <div className="modal-dialog modal-dialog-centered" role="document">
-      <div className="modal-content align-middle">
-        <div className="modal-body">
+    <div className="modal-dialog modal-dialog-centered modal-dialog-host" role="document">
+    <div className="modal-content align-middle">
+      <div className="modal-body">
         <button type="button" className="close" onClick={close} aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-          <h5 className="modal-title text-center">Transfer Breakouts to a Zoom Call</h5>
-          <ul className="nav nav-tabs justify-content-center">
-            <li className="nav-item">
-              <a className={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual Copy</a>
-            </li>
-            <li className="nav-item">
-              <a className={(props.zoomUser ? " " : "disabled ") + (tabView === 1 ? "nav-link active" : "nav-link")} 
-                onClick={() => setTabView(1)} href="#">
-                  Pre-Populate in New Call
-              </a>
-            </li>
-          </ul>
-           <span> </span>
-           <span> </span>
-            {(tabView === 0 &&
-                <BreakoutList {...props} />)
-            || (tabView === 1 &&
-                <ZoomPanel {...props}/>)
-            }
-        </div>
-        <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={close} data-dismiss="modal">Done</button>
-        </div>
+        <h5 className="modal-title text-center">Transfer Breakouts to a Zoom Call</h5>
+        <ul className="nav nav-tabs justify-content-center">
+          <li className="nav-item">
+            <a className={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual Copy</a>
+          </li>
+          <li className="nav-item">
+            <a className={(props.zoomUser ? " " : "disabled ") + (tabView === 1 ? "nav-link active" : "nav-link")} 
+              onClick={() => setTabView(1)} href="#">
+                Pre-Populate in New Call
+            </a>
+          </li>
+        </ul>
+          <span> </span>
+          <span> </span>
+          {(tabView === 0 &&
+              <BreakoutList {...props} />)
+          || (tabView === 1 &&
+              <ZoomPanel {...props}/>)
+          }
+      </div>
+      <div className="modal-footer">
+        <button type="button" className="btn btn-secondary" onClick={close} data-dismiss="modal">Done</button>
       </div>
     </div>
-  </div>
+    </div>
   );
 }
 
@@ -279,7 +283,6 @@ function ZoomPanel(props){
   const createZoomMeeting = () => {
     post(`/${props.meeting.slug}/create_zoom_meeting`, {});
   }
-
   return (
     <div>
       {!props.zoomUser && 
@@ -363,7 +366,7 @@ export default function Meeting(props) {
 
   return (
     <div>
-      {props.meeting.breakouts_frozen && props.userRegistration.is_host  && <BreakoutModal {...props} />}
+      {props.meeting.breakouts_frozen  && <Modal {...props} />}
       <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
         <span className="ghost" style={style} onMouseOver={() => setShowPointer(true)} onMouseOut={()=> setShowPointer(false)}>{props.userRegistration.name.split(' ')[0]}</span>
         <div className="row d-flex align-items-center mb-3">
