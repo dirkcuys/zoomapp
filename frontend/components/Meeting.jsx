@@ -246,82 +246,88 @@ function HostModal(props){
   
   return (
     <div className="modal-dialog modal-dialog-centered modal-dialog-host" role="document">
-    <div className="modal-content align-middle">
-      <div className="modal-body">
-        <button type="button" className="close" onClick={close} aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h5 className="modal-title text-center">Transfer Breakouts to a Zoom Call</h5>
-        <ul className="nav nav-tabs justify-content-center">
-          <li className="nav-item">
-            <a className={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual Copy</a>
-          </li>
-          <li className="nav-item">
-            <a className={(props.zoomUser ? " " : "disabled ") + (tabView === 1 ? "nav-link active" : "nav-link")} 
-              onClick={() => setTabView(1)} href="#">
-                Pre-Populate in New Call
-            </a>
-          </li>
-        </ul>
-          <span> </span>
-          <span> </span>
-          {(tabView === 0 &&
-              <BreakoutList {...props} />)
-          || (tabView === 1 &&
-              <ZoomPanel {...props}/>)
-          }
+      <div className="modal-content align-middle">
+        <div className="modal-header">
+          <h4 className="modal-title text-center">Transfer Breakouts to Zoom</h4>
+          <span></span>
+          <ul className="nav nav-pills justify-content-center">
+            <li className="nav-item">
+              <a className={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual Copy</a>
+            </li>
+            <li className="nav-item">
+              <a className={(props.zoomUser ? " " : "disabled ") + (tabView === 1 ? "nav-link active" : "nav-link")} 
+                onClick={() => setTabView(1)} href="#">
+                  Pre-Populate in New Call
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {(tabView === 0 &&
+            <ManualBreakoutTab close={close} {...props} />)
+        || (tabView === 1 &&
+            <CallCreateTab close={close} {...props}/>)
+        }
       </div>
-      <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" onClick={close} data-dismiss="modal">Done</button>
-      </div>
-    </div>
     </div>
   );
 }
 
-function ZoomPanel(props){
+function CallCreateTab(props){
   const createZoomMeeting = () => {
     post(`/${props.meeting.slug}/create_zoom_meeting`, {});
   }
   return (
     <div>
-      {!props.zoomUser && 
-        <div>
-          <p>You'll need to authenticate with your Zoom account before we can create a call for you.</p>
-          <span></span>
-          <div className="text-center">
-            <p><a href={`/zoom/redirect?next=/m/${props.meeting.slug}`} className="btn btn-primary justify-content-center">Link Your Zoom Account</a></p>
+      <div className="modal-body">
+        {!props.zoomUser && 
+          <div>
+            <p>You'll need to authenticate with your Zoom account before we can create a call for you.</p>
+            <span></span>
+            <div className="text-center">
+              <p><a href={`/zoom/redirect?next=/m/${props.meeting.slug}`} className="btn btn-primary justify-content-center">Link Your Zoom Account</a></p>
+            </div>
           </div>
-        </div>
-      }
-      {props.zoomUser && 
-        <div>
-          <p>Unbreakout will create a new Zoom call with the breakouts pre-populated, and will give links to your participants to join.</p>
-          <span></span>
-          <div className="text-center">
-            {!props.meeting.zoom_id && <p><a onClick={createZoomMeeting} className="btn btn-primary">Create Meeting</a></p>}
-            { 
-              props.meeting.zoom_id && 
-              <p><a className="btn btn-primary">Start Zoom Call</a></p>
-            }
+        }
+        {props.zoomUser && 
+          <div>
+            <p>Unbreakout will create a new Zoom call with the breakouts pre-populated, and will give links to your participants to join.</p>
+            <span></span>
+            <div className="text-center">
+              {!props.meeting.zoom_id && <p><a onClick={createZoomMeeting} className="btn btn-primary">Create Meeting</a></p>}
+              { 
+                props.meeting.zoom_id && 
+                <p><a className="btn btn-primary">Start Zoom Call</a></p>
+              }
+            </div>
           </div>
-        </div>
-      }
+        }
+      </div>
+      <div className="modal-footer">
+        <button type="button" className="btn btn-secondary" onClick={close} data-dismiss="modal">Done</button>
+      </div>
     </div>
   );
 }
 
-function BreakoutList(props){
+function ManualBreakoutTab(props){
   const {breakouts = []} = props.meeting;
   return (
-    <div className="accordion" id="accordion">
-      <p>If you’re not connected to Zoom or don’t want participants to move calls, manually open breakouts and copy them from here.</p>
-      <span></span>
-      {breakouts.length
-        ? breakouts.map( breakout => 
-          <BreakoutCard dataParent="accordion" key={breakout.id} breakout={breakout} {...props} />)
-        : <p className="text-center">No breakouts to display!</p>
-      }
+    <div>
+      <div className="modal-body">
+        <div className="accordion" id="accordion">
+          <p>If you’re not connected to Zoom or don’t want participants to move calls, manually open breakouts and copy them from here.</p>
+          <span></span>
+          {breakouts.length
+            ? breakouts.map( breakout => 
+              <BreakoutCard dataParent="accordion" key={breakout.id} breakout={breakout} {...props} />)
+            : <p className="text-center">No breakouts to display!</p>
+          }
+        </div>
+      </div>
+      <div className="modal-footer">
+        <button type="button" className="btn btn-secondary" onClick={close} data-dismiss="modal">Done</button>
+      </div>
     </div>
   );
 }

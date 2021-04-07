@@ -43,6 +43,10 @@ h1 {
   overflow-y: scroll;
 }
 
+.modal-content-guest{
+  background-color:#e2eaff; 
+}
+
 .modal-dialog{
   max-width:100%;
 }
@@ -55,8 +59,8 @@ h1 {
   width: 50%;
 }
 
-.modal-content-guest{
-  background-color:#e2eaff; 
+.modal-header{
+  display:block;
 }
 
 .breakouts-frozen {
