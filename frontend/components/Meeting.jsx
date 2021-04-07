@@ -32,7 +32,6 @@ function AdminActions(props){
 
   const transfer = () => {
     post(`/${props.meeting.slug}/freeze`, {}); 
-    props.showModal(true);
   }
 
   const registrationUrl = `${document.location.origin}/m/${props.meeting.slug}`
@@ -237,7 +236,6 @@ function BreakoutModal(props){
   const [tabView, setTabView] = useState(0);
   const close = () => {
     post(`/${props.meeting.slug}/freeze`, {}); 
-    props.showModal(false);
   }
   
   return (
@@ -353,19 +351,19 @@ function BreakoutCard(props){
 export default function Meeting(props) {
   console.log(props);
   const {breakouts = []} = props.meeting;
+  const transferring = props.meeting.breakouts_frozen;
   const [showPointer, setShowPointer] = useState(false);
-  const [showBreakoutModal, setShowModal] = useState(false);
   const [mousePosition, setMousePosition] = useState({x:0, y:0});
   const style = {
     top: mousePosition.y-20,
     left: mousePosition.x-15,
     opacity: (showPointer&&!props.meeting.breakouts_frozen)?0.6:0,
   };
-  showBreakoutModal ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'unset';
+  props.meeting.breakouts_frozen ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'unset';
 
   return (
     <div>
-      {showBreakoutModal ? <BreakoutModal showModal={setShowModal} {...props} /> : null}
+      {props.meeting.breakouts_frozen && props.userRegistration.is_host  && <BreakoutModal {...props} />}
       <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
         <span className="ghost" style={style} onMouseOver={() => setShowPointer(true)} onMouseOut={()=> setShowPointer(false)}>{props.userRegistration.name.split(' ')[0]}</span>
         <div className="row d-flex align-items-center mb-3">
@@ -373,7 +371,6 @@ export default function Meeting(props) {
             <StatusMessage {...props} />
           </div>
           <div className="col-md-6 order-0 order-md-1">
-            {/* TODO add meeting title */}
             <h1>{props.meeting.title}</h1>
           </div>
           <div className="col-md-3 order-2 order-md-2">
@@ -398,7 +395,7 @@ export default function Meeting(props) {
             </div>
           </div>
           <div className="col-md-3">
-            { props.userRegistration.is_host && <AdminActions showModal={setShowModal} {...props} /> }
+            { props.userRegistration.is_host && <AdminActions {...props} /> }
           </div>
         </div>
       </div>
