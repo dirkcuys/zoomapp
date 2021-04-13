@@ -232,6 +232,10 @@ function ParticipantModal(props){
         {props.meeting.breakouts_frozen && props.userRegistration.join_url && 
           <p><a href={props.userRegistration.join_url}>Join Meeting</a></p>
         }
+
+        {props.meeting.breakouts_transfer &&
+          <p>Transfer</p>
+        }
       </div>
     </div>
     </div>
@@ -319,7 +323,7 @@ function ManualBreakoutTab(props){
   const {breakouts = []} = props.meeting;
   // TODO: Change state in some way to let participants know to return to the main zoom call
   const transfer = () => {
-    post(`/transfer`, {});
+    post(`/${props.meeting.slug}/transfer`, {});
   }
   return (
     <div>
