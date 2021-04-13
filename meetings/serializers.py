@@ -24,6 +24,7 @@ def serialize_meeting(meeting):
         'breakouts_frozen': meeting.breakouts_frozen,
         'registrants': list(map(serialize_registration, meeting.registration_set.all())),
         'presence': [], # TODO probably remove
+        'breakouts_transfer' : meeting.breakouts_transfer,
     }
 
 

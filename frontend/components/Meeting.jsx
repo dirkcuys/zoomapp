@@ -319,7 +319,7 @@ function ManualBreakoutTab(props){
   const {breakouts = []} = props.meeting;
   // TODO: Change state in some way to let participants know to return to the main zoom call
   const transfer = () => {
-
+    post(`/transfer`, {});
   }
   return (
     <div>
