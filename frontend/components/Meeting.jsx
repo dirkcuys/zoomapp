@@ -288,6 +288,7 @@ function TransferDialogue(props){
   const [tabView, setTabView] = useState(0);
   const cancel = () => {
     post(`/${props.meeting.slug}/freeze`, {}); 
+    post(`/${props.meeting.slug}/discard_zoom_meeting`, {});
   }
 
   return (
@@ -324,15 +325,6 @@ function CallCreateTab(props){
   return (
     <div>
       <div className="modal-body">
-        {!props.zoomUser && 
-          <div>
-            <p>You'll need to authenticate with your Zoom account before we can create a call for you.</p>
-            <span></span>
-            <div className="text-center">
-              <p><a href={`/zoom/redirect?next=/m/${props.meeting.slug}`} className="btn btn-primary justify-content-center">Link Your Zoom Account</a></p>
-            </div>
-          </div>
-        }
         {props.zoomUser && 
           <div>
             <p>Unbreakout will create a new Zoom call with the breakouts pre-populated, and will give links to your participants to join.</p>
@@ -358,6 +350,7 @@ function CallCreateTab(props){
     </div>
   );
 }
+
 
 function ManualBreakoutTab(props){
   const {breakouts = []} = props.meeting;

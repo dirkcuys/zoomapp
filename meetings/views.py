@@ -251,6 +251,30 @@ def create_zoom_meeting(request, slug):
     _ws_update_meeting(meeting)
 
     return http.JsonResponse({'code': 202, 'resp': resp.json()})
+    
+
+@host_required
+def discard_zoom_meeting(request, slug):
+    if request.method != 'POST':
+        return http.JsonResponse({'code': 400, 'error': 'Expecting a post'})
+
+    meeting = Meeting.objects.get(slug=slug)
+
+    meeting.zoom_data = {}
+    meeting.zoom_id = ''
+    meeting.save()
+
+    # register users
+    # TODO this should be done async
+    for user in meeting.registration_set.all():
+        user.registrant_id = ''
+        user.zoom_data = {}
+        user.save()
+
+    # send updated meeting via websocket connection
+    _ws_update_meeting(meeting)
+
+    return http.JsonResponse({'code': 202})
 
 
 @registration_required
