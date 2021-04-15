@@ -4,13 +4,13 @@ import {post} from 'utils/api';
 export default function Modal(props){
   return (
     <div className="modal" role="dialog">
-        {props.userRegistration.is_host && <HostModal {... props} />}
-        {!props.userRegistration.is_host && <ParticipantModal {... props} />}
+        {props.userRegistration.is_host && <HostDisplay {... props} />}
+        {!props.userRegistration.is_host && <ParticipantDisplay {... props} />}
       </div>
   );
 }
 
-function ParticipantModal(props){
+function ParticipantDisplay(props){
   return (
     <div className="modal-dialog modal-dialog-centered modal-dialog-guest" role="document">
       <div className="modal-content modal-content-guest align-middle">
@@ -34,7 +34,7 @@ function ParticipantModal(props){
   );
 }
 
-function HostModal(props){
+function HostDisplay(props){
   return (
     <div className="modal-dialog modal-dialog-centered modal-dialog-host" role="document">
       <div className="modal-content align-middle">
@@ -48,8 +48,7 @@ function HostModal(props){
 function TransferSuccess(props){
   const reset = () => {
     post(`/${props.meeting.slug}/freeze`, {});  
-    post(`/${props.meeting.slug}/transfer`, {});
-    //TODO: discard call
+    post(`/${props.meeting.slug}/discard_zoom_meeting`, {});
   }
 
   return (
@@ -107,33 +106,51 @@ function TransferDialogue(props){
 }
 
 function CallCreateTab(props){
+  const [creating, setCreating] = useState(false);
   const createZoomMeeting = () => {
+    setCreating(true);
     post(`/${props.meeting.slug}/create_zoom_meeting`, {});
+    setCreating(false);
   }
+  const transfer = () => {
+    post(`/${props.meeting.slug}/transfer`, {});
+  }
+
   return (
     <div>
       <div className="modal-body">
         {props.zoomUser && 
           <div>
-            <p>Unbreakout will create a new Zoom call with the breakouts pre-populated, and will give links to your participants to join.</p>
             <span></span>
-            <div className="text-center">
-
+            <div>
               {!props.meeting.zoom_id && 
                 <div>
+                  <p>Unbreakout will create a new Zoom call with the breakouts pre-populated, and will give links to your participants to join.</p>
                   {props.noBreakouts && <p className="text-center"><i>No breakouts to display or all breakouts are empty!</i></p>}
-                  <p><a onClick={createZoomMeeting} className={"btn btn-primary" + (props.noBreakouts ? ' disabled': "")}>Create Meeting</a></p>
                 </div>}
+
               { props.meeting.zoom_id && 
                 <div>
-                <p><a className="btn btn-primary">Start Zoom Call</a></p>
+                  <ul>
+                    <li>Click the <b>"Join Call"</b> button below to start the call as host. <b>Open the call in browser</b> so you aren’t kicked from your main Zoom call.</li>
+                  </ul>
+                  {/* TODO get link to start call as host */}
+                  <p><a className="btn btn-primary ml-5" target="_blank">
+                    Join Call</a></p>
+                  <ul>
+                    <li>In Zoom, navigate to <b>“More” → “Breakout Rooms”</b>, and click <b>“Open All Rooms”</b>. </li>
+                    <li>Now you can press <b>“Transfer Participants”</b> to send your participants to the Zoom call, and they will be immediately passed into their breakouts.</li>
+                  </ul>
                 </div>}
             </div>
           </div>
         }
       </div>
       <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" onClick={props.cancel} data-dismiss="modal">Done</button>
+        <button type="button" className="btn btn-secondary" onClick={props.cancel} data-dismiss="modal">Cancel</button>
+        {props.meeting.zoom_id ?
+        <p><a onClick={transfer} className="btn btn-primary">Transfer Participants</a></p>
+        : <p><a onClick={createZoomMeeting} className={"btn btn-primary" + (props.noBreakouts ? ' disabled': "")}>Create Meeting</a></p>}
       </div>
     </div>
   );
