@@ -16,7 +16,7 @@ from zoom.models import ZoomUserToken
 from .models import Meeting
 from .models import Breakout
 from .models import Registration
-from .decorators import registration_required, host_required
+from .decorators import registration_required, zoom_user_required
 from .serializers import serialize_meeting, serialize_registration, serialize_breakout
 
 
@@ -126,7 +126,7 @@ def _ws_update_meeting(meeting):
     )
 
 
-@host_required
+@zoom_user_required
 def export_breakouts(request, slug):
     meeting = Meeting.objects.get(slug=slug)
     response = http.HttpResponse(content_type="text/csv")
@@ -142,7 +142,6 @@ def export_breakouts(request, slug):
     return response
 
 
-@host_required
 def freeze_breakouts(request, slug):
     meeting = Meeting.objects.get(slug=slug)
     meeting.breakouts_frozen = not meeting.breakouts_frozen
@@ -162,7 +161,6 @@ def freeze_breakouts(request, slug):
     return http.JsonResponse({'code': 202})
 
     
-@host_required
 def transfer_breakouts(request, slug):
     meeting = Meeting.objects.get(slug=slug)
     meeting.breakouts_transfer = True
@@ -179,14 +177,13 @@ def transfer_breakouts(request, slug):
             }
         }
     )
-    
+
     # send updated meeting via websocket connection
     _ws_update_meeting(meeting)
 
     return http.JsonResponse({'code': 202})
 
 
-@host_required
 def clear_breakouts(request, slug):
     Breakout.objects.filter(meeting__slug=slug).delete()
     Registration.objects.filter(meeting__slug=slug).update(x=0, y=0);
@@ -196,7 +193,7 @@ def clear_breakouts(request, slug):
     return http.JsonResponse({'code': 202})
 
 
-@host_required
+@zoom_user_required
 def create_zoom_meeting(request, slug):
     if request.method != 'POST':
         return http.JsonResponse({'code': 400, 'error': 'Expecting a post'})
@@ -257,7 +254,7 @@ def create_zoom_meeting(request, slug):
     return http.JsonResponse({'code': 202, 'resp': resp.json()})
     
 
-@host_required
+@zoom_user_required
 def discard_zoom_meeting(request, slug):
     if request.method != 'POST':
         return http.JsonResponse({'code': 400, 'error': 'Expecting a post'})

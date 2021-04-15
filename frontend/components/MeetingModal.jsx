@@ -136,7 +136,7 @@ function CallCreateTab(props){
                   </ul>
                   {/* TODO get link to start call as host */}
                   <p><a className="btn btn-primary ml-5" target="_blank">
-                    Join Call</a></p>
+                    Start Call</a></p>
                   <ul>
                     <li>In Zoom, navigate to <b>“More” → “Breakout Rooms”</b>, and click <b>“Open All Rooms”</b>. </li>
                     <li>Now you can press <b>“Transfer Participants”</b> to send your participants to the Zoom call, and they will be immediately passed into their breakouts.</li>
