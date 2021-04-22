@@ -230,6 +230,7 @@ def create_zoom_meeting(request, slug):
     meeting.zoom_id = api_data.get('id')
     meeting.zoom_host_id = zoom_host_id
     meeting.zoom_data = api_data
+    meeting.breakouts_frozen = True
     meeting.save()
 
     # register users

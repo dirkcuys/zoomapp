@@ -14,7 +14,7 @@ urlpatterns = [
     re_path(r'^(?P<slug>\w+)/export$', views.export_breakouts, name='export'),
     re_path(r'^(?P<slug>\w+)/freeze$', views.freeze_breakouts, name='freeze_breakouts'),
     re_path(r'^(?P<slug>\w+)/clear$', views.clear_breakouts, name='clear_breakouts'),
-    re_path(r'^(?P<slug>\w+)/manual-transfer$', views.manual_transfer, name='manual-transfer'),
+    re_path(r'^(?P<slug>\w+)/manual_transfer$', views.manual_transfer, name='manual-transfer'),
     re_path(r'^(?P<slug>\w+)/create_zoom_meeting$', views.create_zoom_meeting, name='create_zoom_meeting'),
     re_path(r'^(?P<slug>\w+)/discard_zoom_meeting$', views.discard_zoom_meeting, name='discard_zoom_meeting'),
 

@@ -24,11 +24,11 @@ function UserProfile({userRegistration, ...props}){
 
 function AdminActions(props){
   const manual = () => {
-    post(`/${props.meeting.slug}/manual-transfer`, {});
+    post(`/${props.meeting.slug}/manual_transfer`, {});
   }
 
   const create = () => {
-    // TODO reference call create
+    post(`/${props.meeting.slug}/create_zoom_meeting`, {});
   }
 
   const clear = () => {
