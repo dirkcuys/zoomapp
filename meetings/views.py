@@ -160,6 +160,27 @@ def freeze_breakouts(request, slug):
     )
     return http.JsonResponse({'code': 202})
 
+
+def manual_transfer(request, slug):
+    meeting = Meeting.objects.get(slug=slug)
+    meeting.manual_transfer = True
+    meeting.breakouts_frozen = True
+    meeting.save()
+    # ws broadcast
+    channel_layer = channels.layers.get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'meeting_{meeting.slug}',
+        {
+            'type': 'meeting_message',
+            'message': {
+                'type': 'UPDATE_MEETING', 
+                'payload': {'breakouts_frozen': meeting.breakouts_frozen,
+                    'manual_transfer': meeting.manual_transfer},
+            }
+        }
+    )
+    return http.JsonResponse({'code': 202})
+
     
 def clear_breakouts(request, slug):
     Breakout.objects.filter(meeting__slug=slug).delete()

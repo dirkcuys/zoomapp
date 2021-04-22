@@ -23,8 +23,12 @@ function UserProfile({userRegistration, ...props}){
 
 
 function AdminActions(props){
-  const freeze = () => {
-    post(`/${props.meeting.slug}/freeze`, {});
+  const manual = () => {
+    post(`/${props.meeting.slug}/manual-transfer`, {});
+  }
+
+  const create = () => {
+    // TODO reference call create
   }
 
   const clear = () => {
@@ -43,7 +47,8 @@ function AdminActions(props){
           <hr/>
         </div>}
       <p><a onClick={clear} className="btn btn-primary">Clear Breakouts</a></p>
-      <p><a onClick={freeze} className="btn btn-primary">Freeze and Transfer</a></p>
+      <p><a onClick={manual} className="btn btn-primary">Manual assign</a></p>
+      <p><a onClick={create} className="btn btn-primary">Create a new call</a></p>
       <hr/>
       <p><a href="{% url 'docs' %}" target="_blank">How to use Unbreakout</a></p>
       <hr/>
