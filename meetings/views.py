@@ -18,6 +18,7 @@ from .models import Breakout
 from .models import Registration
 from .decorators import registration_required, zoom_user_required
 from .serializers import serialize_meeting, serialize_registration, serialize_breakout
+from .tasks import create_zoom_registrations
 
 
 logger = logging.getLogger(__name__)
@@ -233,8 +234,12 @@ def create_zoom_meeting(request, slug):
     meeting.breakouts_frozen = True
     meeting.save()
 
-    # register users
-    # TODO this should be done async
+    # send updated meeting via websocket connection
+    _ws_update_meeting(meeting)
+
+    # TODO get async call to work, currently throws error about meeting not serializable
+    # create_zoom_registrations.delay(meeting)
+
     for user in meeting.registration_set.all():
         registration_data = {
             "email": user.email,
