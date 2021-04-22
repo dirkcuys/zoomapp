@@ -161,29 +161,6 @@ def freeze_breakouts(request, slug):
     return http.JsonResponse({'code': 202})
 
     
-def transfer_breakouts(request, slug):
-    meeting = Meeting.objects.get(slug=slug)
-    meeting.breakouts_transfer = True
-    meeting.save()
-    # ws broadcast
-    channel_layer = channels.layers.get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f'meeting_{meeting.slug}',
-        {
-            'type': 'meeting_message',
-            'message': {
-                'type': 'UPDATE_MEETING', 
-                'payload': {'breakouts_transfer': meeting.breakouts_transfer},
-            }
-        }
-    )
-
-    # send updated meeting via websocket connection
-    _ws_update_meeting(meeting)
-
-    return http.JsonResponse({'code': 202})
-
-
 def clear_breakouts(request, slug):
     Breakout.objects.filter(meeting__slug=slug).delete()
     Registration.objects.filter(meeting__slug=slug).update(x=0, y=0);
@@ -261,7 +238,6 @@ def discard_zoom_meeting(request, slug):
 
     meeting = Meeting.objects.get(slug=slug)
 
-    meeting.breakouts_transfer = False
     meeting.zoom_data = {}
     meeting.zoom_id = ''
     meeting.save()

@@ -31,10 +31,6 @@ function AdminActions(props){
     post(`/${props.meeting.slug}/clear`, {});
   }
 
-  const transfer = () => {
-    post(`/${props.meeting.slug}/freeze`, {}); 
-  }
-
   const registrationUrl = `${document.location.origin}/m/${props.meeting.slug}`
   return (
     <div>
@@ -47,7 +43,7 @@ function AdminActions(props){
           <hr/>
         </div>}
       <p><a onClick={clear} className="btn btn-primary">Clear Breakouts</a></p>
-      <p><a onClick={transfer} className="btn btn-primary">Freeze and Transfer</a></p>
+      <p><a onClick={freeze} className="btn btn-primary">Freeze and Transfer</a></p>
       <hr/>
       <p><a href="{% url 'docs' %}" target="_blank">How to use Unbreakout</a></p>
       <hr/>
