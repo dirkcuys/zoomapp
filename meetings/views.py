@@ -234,9 +234,6 @@ def create_zoom_meeting(request, slug):
     meeting.breakouts_frozen = True
     meeting.save()
 
-    # send updated meeting via websocket connection
-    _ws_update_meeting(meeting)
-
     # TODO get async call to work, currently throws error about meeting not serializable
     # create_zoom_registrations.delay(meeting)
 
