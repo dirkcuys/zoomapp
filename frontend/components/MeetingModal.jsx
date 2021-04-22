@@ -47,8 +47,7 @@ function HostDisplay(props){
 
 function TransferSuccess(props){
   const reset = () => {
-    post(`/${props.meeting.slug}/freeze`, {});  
-    post(`/${props.meeting.slug}/discard_zoom_meeting`, {});
+    post(`/${props.meeting.slug}/restore`, {});
   }
 
   return (
@@ -74,8 +73,7 @@ function TransferSuccess(props){
 function TransferDialogue(props){
   const [tabView, setTabView] = useState(0);
   const cancel = () => {
-    post(`/${props.meeting.slug}/freeze`, {}); 
-    post(`/${props.meeting.slug}/discard_zoom_meeting`, {});
+    post(`/${props.meeting.slug}/restore`, {});
   }
 
   return (

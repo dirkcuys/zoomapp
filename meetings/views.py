@@ -254,7 +254,7 @@ def create_zoom_meeting(request, slug):
     
 
 @zoom_user_required
-def discard_zoom_meeting(request, slug):
+def restore(request, slug):
     if request.method != 'POST':
         return http.JsonResponse({'code': 400, 'error': 'Expecting a post'})
 
@@ -262,6 +262,8 @@ def discard_zoom_meeting(request, slug):
 
     meeting.zoom_data = {}
     meeting.zoom_id = ''
+    meeting.breakouts_frozen = False
+    meeting.manual_transfer = False
     meeting.save()
 
     # register users
