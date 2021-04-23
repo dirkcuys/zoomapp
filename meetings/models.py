@@ -11,6 +11,7 @@ class Meeting(models.Model):
     zoom_data = models.TextField()
     title=models.CharField(max_length=256, blank=True)
     breakouts_frozen = models.BooleanField(default=False)
+    manual_transfer = models.BooleanField(default=False)
 
     def __str__(self):
         return f'[{self.slug}] {self.title}'

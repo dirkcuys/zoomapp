@@ -16,8 +16,9 @@ from zoom.models import ZoomUserToken
 from .models import Meeting
 from .models import Breakout
 from .models import Registration
-from .decorators import registration_required, host_required
+from .decorators import registration_required, zoom_user_required
 from .serializers import serialize_meeting, serialize_registration, serialize_breakout
+from .tasks import create_zoom_registrations
 
 
 logger = logging.getLogger(__name__)
@@ -126,7 +127,7 @@ def _ws_update_meeting(meeting):
     )
 
 
-@host_required
+@zoom_user_required
 def export_breakouts(request, slug):
     meeting = Meeting.objects.get(slug=slug)
     response = http.HttpResponse(content_type="text/csv")
@@ -142,7 +143,6 @@ def export_breakouts(request, slug):
     return response
 
 
-@host_required
 def freeze_breakouts(request, slug):
     meeting = Meeting.objects.get(slug=slug)
     meeting.breakouts_frozen = not meeting.breakouts_frozen
@@ -162,7 +162,27 @@ def freeze_breakouts(request, slug):
     return http.JsonResponse({'code': 202})
 
 
-@host_required
+def manual_transfer(request, slug):
+    meeting = Meeting.objects.get(slug=slug)
+    meeting.manual_transfer = True
+    meeting.breakouts_frozen = True
+    meeting.save()
+    # ws broadcast
+    channel_layer = channels.layers.get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'meeting_{meeting.slug}',
+        {
+            'type': 'meeting_message',
+            'message': {
+                'type': 'UPDATE_MEETING', 
+                'payload': {'breakouts_frozen': meeting.breakouts_frozen,
+                    'manual_transfer': meeting.manual_transfer},
+            }
+        }
+    )
+    return http.JsonResponse({'code': 202})
+
+    
 def clear_breakouts(request, slug):
     Breakout.objects.filter(meeting__slug=slug).delete()
     Registration.objects.filter(meeting__slug=slug).update(x=0, y=0);
@@ -172,7 +192,7 @@ def clear_breakouts(request, slug):
     return http.JsonResponse({'code': 202})
 
 
-@host_required
+@zoom_user_required
 def create_zoom_meeting(request, slug):
     if request.method != 'POST':
         return http.JsonResponse({'code': 400, 'error': 'Expecting a post'})
@@ -211,10 +231,12 @@ def create_zoom_meeting(request, slug):
     meeting.zoom_id = api_data.get('id')
     meeting.zoom_host_id = zoom_host_id
     meeting.zoom_data = api_data
+    meeting.breakouts_frozen = True
     meeting.save()
 
-    # register users
-    # TODO this should be done async
+    # TODO get async call to work, currently throws error about meeting not serializable
+    # create_zoom_registrations.delay(meeting)
+
     for user in meeting.registration_set.all():
         registration_data = {
             "email": user.email,
@@ -231,6 +253,31 @@ def create_zoom_meeting(request, slug):
     _ws_update_meeting(meeting)
 
     return http.JsonResponse({'code': 202, 'resp': resp.json()})
+    
+
+def restore(request, slug):
+    if request.method != 'POST':
+        return http.JsonResponse({'code': 400, 'error': 'Expecting a post'})
+
+    meeting = Meeting.objects.get(slug=slug)
+
+    meeting.zoom_data = {}
+    meeting.zoom_id = ''
+    meeting.breakouts_frozen = False
+    meeting.manual_transfer = False
+    meeting.save()
+
+    # register users
+    # TODO this should be done async
+    for user in meeting.registration_set.all():
+        user.registrant_id = ''
+        user.zoom_data = {}
+        user.save()
+
+    # send updated meeting via websocket connection
+    _ws_update_meeting(meeting)
+
+    return http.JsonResponse({'code': 202})
 
 
 @registration_required

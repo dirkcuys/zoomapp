@@ -43,9 +43,24 @@ h1 {
   overflow-y: scroll;
 }
 
+.modal-content-guest{
+  background-color:#e2eaff; 
+}
+
 .modal-dialog{
   max-width:100%;
+}
+
+.modal-dialog-host{
   width: 70%;
+}
+
+.modal-dialog-guest{
+  width: 50%;
+}
+
+.modal-header{
+  display:block;
 }
 
 .breakouts-frozen {
@@ -86,6 +101,10 @@ h1 {
     //position: absolute;
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+.btn-bar {
+  width: 80%;
 }
 
 .participant-count {
