@@ -4,29 +4,27 @@ import {post} from 'utils/api';
 export default function Modal(props){
   return (
     <div className="modal" role="dialog">
-        {props.userRegistration.is_host && <HostDisplay {... props} />}
-        {!props.userRegistration.is_host && <ParticipantDisplay {... props} />}
+        {props.userRegistration.is_host && <HostView {... props} />}
+        {!props.userRegistration.is_host && <ParticipantView {... props} />}
       </div>
   );
 }
 
-function ParticipantDisplay(props){
+function ParticipantView(props){
   return (
     <div className="modal-dialog modal-dialog-centered modal-dialog-guest" role="document">
       <div className="modal-content modal-content-guest align-middle">
       {/* TODO: reference a variable that can actually tell if manual or zoom call */}
       <div className="modal-body">
         <h4 className="modal-title text-center">
-          {props.userRegistration.join_url && props.meeting.breakouts_transfer && 
+          {props.userRegistration.join_url && 
             <a href={props.userRegistration.join_url} target="_blank">
-              Click here to join the breakouts in a new Zoom call.</a>}
-          {!props.userRegistration.join_url && props.meeting.breakouts_transfer && 
-            'Please return to the Zoom call to join your breakouts.'}
-          {!props.meeting.breakouts_transfer && 'The host has frozen breakouts.'}
+              Click here to join your breakouts in Zoom.</a>}
+          {!props.userRegistration.join_url && 'The host has frozen breakouts.'}
         </h4>
-        {props.meeting.breakouts_transfer &&
-          <p>Keep this window open if you will be doing another round of breakouts.</p>}
-        {!props.meeting.breakouts_transfer && 
+        {props.meeting.breakouts_frozen && !props.meeting.manual_transfer && !props.userRegistration.join_url &&
+          <p>Please wait for the host to open breakout selection.</p>}
+        {props.meeting.manual_transfer && 
           <p>Please wait for the host to open breakouts on Zoom.</p>}
         </div>
       </div>
@@ -34,24 +32,24 @@ function ParticipantDisplay(props){
   );
 }
 
-function HostDisplay(props){
+function HostView(props){
+  const restore = () => {
+    post(`/${props.meeting.slug}/restore`, {});
+  }
+
   return (
     <div className="modal-dialog modal-dialog-centered modal-dialog-host" role="document">
       <div className="modal-content align-middle">
-        {props.meeting.breakouts_transfer && <TransferSuccess {... props} />}
-        {!props.meeting.breakouts_transfer && <TransferDialogue {... props} />}
+        {props.meeting.manual_transfer && <ManualTransfer restore={restore} {... props} />}
+        {/* TODO make sure below references a variable that can tell if call is in process of creation */}
+        {props.meeting.zoom_id && <ZoomCallCreation restore={restore} {... props} />}
       </div>
     </div>
   );
 }
 
-function TransferSuccess(props){
-  const reset = () => {
-    post(`/${props.meeting.slug}/restore`, {});
-  }
-
+function ZoomCallCreation(props){
   return (
-    //TODO: reference a variable that can actually tell if manual or zoom call
     <div className="modal-body">
       <h4 className="modal-title text-center">
         {props.userRegistration.join_url && 
@@ -60,109 +58,23 @@ function TransferSuccess(props){
       </h4>
       {props.userRegistration.join_url && 
         <p>Your participants will now be prompted to return to Zoom. If you want to start a new Unbreakout session, use the buttons below.</p>}
-      {!props.userRegistration.join_url &&  
-        <p>Your participants will now be prompted to join the new call. If you’re done with these new breakouts and want to start a new Unbreakout session, use the buttons below. But be careful, it will stop showing them the Zoom join link!</p>}
         
       <div className="text-center">
-        <p><a onClick={reset} className="btn btn-primary">Return to Session</a></p>
+        <p><a onClick={props.restore} className="btn btn-primary">Reopen Breakouts</a></p>
       </div>
     </div>
   );
 }
 
-function TransferDialogue(props){
-  const [tabView, setTabView] = useState(0);
-  const cancel = () => {
-    post(`/${props.meeting.slug}/restore`, {});
-  }
+
+function ManualTransfer(props){
+  const {breakouts = []} = props.meeting;
 
   return (
     <div>
       <div className="modal-header">
-        <h4 className="modal-title text-center">Transfer Breakouts to Zoom</h4>
-        <span></span>
-        <ul className="nav nav-pills justify-content-center">
-          <li className="nav-item">
-            <a className={tabView === 0 ? "nav-link active" : "nav-link"} onClick={() => setTabView(0)} aria-current="page" href="#">Manual Copy</a>
-          </li>
-          <li className="nav-item">
-            <a className={(props.zoomUser ? " " : "disabled ") + (tabView === 1 ? "nav-link active" : "nav-link")} 
-              onClick={() => setTabView(1)} href="#">
-                Pre-Populate in New Call
-            </a>
-          </li>
-        </ul>
+        <h4 className="modal-title text-center">Manually Transfer Breakouts to Zoom</h4>
       </div>
-
-      {(tabView === 0 &&
-          <ManualBreakoutTab cancel={cancel} {...props} />)
-      || (tabView === 1 &&
-          <CallCreateTab cancel={cancel} {...props}/>)
-      }
-    </div>
-  );
-}
-
-function CallCreateTab(props){
-  const [creating, setCreating] = useState(false);
-  const createZoomMeeting = () => {
-    setCreating(true);
-    post(`/${props.meeting.slug}/create_zoom_meeting`, {});
-    setCreating(false);
-  }
-  const transfer = () => {
-    post(`/${props.meeting.slug}/transfer`, {});
-  }
-
-  return (
-    <div>
-      <div className="modal-body">
-        {props.zoomUser && 
-          <div>
-            <span></span>
-            <div>
-              {!props.meeting.zoom_id && 
-                <div>
-                  <p>Unbreakout will create a new Zoom call with the breakouts pre-populated, and will give links to your participants to join.</p>
-                  {props.noBreakouts && <p className="text-center"><i>No breakouts to display or all breakouts are empty!</i></p>}
-                </div>}
-
-              { props.meeting.zoom_id && 
-                <div>
-                  <ul>
-                    <li>Click the <b>"Join Call"</b> button below to start the call as host. <b>Open the call in browser</b> so you aren’t kicked from your main Zoom call.</li>
-                  </ul>
-                  {/* TODO get link to start call as host */}
-                  <p><a className="btn btn-primary ml-5" target="_blank">
-                    Start Call</a></p>
-                  <ul>
-                    <li>In Zoom, navigate to <b>“More” → “Breakout Rooms”</b>, and click <b>“Open All Rooms”</b>. </li>
-                    <li>Now you can press <b>“Transfer Participants”</b> to send your participants to the Zoom call, and they will be immediately passed into their breakouts.</li>
-                  </ul>
-                </div>}
-            </div>
-          </div>
-        }
-      </div>
-      <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" onClick={props.cancel} data-dismiss="modal">Cancel</button>
-        {props.meeting.zoom_id ?
-        <p><a onClick={transfer} className="btn btn-primary">Transfer Participants</a></p>
-        : <p><a onClick={createZoomMeeting} className={"btn btn-primary" + (props.noBreakouts ? ' disabled': "")}>Create Meeting</a></p>}
-      </div>
-    </div>
-  );
-}
-
-
-function ManualBreakoutTab(props){
-  const {breakouts = []} = props.meeting;
-  // TODO: Change state in some way to let participants know to return to the main zoom call
-  const transfer = () => {
-    post(`/${props.meeting.slug}/transfer`, {});
-  }
-  return (
-    <div>
       <div className="modal-body">
         <div className="accordion" id="accordion">
           <p>If you’re not connected to Zoom or don’t want participants to move calls, <strong>manually create breakouts</strong> and copy them from here.</p>
@@ -176,12 +88,8 @@ function ManualBreakoutTab(props){
         </div>
       </div>
       <div className="modal-footer">
-        <p><a type="button" className="btn btn-secondary" onClick={props.cancel} data-dismiss="modal">
-          Cancel
-        </a></p>
-        <p><a type="button" className={"btn btn-primary" + (props.noBreakouts ? ' disabled': "")}
-          onClick={transfer} data-dismiss="modal">
-          Transfer Participants
+        <p><a className="btn btn-primary" onClick={props.restore} data-dismiss="modal">
+          Reopen Breakouts
         </a></p>
       </div>
     </div>

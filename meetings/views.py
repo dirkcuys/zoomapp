@@ -255,7 +255,6 @@ def create_zoom_meeting(request, slug):
     return http.JsonResponse({'code': 202, 'resp': resp.json()})
     
 
-@zoom_user_required
 def restore(request, slug):
     if request.method != 'POST':
         return http.JsonResponse({'code': 400, 'error': 'Expecting a post'})

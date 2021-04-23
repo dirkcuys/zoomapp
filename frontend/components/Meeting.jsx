@@ -53,16 +53,18 @@ function AdminActions(props){
         </div>}
       <p><a onClick={clear} className="btn">Clear Breakouts</a></p>
       <hr/>
-      <p><a onClick={freeze} className="btn">Freeze Breakouts</a></p>
+      <p><a onClick={freeze} className="btn">
+        {props.meeting.breakouts_frozen ? 'Unfreeze Breakouts' : 'Freeze Breakouts'}
+      </a></p>
       <hr/>
       <div className="text-center">      
-      <p><a onClick={manual} className="btn btn-primary btn-bar">Manually Assign Breakouts</a></p>
-      <p>or</p>
-      <p><a onClick={create} className="btn btn-primary btn-bar">Create a New Zoom Call</a></p>
-      <hr/>
+        <p><a onClick={manual} className="btn btn-primary btn-bar">Manually Assign Breakouts</a></p>
+        <p>or</p>
+        <p><a onClick={create} className={(props.zoomUser ? " " : "disabled ") + "btn btn-primary btn-bar"}>Create a New Zoom Call</a></p>
+        <hr/>
+      </div>
       <p><a href="{% url 'docs' %}" target="_blank">How to use Unbreakout</a></p>
       <hr/>
-      </div>
     </div>
   );
 }
@@ -243,7 +245,10 @@ export default function Meeting(props) {
 
   return (
     <div>
-      {props.meeting.breakouts_frozen  && <Modal noBreakouts={noBreakouts} {...props} />}
+      {props.meeting.breakouts_frozen && 
+        ((props.meeting.manual_transfer || props.meeting.zoom_id) || !props.userRegistration.is_host)
+         && <Modal noBreakouts={noBreakouts} {...props}
+      />}
       <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
         <span className="ghost" style={style} onMouseOver={() => setShowPointer(true)} onMouseOut={()=> setShowPointer(false)}>{props.userRegistration.name.split(' ')[0]}</span>
         <div className="row d-flex align-items-center mb-3">
