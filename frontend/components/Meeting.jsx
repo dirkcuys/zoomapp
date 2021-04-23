@@ -51,14 +51,14 @@ function AdminActions(props){
           <p>Zoom Account Linked!</p>
           <hr/>
         </div>}
-      <p><a onClick={clear} className="btn btn-light">Clear Breakouts</a></p>
+      <p><a onClick={clear} className="btn">Clear Breakouts</a></p>
       <hr/>
-      <p><a onClick={freeze} className="btn btn-light">Freeze Breakouts</a></p>
+      <p><a onClick={freeze} className="btn">Freeze Breakouts</a></p>
       <hr/>
       <div className="text-center">      
-      <p><a onClick={manual} className="btn btn-primary">Manually Assign Breakouts</a></p>
+      <p><a onClick={manual} className="btn btn-primary btn-bar">Manually Assign Breakouts</a></p>
       <p>or</p>
-      <p><a onClick={create} className="btn btn-primary text-center">Create a New Zoom Call</a></p>
+      <p><a onClick={create} className="btn btn-primary btn-bar">Create a New Zoom Call</a></p>
       <hr/>
       <p><a href="{% url 'docs' %}" target="_blank">How to use Unbreakout</a></p>
       <hr/>
