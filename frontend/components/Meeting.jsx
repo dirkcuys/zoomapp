@@ -106,7 +106,7 @@ function BreakoutForm(props){
             onChange={e => setTitle(e.target.value)}
           />
           <div className="input-group-append">
-            <button type="submit" className="btn btn-primary"><strong>+</strong></button>
+            <button type="submit" disabled={props.meeting.breakouts_frozen ? "disabled" : ""} className="btn btn-primary"><strong>+</strong></button>
           </div>
         </div>
       </div>
