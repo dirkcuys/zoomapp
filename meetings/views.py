@@ -199,6 +199,23 @@ def create_zoom_meeting(request, slug):
 
     meeting = Meeting.objects.get(slug=slug)
 
+    meeting.zoom_transfer = True
+    meeting.breakouts_frozen = True
+    meeting.save()
+    # ws broadcast
+    channel_layer = channels.layers.get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'meeting_{meeting.slug}',
+        {
+            'type': 'meeting_message',
+            'message': {
+                'type': 'UPDATE_MEETING', 
+                'payload': {'breakouts_frozen': meeting.breakouts_frozen,
+                    'zoom_transfer': meeting.zoom_transfer},
+            }
+        }
+    )
+
     zoom_host_id = request.session['zoom_user'].get('id')
     if not zoom_host_id:
         return http.JsonResponse({'code': 400, 'error': 'User not authenticated with Zoom'})
@@ -231,11 +248,7 @@ def create_zoom_meeting(request, slug):
     meeting.zoom_id = api_data.get('id')
     meeting.zoom_host_id = zoom_host_id
     meeting.zoom_data = api_data
-    meeting.breakouts_frozen = True
     meeting.save()
-
-    # TODO get async call to work, currently throws error about meeting not serializable
-    # create_zoom_registrations.delay(meeting)
 
     for user in meeting.registration_set.all():
         registration_data = {
@@ -252,6 +265,9 @@ def create_zoom_meeting(request, slug):
     # send updated meeting via websocket connection
     _ws_update_meeting(meeting)
 
+    # # TODO get async call to work, currently throws error about meeting not serializable
+    # create_zoom_registrations.delay(meeting)
+
     return http.JsonResponse({'code': 202, 'resp': resp.json()})
     
 
@@ -264,6 +280,7 @@ def restore(request, slug):
     meeting.zoom_data = {}
     meeting.zoom_id = ''
     meeting.manual_transfer = False
+    meeting.zoom_transfer = False
     meeting.save()
 
     # register users
