@@ -263,7 +263,6 @@ def restore(request, slug):
 
     meeting.zoom_data = {}
     meeting.zoom_id = ''
-    meeting.breakouts_frozen = False
     meeting.manual_transfer = False
     meeting.save()
 
