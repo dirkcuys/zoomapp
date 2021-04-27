@@ -25,4 +25,4 @@ def create_zoom_registrations(meeting):
     from .views import _ws_update_meeting
     _ws_update_meeting(meeting)
 
-    pass
+    return

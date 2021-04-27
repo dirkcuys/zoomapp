@@ -23,6 +23,7 @@ def serialize_meeting(meeting):
         'breakouts': list(map(serialize_breakout, meeting.breakout_set.all().order_by('pk'))),
         'breakouts_frozen': meeting.breakouts_frozen,
         'manual_transfer': meeting.manual_transfer,
+        'zoom_transfer': meeting.zoom_transfer,
         'registrants': list(map(serialize_registration, meeting.registration_set.all())),
         'presence': [], # TODO probably remove
     }

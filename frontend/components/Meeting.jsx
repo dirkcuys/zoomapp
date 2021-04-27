@@ -106,7 +106,7 @@ function BreakoutForm(props){
             onChange={e => setTitle(e.target.value)}
           />
           <div className="input-group-append">
-            <button type="submit" className="btn btn-primary"><strong>+</strong></button>
+            <button type="submit" disabled={props.meeting.breakouts_frozen ? "disabled" : ""} className="btn btn-primary"><strong>+</strong></button>
           </div>
         </div>
       </div>
@@ -221,8 +221,16 @@ function StatusMessage(props){
   const {breakouts_frozen} = props.meeting;
   return (
     <div className={`p-2${breakouts_frozen?' breakouts-frozen':''}`}>
-      <strong>Welcome!</strong>
-      <p className="m-0">Please join a room by clicking on the room or add your own room</p>
+      {breakouts_frozen ? 
+        <div>
+          <strong>The host has frozen breakouts.</strong>
+          <p className="m-0">Please wait for the host to open breakout selection.</p>
+        </div> :
+        <div>
+          <strong>Welcome!</strong>
+          <p className="m-0">Please join a room by clicking on the room or add your own room</p>
+        </div>
+      }
     </div>
   );
 }
@@ -246,7 +254,7 @@ export default function Meeting(props) {
   return (
     <div>
       {props.meeting.breakouts_frozen && 
-        ((props.meeting.manual_transfer || props.meeting.zoom_id) || !props.userRegistration.is_host)
+        (props.meeting.manual_transfer || props.meeting.zoom_transfer)
          && <Modal noBreakouts={noBreakouts} {...props}
       />}
       <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
