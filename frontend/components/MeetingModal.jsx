@@ -20,10 +20,16 @@ function ParticipantView(props){
           {props.userRegistration.join_url && 
             <a href={props.userRegistration.join_url} target="_blank">
               Click here to join your breakouts in Zoom.</a>}
-          {!props.userRegistration.join_url && 'The host has frozen breakouts.'}
+          {props.userRegistration.manual_transfer && 'The host has frozen breakouts.'}
+          {props.meeting.zoom_transfer && !props.userRegistration.join_url &&
+            'Generating a Zoom link for you...'}
         </h4>
-        {props.meeting.breakouts_frozen && !props.meeting.manual_transfer && !props.userRegistration.join_url &&
-          <p>Please wait for the host to open breakout selection.</p>}
+        {!props.userRegistration.join_url && props.meeting.zoom_transfer &&
+          <div className="d-flex justify-content-center">
+            <div className="spinner-border" role="status">
+              <span className="sr-only">Loading...</span>
+            </div>
+          </div>}
         {props.meeting.manual_transfer && 
           <p>Please wait for the host to open breakouts on Zoom.</p>}
         </div>
@@ -42,7 +48,7 @@ function HostView(props){
       <div className="modal-content align-middle">
         {props.meeting.manual_transfer && <ManualTransfer restore={restore} {... props} />}
         {/* TODO make sure below references a variable that can tell if call is in process of creation */}
-        {props.meeting.zoom_id && <ZoomCallCreation restore={restore} {... props} />}
+        {props.meeting.zoom_transfer && <ZoomCallCreation restore={restore} {... props} />}
       </div>
     </div>
   );
@@ -54,14 +60,23 @@ function ZoomCallCreation(props){
       <h4 className="modal-title text-center">
         {props.userRegistration.join_url && 
           <a href={props.userRegistration.join_url} target="_blank">Click here to join the call</a>}
-        {!props.userRegistration.join_url && 'You did it!'}
+        {!props.userRegistration.join_url && 'Creating Zoom call, registering participants...'}
       </h4>
+
       {props.userRegistration.join_url && 
-        <p>Your participants will now be prompted to return to Zoom. If you want to start a new Unbreakout session, use the buttons below.</p>}
-        
-      <div className="text-center">
-        <p><a onClick={props.restore} className="btn btn-primary">Reopen Breakouts</a></p>
-      </div>
+        <div>
+          <p>Your participants will now be prompted to return to Zoom. If you want to start a new Unbreakout session, use the buttons below.</p>
+          <div className="text-center">
+            <p><a onClick={props.restore} className="btn btn-primary">Reopen Breakouts</a></p>
+          </div>
+        </div>}
+
+      {!props.userRegistration.join_url &&
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>}
     </div>
   );
 }

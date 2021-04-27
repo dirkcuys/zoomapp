@@ -254,7 +254,7 @@ export default function Meeting(props) {
   return (
     <div>
       {props.meeting.breakouts_frozen && 
-        (props.meeting.manual_transfer || props.meeting.zoom_id)
+        (props.meeting.manual_transfer || props.meeting.zoom_transfer)
          && <Modal noBreakouts={noBreakouts} {...props}
       />}
       <div className="meeting container-fluid flex-grow-1 d-flex flex-column pt-3" onMouseMove={e => setMousePosition({x: e.clientX, y: e.clientY})}>
