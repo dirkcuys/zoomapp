@@ -58,12 +58,10 @@ function AdminActions(props){
         {props.meeting.breakouts_frozen ? 'Unfreeze Breakouts' : 'Freeze Breakouts'}
       </a></p>
       <hr/>
-      <div className="text-center">      
-        <p><a onClick={manual} className="btn btn-primary btn-bar">Manually Assign Breakouts</a></p>
-        <p>or</p>
-        <p><a onClick={create} className={(props.zoomUser ? " " : "disabled ") + "btn btn-primary btn-bar"}>Create a New Zoom Call</a></p>
-        <hr/>
-      </div>
+      <p><a onClick={manual} className="btn btn-primary btn-bar">Manually Copy into Zoom</a></p>
+      <p className="text-center">or</p>
+      <p><a onClick={create} className={(props.zoomUser ? " " : "disabled ") + "btn btn-primary btn-bar"}>Transfer into a New Zoom Call</a></p>
+      <hr/>
       <p><a href="{% url 'docs' %}" target="_blank">How to use Unbreakout</a></p>
       <hr/>
     </div>
