@@ -105,7 +105,7 @@ function ManualTransfer(props){
         </div>
       </div>
       <div className="modal-footer">
-        <p><a className="btn btn-primary" onClick={props.restore} data-dismiss="modal">
+        <p><a className="btn btn-outline-dark" onClick={props.restore} data-dismiss="modal">
           Reopen Breakouts
         </a></p>
       </div>
