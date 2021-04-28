@@ -18,9 +18,9 @@ function ParticipantView(props){
       <div className="modal-body">
         <h4 className="modal-title text-center">
           {props.userRegistration.join_url && 
-            <a href={props.userRegistration.join_url} target="_blank">
-              Click here to join your breakouts in Zoom.</a>}
-          {props.userRegistration.manual_transfer && 'The host has frozen breakouts.'}
+            <p><a href={props.userRegistration.join_url} target="_blank" 
+              className="btn btn-primary btn-lg">Click here to join your breakout</a></p>}
+          {props.meeting.manual_transfer && 'The host has frozen breakouts.'}
           {props.meeting.zoom_transfer && !props.userRegistration.join_url &&
             'Generating a Zoom link for you...'}
         </h4>
