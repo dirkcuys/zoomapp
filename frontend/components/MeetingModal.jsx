@@ -32,6 +32,8 @@ function ParticipantView(props){
           </div>}
         {props.meeting.manual_transfer && 
           <p>Please wait for the host to open breakouts on Zoom.</p>}
+        {props.meeting.zoom_transfer && 
+          <p>The host has created a new Zoom call with the breakouts pre-populated. Click above to join the call and enter your breakout session.</p>}
         </div>
       </div>
     </div>
