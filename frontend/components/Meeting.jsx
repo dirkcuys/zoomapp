@@ -51,18 +51,17 @@ function AdminActions(props){
           <p>Zoom Account Linked!</p>
           <hr/>
         </div>}
-      <p><a onClick={clear} className="btn">Clear Breakouts</a></p>
+      <p><a onClick={clear} className="btn btn-outline-dark">Clear Breakouts</a></p>
       <hr/>
-      <p><a onClick={freeze} className="btn">
+      <p><a onClick={freeze} 
+        className={"btn " + (props.meeting.breakouts_frozen ? "btn-outline-danger" : "btn-outline-info")}>
         {props.meeting.breakouts_frozen ? 'Unfreeze Breakouts' : 'Freeze Breakouts'}
       </a></p>
       <hr/>
-      <div className="text-center">      
-        <p><a onClick={manual} className="btn btn-primary btn-bar">Manually Assign Breakouts</a></p>
-        <p>or</p>
-        <p><a onClick={create} className={(props.zoomUser ? " " : "disabled ") + "btn btn-primary btn-bar"}>Create a New Zoom Call</a></p>
-        <hr/>
-      </div>
+      <p><a onClick={manual} className={(props.noBreakouts ? "disabled " : "") + "btn btn-primary btn-bar"}>Manually Copy into Zoom</a></p>
+      <p className="text-center">or</p>
+      <p><a onClick={create} className={((props.zoomuser || !props.noBreakouts) ? "" : "disabled ") + "btn btn-primary btn-bar"}>Transfer into a New Zoom Call</a></p>
+      <hr/>
       <p><a href="{% url 'docs' %}" target="_blank">How to use Unbreakout</a></p>
       <hr/>
     </div>
@@ -288,7 +287,7 @@ export default function Meeting(props) {
             </div>
           </div>
           <div className="col-md-3">
-            { props.userRegistration.is_host && <AdminActions {...props} /> }
+            { props.userRegistration.is_host && <AdminActions noBreakouts={noBreakouts} {...props} /> }
           </div>
         </div>
       </div>

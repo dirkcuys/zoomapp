@@ -18,9 +18,9 @@ function ParticipantView(props){
       <div className="modal-body">
         <h4 className="modal-title text-center">
           {props.userRegistration.join_url && 
-            <a href={props.userRegistration.join_url} target="_blank">
-              Click here to join your breakouts in Zoom.</a>}
-          {props.userRegistration.manual_transfer && 'The host has frozen breakouts.'}
+            <p><a href={props.userRegistration.join_url} target="_blank" 
+              className="btn btn-primary btn-lg">Click here to join your breakout</a></p>}
+          {props.meeting.manual_transfer && 'The host has frozen breakouts.'}
           {props.meeting.zoom_transfer && !props.userRegistration.join_url &&
             'Generating a Zoom link for you...'}
         </h4>
@@ -32,6 +32,8 @@ function ParticipantView(props){
           </div>}
         {props.meeting.manual_transfer && 
           <p>Please wait for the host to open breakouts on Zoom.</p>}
+        {props.meeting.zoom_transfer && 
+          <p>The host has created a new Zoom call with the breakouts pre-populated. Click above to join the call and enter your breakout session.</p>}
         </div>
       </div>
     </div>
@@ -47,7 +49,6 @@ function HostView(props){
     <div className="modal-dialog modal-dialog-centered modal-dialog-host" role="document">
       <div className="modal-content align-middle">
         {props.meeting.manual_transfer && <ManualTransfer restore={restore} {... props} />}
-        {/* TODO make sure below references a variable that can tell if call is in process of creation */}
         {props.meeting.zoom_transfer && <ZoomCallCreation restore={restore} {... props} />}
       </div>
     </div>
@@ -59,17 +60,10 @@ function ZoomCallCreation(props){
     <div className="modal-body">
       <h4 className="modal-title text-center">
         {props.userRegistration.join_url && 
-          <a href={props.userRegistration.join_url} target="_blank">Click here to join the call</a>}
+          <p><a href={props.userRegistration.join_url} target="_blank" 
+            className="btn btn-primary btn-lg">Click here to join the call</a></p>}
         {!props.userRegistration.join_url && 'Creating Zoom call, registering participants...'}
       </h4>
-
-      {props.userRegistration.join_url && 
-        <div>
-          <p>Your participants will now be prompted to return to Zoom. If you want to start a new Unbreakout session, use the buttons below.</p>
-          <div className="text-center">
-            <p><a onClick={props.restore} className="btn btn-primary">Reopen Breakouts</a></p>
-          </div>
-        </div>}
 
       {!props.userRegistration.join_url &&
         <div className="d-flex justify-content-center">
@@ -77,6 +71,16 @@ function ZoomCallCreation(props){
             <span className="sr-only">Loading...</span>
           </div>
         </div>}
+
+      {props.userRegistration.join_url && 
+        <div>
+          <p>Your participants will now be prompted to return to Zoom. If you want to start a new Unbreakout session, use the buttons below.</p>
+          <span></span>
+          <div className="text-center">
+            <p><a onClick={props.restore} className="btn btn-outline-dark">Reopen Breakouts</a></p>
+          </div>
+        </div>}
+
     </div>
   );
 }
@@ -103,7 +107,7 @@ function ManualTransfer(props){
         </div>
       </div>
       <div className="modal-footer">
-        <p><a className="btn btn-primary" onClick={props.restore} data-dismiss="modal">
+        <p><a className="btn btn-outline-dark" onClick={props.restore} data-dismiss="modal">
           Reopen Breakouts
         </a></p>
       </div>
