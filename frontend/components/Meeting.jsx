@@ -51,9 +51,10 @@ function AdminActions(props){
           <p>Zoom Account Linked!</p>
           <hr/>
         </div>}
-      <p><a onClick={clear} className="btn">Clear Breakouts</a></p>
+      <p><a onClick={clear} className="btn btn-outline-dark">Clear Breakouts</a></p>
       <hr/>
-      <p><a onClick={freeze} className="btn">
+      <p><a onClick={freeze} 
+        className={"btn " + (props.meeting.breakouts_frozen ? "btn-outline-danger" : "btn-outline-info")}>
         {props.meeting.breakouts_frozen ? 'Unfreeze Breakouts' : 'Freeze Breakouts'}
       </a></p>
       <hr/>
