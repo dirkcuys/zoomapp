@@ -113,6 +113,11 @@ h1 {
  font-size: large;
 }
 
+.btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 .participant-count {
   position: fixed;
   bottom: 0;
