@@ -117,7 +117,9 @@ function ManualTransfer(props){
 
 function BreakoutCard(props){
   const {id, title, participants} = props.breakout;
-  const names = participants.map(registrant => registrant.name.substring(3)).sort();
+  const names = participants.map(registrant => registrant.name.substring(3))
+    .sort(function (a, b) {
+    return a.toLowerCase().localeCompare(b.toLowerCase());});
   const [collapsed, setCollapsed] = useState(names.length == 0);
   return (
     <div className="card">
