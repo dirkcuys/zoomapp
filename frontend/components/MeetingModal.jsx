@@ -116,15 +116,17 @@ function ManualTransfer(props){
 }
 
 function BreakoutCard(props){
-  const [collapsed, setCollapsed] = useState(false);
   const {id, title, participants} = props.breakout;
   const names = participants.map(registrant => registrant.name.substring(3)).sort();
+  const [collapsed, setCollapsed] = useState(names.length == 0);
   return (
     <div className="card">
       <div className="card-header" id={id}>
         <h2 className="mb-0">
-          <button className="btn btn-link btn-block text-left" type="button" onClick={() => setCollapsed(!collapsed)} aria-expanded="true" aria-controls="collapseone">
-            {title}
+          <button className={"btn btn-link btn-block text-left" + (names.length == 0 ? " disabled" : "")}
+            type="button" onClick={() => setCollapsed(!collapsed)}
+            aria-expanded="true" aria-controls="collapseone">
+            <b>{title}</b> {names.length == 0 ? " (empty)" : ""}
           </button>
         </h2>
       </div>

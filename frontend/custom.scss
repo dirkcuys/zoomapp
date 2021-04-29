@@ -109,13 +109,16 @@ h1 {
 
 .btn-link {
  color: black;
- font-weight: bold;
  font-size: large;
 }
 
 .btn:focus {
   outline: none;
   box-shadow: none;
+}
+
+.card-header {
+  background-color: rgba(227, 227, 227, 0.8);
 }
 
 .participant-count {
