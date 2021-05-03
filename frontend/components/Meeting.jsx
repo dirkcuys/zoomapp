@@ -49,8 +49,14 @@ function AdminActions(props){
       {props.zoomUser && 
         <div>
           <p>Zoom Account Linked!</p>
-          <hr/>
         </div>}
+      {!props.zoomUser &&
+        <p><a href='/zoom/redirect' target="_blank" 
+          className="btn btn-outline-warning">
+          Link Zoom Account
+        </a></p>}
+      <hr/>
+
       <p><a onClick={clear} className="btn btn-outline-dark">Clear Breakouts</a></p>
       <hr/>
       <p><a onClick={freeze} 
