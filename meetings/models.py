@@ -6,10 +6,16 @@ from django.db import models
 class Meeting(models.Model):
     slug = models.SlugField()
     short_code = models.CharField(max_length=64)
-    zoom_id = models.CharField(max_length=256)
-    zoom_host_id = models.CharField(max_length=256)
+    zoom_id = models.CharField(max_length=256, blank=True)
+    zoom_host_id = models.CharField(max_length=256, blank=True)
     zoom_data = models.TextField()
+    title=models.CharField(max_length=256, blank=True)
     breakouts_frozen = models.BooleanField(default=False)
+    manual_transfer = models.BooleanField(default=False)
+    zoom_transfer = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'[{self.slug}] {self.title}'
 
 
 class Breakout(models.Model):
@@ -20,7 +26,8 @@ class Breakout(models.Model):
 
 class Registration(models.Model):
     meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
-    registrant_id = models.CharField(max_length=256)
+    registrant_id = models.CharField(max_length=256, blank=True)
+    is_host = models.BooleanField(default=False)
     email = models.EmailField()
     name = models.CharField(max_length=256)
     breakout = models.ForeignKey(Breakout, null=True, on_delete=models.SET_NULL)
@@ -34,4 +41,7 @@ class Registration(models.Model):
     # TODO remove below
     call_joined_at = models.DateTimeField(blank=True, null=True)
     call_left_at = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 

@@ -1,31 +1,27 @@
 import React from 'react';
 import { connect } from 'react-redux'
 
-import MeetingList from 'components/MeetingList';
-import ZoomAuth from 'components/ZoomAuth';
 import Meeting from 'components/Meeting';
 import MeetingRegistration from 'components/MeetingRegistration';
 
 
 function App(props) {
   const {meeting, zoomUser, userRegistration, shortCode} = props;
-  if (meeting && (zoomUser || userRegistration) && !shortCode ){
-    return <Meeting {...props} />;
-  }
-  if (!zoomUser && !meeting){
-    return <ZoomAuth {...props} />;
-  }
-  if (zoomUser && !meeting){
-    return <MeetingList {...props} />;
-  }
-  if (meeting && shortCode){
+  if (!userRegistration){
     return <MeetingRegistration {...props} />;
-  }
+  } 
+  return <Meeting {...props} />;
 }
 
-
 const mapStateToProps = (state, ownProps) => {
-  return {...state}
+  let user = state.userRegistration;
+  if (user) {
+    // get latest state for user registration and replace prop with that
+    let users = state.meeting.registrants.filter(user => user.id == state.userRegistration.id);
+    user = users.pop();
+  }
+
+  return {...state, userRegistration: user}
 }
 
 const Appa = connect(mapStateToProps, null)(App)

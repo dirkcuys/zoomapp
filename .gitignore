@@ -1,5 +1,6 @@
 *.pyc
 *.swp
+*.code-workspace
 venv
 node_modules/
 db.sqlite3

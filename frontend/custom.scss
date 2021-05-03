@@ -20,8 +20,8 @@ body {
 }
 
 .hero {
-  margin-top: 30vh;
-  margin-bottom: 2em;
+  margin-top: 22vh;
+  margin-bottom: 1em;
   h1 {
     font-weight: bold;
     text-transform: uppercase;
@@ -38,9 +38,29 @@ h1 {
   position: fixed;
   width: 100vw;
   height: 100vh;
-  background-color: $dark-gray;
+  background-color: #555c;
   display: block;
-  opacity: 0.9;
+  overflow-y: scroll;
+}
+
+.modal-content-guest{
+  background-color:#e2eaff; 
+}
+
+.modal-dialog{
+  max-width:100%;
+}
+
+.modal-dialog-host{
+  width: 70%;
+}
+
+.modal-dialog-guest{
+  width: 50%;
+}
+
+.modal-header{
+  display:block;
 }
 
 .breakouts-frozen {
@@ -53,6 +73,14 @@ h1 {
   padding: 0.5em;
   border-radius: 5px;
   min-height: 100px;
+  margin-bottom: 1em;
+}
+
+.nav {
+  margin-bottom: 1em;
+}
+
+.modal-title {
   margin-bottom: 1em;
 }
 
@@ -73,6 +101,29 @@ h1 {
     //position: absolute;
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+.btn-bar {
+  width: 100%;
+}
+
+.btn-link {
+ color: black;
+ font-size: large;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.card-header {
+  background-color: rgba(227, 227, 227, 0.8);
+  padding: 5px;
+}
+
+.card-body {
+  padding: 5px;
 }
 
 .participant-count {

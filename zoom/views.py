@@ -15,6 +15,10 @@ logger = logging.getLogger(__name__)
 
 
 def redirect(request):
+    # save next url if it's specified as a query param
+    next_ = request.GET.get('next')
+    if next_:
+        request.session['next_url'] = next_
     url = f'https://zoom.us/oauth/authorize?response_type=code&client_id={settings.ZOOM_CLIENT_ID}&redirect_uri={settings.ZOOM_REDIRECT_URL}'
     return http.HttpResponseRedirect(url)
 
@@ -37,7 +41,13 @@ def callback(request):
         'zoom_api_data': json.dumps(api_resp.json()),
     })
     request.session['zoom_user'] = api_resp.json()
-    return http.HttpResponseRedirect('/list')
+
+    # check if we should redirect the user
+    next_ = request.session.get('next_url')
+    if next_:
+        del request.session['next_url']
+        return http.HttpResponseRedirect(next_)
+    return http.HttpResponseRedirect('/')
 
 
 def _data_compliance(deauth_data):

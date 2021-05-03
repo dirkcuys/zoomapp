@@ -11,7 +11,7 @@ def registration_required(func):
     return decorated
 
 
-def host_required(func):
+def zoom_user_required(func):
     def decorated(*args, **kwargs):
         if not args[0].session.get('zoom_user'):
             raise PermissionDenied

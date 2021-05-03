@@ -19,20 +19,24 @@ def serialize_meeting(meeting):
         'zoom_id': meeting.zoom_id,
         'slug': meeting.slug,
         'short_code': meeting.short_code,
-        'topic': json.loads(meeting.zoom_data).get('topic'),
+        'title': meeting.title,
         'breakouts': list(map(serialize_breakout, meeting.breakout_set.all().order_by('pk'))),
         'breakouts_frozen': meeting.breakouts_frozen,
+        'manual_transfer': meeting.manual_transfer,
+        'zoom_transfer': meeting.zoom_transfer,
         'registrants': list(map(serialize_registration, meeting.registration_set.all())),
-        'presence': [],
+        'presence': [], # TODO probably remove
     }
 
 
 def serialize_registration(registration):
-    # TODO email and join_url should maybe not be serialized by default!
+    # TODO join_url should maybe not be serialized by default!
+    # TODO registration.zoom_data wont exist
     zoom_data = json.loads(registration.zoom_data)
     return {
+        "id": registration.pk,
+        "is_host": registration.is_host,
         "name": registration.name,
-        "email": registration.email,
         "breakout_id": registration.breakout_id,
         "registrant_id": registration.registrant_id,
         "x": registration.x,

@@ -54,26 +54,26 @@
     env: "{{ django_env | combine(nginx_env) | combine(uvicorn_vars) }}"
 
 
-#   - name: Run docker container for celery worker
-#     docker_container:
-#       name: "{{DOMAIN}}-celery"
-#       image: local/unbreakout
-#       command: /opt/app-venv/bin/celery worker -A unbreakout
-#       user: celery
-#       state: started
-#       #pull: yes # TODO
-#       recreate: true
-#       restart: yes
-#       restart_policy: always
-#       volumes:
-#       - "/var/docker_volumes/nginx/static/{{DOMAIN}}/static:/opt/app/public"
-#       - "/var/docker_volumes/nginx/static/{{DOMAIN}}/media:/opt/app/media"
-#       - "/var/docker_volumes/{{DOMAIN}}/celery:/var/lib/celery"
-#       - "/var/docker_volumes/{{DOMAIN}}/log:/var/log"
-#       links:
-#       - postgres
-#       - redis
-#       env: "{{django_env}}"
+- name: Run docker container for celery worker
+  docker_container:
+    name: "{{DOMAIN}}-celery"
+    image: local/unbreakout
+    user: celery
+    state: started
+    #pull: yes # TODO
+    recreate: true
+    restart: yes
+    restart_policy: always
+    volumes:
+    - "/var/docker_volumes/nginx/static/{{DOMAIN}}/static:/opt/app/static_serve"
+    - "/var/docker_volumes/nginx/static/{{DOMAIN}}/media:/opt/app/upload"
+    - "/var/docker_volumes/{{DOMAIN}}/celery:/var/lib/celery"
+    - "/var/docker_volumes/{{DOMAIN}}/log:/var/log"
+    links:
+    - postgres
+    - redis
+    env: "{{django_env}}"
+    command: /opt/app-venv/bin/celery worker -A unbreakout
 
 
 #   - name: Run docker container for celery beat worker

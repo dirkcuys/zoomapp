@@ -17,6 +17,10 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 COPY docker/entry.sh /entry.sh
+RUN mkdir -p /var/lib/celery && \
+    addgroup --gid 5313 celery && \
+    adduser --uid 5313 --gid 5313 celery && \
+    chown celery:celery /var/lib/celery/
 EXPOSE 80
 ENTRYPOINT ["/entry.sh"]
 CMD ["/opt/app-venv/bin/gunicorn", "unbreakout.asgi:application", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:80", "--forwarded-allow-ips=\"*\""]
