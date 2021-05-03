@@ -47,7 +47,7 @@ def callback(request):
     if next_:
         del request.session['next_url']
         return http.HttpResponseRedirect(next_)
-    return http.HttpResponseRedirect('/list')
+    return http.HttpResponseRedirect('/')
 
 
 def _data_compliance(deauth_data):
