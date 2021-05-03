@@ -39,6 +39,7 @@ function AdminActions(props){
     post(`/${props.meeting.slug}/freeze`, {});
   }
 
+  const enableZoomCallButton = props.zoomUser && !props.noBreakouts;
 
   const registrationUrl = `${document.location.origin}/m/${props.meeting.slug}`
   return (
@@ -66,7 +67,7 @@ function AdminActions(props){
       <hr/>
       <p><a onClick={manual} className={(props.noBreakouts ? "disabled " : "") + "btn btn-primary btn-bar"}>Manually Copy into Zoom</a></p>
       <p className="text-center">or</p>
-      <p><a onClick={create} className={((!props.zoomuser || props.noBreakouts) ? "disabled " : "") + "btn btn-primary btn-bar"}>Transfer into a New Zoom Call</a></p>
+      <p><a onClick={create} className={(enableZoomCallButton ? "" : "disabled ") + "btn btn-primary btn-bar"}>Transfer into a New Zoom Call</a></p>
       <hr/>
       <p><a href="{% url 'docs' %}" target="_blank">How to use Unbreakout</a></p>
       <hr/>
