@@ -71,7 +71,7 @@ function AdminActions(props){
       <p className="text-center">or</p>
       <p><a onClick={create} className={(enableZoomCallButton ? "" : "disabled ") + "btn btn-primary btn-bar"}>Transfer into a New Zoom Call</a></p>
       <hr/>
-      <p><a href="/content/docs" target="_blank">How to use Unbreakout</a></p>
+      <p><a href="/docs" target="_blank">How to use Unbreakout</a></p>
       <hr/>
     </div>
   );
