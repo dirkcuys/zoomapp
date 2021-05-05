@@ -16,7 +16,7 @@ from zoom.models import ZoomUserToken
 from .models import Meeting
 from .models import Breakout
 from .models import Registration
-from .decorators import registration_required, zoom_user_required
+from .decorators import registration_required, zoom_user_required, host_required
 from .serializers import serialize_meeting, serialize_registration, serialize_breakout
 from .tasks import create_zoom_registrations
 
@@ -143,8 +143,10 @@ def export_breakouts(request, slug):
     return response
 
 
+@host_required
 def freeze_breakouts(request, slug):
     meeting = Meeting.objects.get(slug=slug)
+
     meeting.breakouts_frozen = not meeting.breakouts_frozen
     meeting.save()
     # ws broadcast
@@ -162,6 +164,7 @@ def freeze_breakouts(request, slug):
     return http.JsonResponse({'code': 202})
 
 
+@host_required
 def manual_transfer(request, slug):
     meeting = Meeting.objects.get(slug=slug)
     meeting.manual_transfer = True
@@ -183,6 +186,7 @@ def manual_transfer(request, slug):
     return http.JsonResponse({'code': 202})
 
     
+@host_required
 def clear_breakouts(request, slug):
     Breakout.objects.filter(meeting__slug=slug).delete()
     Registration.objects.filter(meeting__slug=slug).update(x=0, y=0);
@@ -270,7 +274,7 @@ def create_zoom_meeting(request, slug):
 
     return http.JsonResponse({'code': 202, 'resp': resp.json()})
     
-
+@host_required
 def restore(request, slug):
     if request.method != 'POST':
         return http.JsonResponse({'code': 400, 'error': 'Expecting a post'})

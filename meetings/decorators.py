@@ -18,3 +18,14 @@ def zoom_user_required(func):
         return func(*args, **kwargs)
     return decorated
 
+
+def host_required(func):
+    def decorated(*args, **kwargs):
+        meeting = Meeting.objects.get(slug=kwargs.get('slug'))
+        email = args[0].session.get('user_registration')
+        user = meeting.registration_set.get(email=email)
+
+        if not user.is_host:
+            raise PermissionDenied
+        return func(*args, **kwargs)
+    return decorated
