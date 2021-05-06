@@ -89,6 +89,10 @@ h1 {
   //overflow: auto;
 }
 
+#reg-link {
+  word-break: break-all;
+}
+
 .breakout-list {
   display: grid;
   grid-template-columns: repeat(1, 1fr);

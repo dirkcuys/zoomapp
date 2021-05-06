@@ -47,14 +47,14 @@ function AdminActions(props){
   return (
     <div>
       <h5>Host controls</h5>
-      <p>Registration link: <a href={registrationUrl}>{registrationUrl}</a></p>
+      <p>Registration link: <br /><a id="reg-link" href={registrationUrl}>{registrationUrl}</a></p>
       <hr/>
       {props.zoomUser && 
         <div>
           <p>Zoom Account Linked!</p>
         </div>}
       {!props.zoomUser &&
-        <p><a href='/zoom/redirect' target="_blank" 
+        <p><a href={'/zoom/redirect?next=' + window.location.href}
           className="btn btn-outline-warning">
           Link Zoom Account
         </a></p>}
