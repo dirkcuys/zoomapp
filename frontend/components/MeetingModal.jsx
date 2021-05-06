@@ -74,7 +74,7 @@ function ZoomCallCreation(props){
 
       {props.userRegistration.join_url && 
         <div>
-          <p>Your participants will now be prompted to return to Zoom. If you want to start a new Unbreakout session, use the buttons below.</p>
+          <p>Your participants will now be prompted to return to Zoom. If you want to discard this call and start a new Unbreakout session, click the button below.</p>
           <span></span>
           <div className="text-center">
             <p><a onClick={props.restore} className="btn btn-outline-dark">Reopen Breakouts</a></p>
@@ -128,7 +128,7 @@ function BreakoutCard(props){
           <button className={"btn btn-link btn-block text-left" + (names.length == 0 ? " disabled" : "")}
             type="button" onClick={() => setCollapsed(!collapsed)}
             aria-expanded="true" aria-controls="collapseone">
-            <b>{title}</b> {names.length == 0 ? " (empty)" : ""}
+            <b>{title}</b> {" (" + names.length + ")"}
           </button>
         </h2>
       </div>
