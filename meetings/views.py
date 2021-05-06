@@ -97,6 +97,20 @@ def register(request, slug):
         # and set title
         meeting.title = json_data.get('title')
         meeting.save()
+        
+    if (meeting.zoom_transfer):
+        zoom_host_id = meeting.zoom_host_id
+        zoom_auth = ZoomUserToken.objects.get(zoom_user_id=zoom_host_id)
+        registration_data = {
+            "email": registration.email,
+            'first_name': registration.name
+        }
+        resp = zoom_post(f'/meetings/{meeting.zoom_id}/registrants', zoom_auth, registration_data)
+        logger.error(resp.json())
+        zoom_registration = resp.json()
+        registration.registrant_id = zoom_registration.get('registrant_id', '')
+        registration.zoom_data = json.dumps(zoom_registration)
+        registration.save()
     
     request.session['user_registration'] = registration.email
 
