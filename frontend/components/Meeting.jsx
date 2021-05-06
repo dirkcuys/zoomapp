@@ -54,7 +54,7 @@ function AdminActions(props){
           <p>Zoom Account Linked!</p>
         </div>}
       {!props.zoomUser &&
-        <p><a href='/zoom/redirect' target="_blank" 
+        <p><a href={'/zoom/redirect?next=' + window.location.href}
           className="btn btn-outline-warning">
           Link Zoom Account
         </a></p>}
