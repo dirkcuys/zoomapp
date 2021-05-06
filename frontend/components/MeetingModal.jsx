@@ -128,7 +128,7 @@ function BreakoutCard(props){
           <button className={"btn btn-link btn-block text-left" + (names.length == 0 ? " disabled" : "")}
             type="button" onClick={() => setCollapsed(!collapsed)}
             aria-expanded="true" aria-controls="collapseone">
-            <b>{title}</b> {names.length == 0 ? " (empty)" : ""}
+            <b>{title}</b> {" (" + names.length + ")"}
           </button>
         </h2>
       </div>
