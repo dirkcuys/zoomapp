@@ -4,6 +4,7 @@ import string
 import random
 import unicodecsv as csv
 import datetime
+import math
 
 from django.shortcuts import render
 from django import http
@@ -307,6 +308,36 @@ def restore(request, slug):
         user.registrant_id = ''
         user.zoom_data = {}
         user.save()
+
+    # send updated meeting via websocket connection
+    _ws_update_meeting(meeting)
+
+    return http.JsonResponse({'code': 202})
+
+@host_required
+def create_test_users(request, slug):
+    meeting = Meeting.objects.get(slug=slug)
+    count = int(request.GET.get('count'))
+    breakouts = math.ceil(count / 10)
+
+    for i in range(breakouts):
+        breakout_title = "".join([random.choice(string.digits+string.ascii_letters) for j in range(16)])
+        breakout = Breakout.objects.create(meeting=meeting, title=breakout_title)
+        for j in range(10):
+            if count > 0:
+                email = "".join([random.choice(string.digits+string.ascii_letters) for j in range(16)]) + "@gmail.com"
+                registration, _ = Registration.objects.update_or_create(
+                    meeting=meeting,
+                    email=email, 
+                    defaults={
+                        'name': "".join([random.choice(string.digits+string.ascii_letters) for j in range(4)]),
+                        'zoom_data': '{}',
+                    }
+                )
+                registration.breakout = breakout
+                count -= 1
+                registration.save()
+        
 
     # send updated meeting via websocket connection
     _ws_update_meeting(meeting)

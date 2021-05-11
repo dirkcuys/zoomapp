@@ -17,6 +17,8 @@ urlpatterns = [
     re_path(r'^(?P<slug>\w+)/manual_transfer$', views.manual_transfer, name='manual-transfer'),
     re_path(r'^(?P<slug>\w+)/create_zoom_meeting$', views.create_zoom_meeting, name='create_zoom_meeting'),
     re_path(r'^(?P<slug>\w+)/restore$', views.restore, name='restore'),
+    
+    re_path(r'^m/(?P<slug>\w+)/test_users$', views.create_test_users, name='create_test_users'),
 
     re_path(r'^(?P<slug>\w+)/create_breakout$', views.create_breakout, name='create_breakout'),
     path('<slug:slug>/breakout/<int:breakout_id>/join', views.join_breakout, name='join_breakout'),
