@@ -10,6 +10,7 @@ function RegistrationForm(props){
   const [name, setName] = useState('');
   const [nameField, setNameField] = useState(null);
   const [emailField, setEmailField] = useState(null);
+  const sessionFull = props.meeting.registrants.length >= 200;
   const onSubmit = e => {
     e.preventDefault();
     if (!emailField.checkValidity() || !nameField.checkValidity()){
@@ -43,12 +44,14 @@ function RegistrationForm(props){
           <button 
             className="btn btn-outline-secondary ml-2" type="button" 
             onClick={e => setEmoji(randomEmoji())}
+            disabled={sessionFull ? "disabled" : ""}
           >⟳</button>
         </div>
       </div>
       <div className="form-group">
         <label htmlFor="nameInput">Name (as it appears in Zoom)</label>
         <input 
+          disabled={sessionFull ? "disabled" : ""}
           ref={setNameField}
           name="name"
           required="True"
@@ -62,6 +65,7 @@ function RegistrationForm(props){
       <div className="form-group">
         <label htmlFor="emailInput">Email</label>
         <input 
+          disabled={sessionFull ? "disabled" : ""}
           ref={setEmailField}
           name="email"
           required="True"
@@ -74,8 +78,10 @@ function RegistrationForm(props){
           onChange={e => setEmail(e.target.value)} 
         />
       </div>
-      <button type="submit" className="btn btn-primary">
-        {props.isHost ? 'Launch as Host' : 'Join'}
+      <button type="submit" 
+        className={"btn " + (sessionFull ? "btn-secondary" : "btn-primary")}
+        disabled={sessionFull ? "disabled" : ""}>
+        {props.isHost ? 'Launch as Host' : (sessionFull ? 'Session Full' : 'Join')}
       </button>
     </form>
   );
