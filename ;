@@ -1,6 +1,0 @@
-SECRET_KEY=apples
-DEBUG=True
-DOMAIN=localhost
-ZOOM_CLIENT_ID=PDeqtYRPTraxbD08Z11QRA
-ZOOM_CLIENT_SECRET=tBRNPxXKbvUYt7x1OQn9CjFRt1Rx7xHs
-ZOOM_REDIRECT_URL=https://doop.unbreakout.media.mit.edu/zoom/callback
