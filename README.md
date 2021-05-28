@@ -6,7 +6,6 @@ echo SECRET_KEY=changemeplease > docker.env
 echo DEBUG=True >> docker.env
 docker-compose up
 
-
 ```
 
 You'll need to [create a Zoom OAuth App](https://marketplace.zoom.us/docs/guides/build/oauth-app) and update the docker.env file with the API keys and set other variables.
@@ -20,7 +19,7 @@ ZOOM_CLIENT_SECRET=
 ZOOM_REDIRECT_URL=https://YOUR_DOMAIN/zoom/callback
 ```
 
-If you want to set up the environment to test locally, you can use a non-existent domain for the ZOOM_REDIRECT_RUL, or a domain you control and manually fix the URL you are redirected to after a successful OAuth flow to point to your dev environment.
+If you want to set up the environment to test locally, you can use a non-existent domain for the ZOOM_REDIRECT_URL, or a domain you control and manually fix the URL you are redirected to after a successful OAuth flow to point to your dev environment.
 
 
 Create db:
