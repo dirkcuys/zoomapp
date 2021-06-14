@@ -49,29 +49,28 @@ function AdminActions(props){
       <h5>Host controls</h5>
       <p>Registration link: <br /><a id="reg-link" href={registrationUrl}>{registrationUrl}</a></p>
       <hr/>
-      {props.zoomUser && 
-        <div>
-          <p>Zoom Account Linked!</p>
-        </div>}
-      {!props.zoomUser &&
-        <p><a href={'/zoom/redirect?next=' + window.location.href}
-          className="btn btn-outline-warning">
-          Link Zoom Account
-        </a></p>}
+      <p><a href="/docs" target="_blank">How to use Unbreakout</a></p>
       <hr/>
-
       <p><a onClick={clear} className="btn btn-outline-dark">Clear Breakouts</a></p>
       <hr/>
       <p><a onClick={freeze} 
-        className={"btn " + (props.meeting.breakouts_frozen ? "btn-outline-danger" : "btn-outline-info")}>
+        className={"btn " + (props.meeting.breakouts_frozen ? "btn-outline-info" : "btn-outline-danger")}>
         {props.meeting.breakouts_frozen ? 'Unfreeze Breakouts' : 'Freeze Breakouts'}
       </a></p>
       <hr/>
-      <p><a onClick={manual} className={(props.noBreakouts ? "disabled " : "") + "btn btn-primary btn-bar"}>Manually Copy into Zoom</a></p>
-      <p className="text-center">or</p>
-      <p><a onClick={create} className={(enableZoomCallButton ? "" : "disabled ") + "btn btn-primary btn-bar"}>Transfer into a New Zoom Call</a></p>
+      <p><a onClick={manual} className={(props.noBreakouts ? "disabled " : "") + "btn btn-primary btn-bar btn-lg"}>Transfer to Zoom</a></p>
       <hr/>
-      <p><a href="/docs" target="_blank">How to use Unbreakout</a></p>
+      {props.zoomUser && 
+        <div className="text-center">
+          <p><a onClick={create} className={enableZoomCallButton ? "" : "disabled "}>(Experimental) <br/>Create a New Zoom Call</a></p>
+        </div>}
+      {!props.zoomUser &&
+        <div className="text-center">
+          <p><a href={'/zoom/redirect?next=' + window.location.href}
+            className="text-center">
+            (Experimental) <br/> Link your Zoom account
+          </a></p>
+        </div>}
       <hr/>
     </div>
   );
