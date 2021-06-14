@@ -39,8 +39,6 @@ function AdminActions(props){
     post(`/${props.meeting.slug}/freeze`, {});
   }
   
-  const showZoomCallButton = props.zoomUser && !props.noBreakouts;
-
   const enableZoomCallButton = props.zoomUser && !props.noBreakouts;
 
   const registrationUrl = `${document.location.origin}/m/${props.meeting.slug}`
