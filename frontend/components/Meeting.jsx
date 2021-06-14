@@ -54,7 +54,7 @@ function AdminActions(props){
       <p><a onClick={clear} className="btn btn-outline-dark">Clear Breakouts</a></p>
       <hr/>
       <p><a onClick={freeze} 
-        className={"btn " + (props.meeting.breakouts_frozen ? "btn-outline-danger" : "btn-outline-info")}>
+        className={"btn " + (props.meeting.breakouts_frozen ? "btn-outline-info" : "btn-outline-danger")}>
         {props.meeting.breakouts_frozen ? 'Unfreeze Breakouts' : 'Freeze Breakouts'}
       </a></p>
       <hr/>
