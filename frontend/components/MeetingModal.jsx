@@ -77,7 +77,7 @@ function ZoomCallCreation(props){
           <p>Your participants will now be prompted to return to Zoom. If you want to discard this call and start a new Unbreakout session, click the button below.</p>
           <span></span>
           <div className="text-center">
-            <p><a onClick={props.restore} className="btn btn-outline-dark">Reopen Breakouts</a></p>
+            <p><a onClick={props.restore} className="btn btn-outline-dark">Return to Breakouts</a></p>
           </div>
         </div>}
 
@@ -108,7 +108,7 @@ function ManualTransfer(props){
       </div>
       <div className="modal-footer">
         <p><a className="btn btn-outline-dark" onClick={props.restore} data-dismiss="modal">
-          Reopen Breakouts
+          Return to Breakouts
         </a></p>
       </div>
     </div>
