@@ -39,8 +39,6 @@ function AdminActions(props){
     post(`/${props.meeting.slug}/freeze`, {});
   }
   
-  const showZoomCallButton = props.zoomUser && !props.noBreakouts;
-
   const enableZoomCallButton = props.zoomUser && !props.noBreakouts;
 
   const registrationUrl = `${document.location.origin}/m/${props.meeting.slug}`
@@ -62,7 +60,7 @@ function AdminActions(props){
       <hr/>
       {props.zoomUser && 
         <div className="text-center">
-          <p><a onClick={create} className={enableZoomCallButton ? "" : "disabled "}>(Experimental) <br/>Create a New Zoom Call</a></p>
+          <p><a onClick={enableZoomCallButton ? create : null} className={enableZoomCallButton ? "" : "disabled "}>(Experimental) <br/>Create a New Zoom Call</a></p>
         </div>}
       {!props.zoomUser &&
         <div className="text-center">
