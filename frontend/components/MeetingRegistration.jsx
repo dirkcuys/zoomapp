@@ -49,7 +49,7 @@ function RegistrationForm(props){
         </div>
       </div>
       <div className="form-group">
-        <label htmlFor="nameInput">Name (as it appears in Zoom)</label>
+        <label htmlFor="nameInput">Name</label>
         <input 
           disabled={sessionFull ? "disabled" : ""}
           ref={setNameField}
