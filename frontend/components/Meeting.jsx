@@ -56,11 +56,11 @@ function AdminActions(props){
         {props.meeting.breakouts_frozen ? 'Unfreeze Breakouts' : 'Freeze Breakouts'}
       </a></p>
       <hr/>
-      <p><a onClick={manual} className={(props.noBreakouts ? "disabled " : "") + "btn btn-primary btn-bar btn-lg"}>Transfer to Zoom</a></p>
+      <p><a onClick={manual} className={(props.noBreakouts ? "disabled " : "") + "btn btn-primary btn-bar btn-lg"}>Copy Breakouts into Zoom</a></p>
       <hr/>
       {props.zoomUser && 
         <div className="text-center">
-          <p><a onClick={enableZoomCallButton ? create : null} className={(enableZoomCallButton ? "" : "disabled ") + "btn btn-primary btn-bar"}>(Experimental) <br/>Create a New Zoom Call</a></p>
+          <p><a onClick={enableZoomCallButton ? create : null} className={(enableZoomCallButton ? "" : "disabled ") + "btn btn-primary btn-bar"}>(Experimental) <br/>Transfer to a new Zoom Call</a></p>
         </div>}
       {!props.zoomUser &&
         <div className="text-center">
