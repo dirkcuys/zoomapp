@@ -77,7 +77,7 @@ function ZoomCallCreation(props){
           <p>Your participants will now be prompted to return to Zoom. If you want to discard this call and start a new Unbreakout session, click the button below.</p>
           <span></span>
           <div className="text-center">
-            <p><a onClick={props.restore} className="btn btn-outline-dark">Return to Breakouts</a></p>
+            <p><a onClick={props.restore} className="btn btn-outline-dark">Return to Unbreakout</a></p>
           </div>
         </div>}
 
@@ -96,8 +96,8 @@ function ManualTransfer(props){
       </div>
       <div className="modal-body">
         <div className="accordion" id="accordion">
-          <p>If you’re not connected to Zoom or don’t want participants to move calls, <strong>manually create breakouts</strong> and copy them from here.</p>
-          <p>When you press <strong>"Transfer Breakouts"</strong>, your participants will be prompted to return to your call.</p>
+          <p>Click <strong>"Breakout Roomss"</strong> in your existing Zoom call. Select <strong>"Assign manually"</strong> and select the number of breakout rooms below. Rename them to match the breakouts below, and press <strong>"Assign"</strong> to assign participants to their breakouts.</p>
+          <p>When you're ready, click <strong>"Open All Rooms"</strong>.</p>
           <span></span>
           {props.noBreakouts
             ? <p className="text-center"><i>No breakouts to display or all breakouts are empty!</i></p>
@@ -108,7 +108,7 @@ function ManualTransfer(props){
       </div>
       <div className="modal-footer">
         <p><a className="btn btn-outline-dark" onClick={props.restore} data-dismiss="modal">
-          Return to Breakouts
+          Return to Unbreakout
         </a></p>
       </div>
     </div>
