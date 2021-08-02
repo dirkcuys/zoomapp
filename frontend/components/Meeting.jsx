@@ -56,7 +56,7 @@ function AdminActions(props){
         {props.meeting.breakouts_frozen ? 'Unfreeze Breakouts' : 'Freeze Breakouts'}
       </a></p>
       <hr/>
-      <p><a onClick={manual} className={(props.noBreakouts ? "disabled " : "") + "btn btn-primary btn-bar btn-lg"}>Copy Breakouts into Zoom</a></p>
+      <p><a onClick={manual} className={(props.noBreakouts ? "disabled " : "") + "btn btn-primary btn-bar btn-lg"}>Get List of Rooms</a></p>
       <hr/>
       {props.zoomUser && 
         <div className="text-center">
@@ -228,12 +228,11 @@ function StatusMessage(props){
     <div className={`p-2${breakouts_frozen?' breakouts-frozen':''}`}>
       {breakouts_frozen ? 
         <div>
-          <strong>The host has frozen breakouts.</strong>
-          <p className="m-0">Please wait for the host to open breakout selection.</p>
+          <strong>The host has paused Unbreakout.</strong>
         </div> :
         <div>
           <strong>Welcome!</strong>
-          <p className="m-0">Please join a room by clicking on the room or add your own room</p>
+          <p className="m-0">Please join a breakout by clicking on it, or suggest a new breakout</p>
         </div>
       }
     </div>

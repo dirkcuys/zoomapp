@@ -92,11 +92,11 @@ function ManualTransfer(props){
   return (
     <div>
       <div className="modal-header">
-        <h4 className="modal-title text-center">Manually Transfer Breakouts to Zoom</h4>
+        <h4 className="modal-title text-center">List of Rooms and Participants</h4>
       </div>
       <div className="modal-body">
         <div className="accordion" id="accordion">
-          <p>Click <strong>"Breakout Roomss"</strong> in your existing Zoom call. Select <strong>"Assign manually"</strong> and select the number of breakout rooms below. Rename them to match the breakouts below, and press <strong>"Assign"</strong> to assign participants to their breakouts.</p>
+          <p>Click <strong>"Breakout Rooms"</strong> in your existing Zoom call. Select <strong>"Assign manually"</strong> and select the number of breakout rooms below. Rename them to match the breakouts below, and press <strong>"Assign"</strong> to assign participants to their breakouts.</p>
           <p>When you're ready, click <strong>"Open All Rooms"</strong>.</p>
           <span></span>
           {props.noBreakouts
